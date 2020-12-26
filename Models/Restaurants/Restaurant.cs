@@ -9,7 +9,7 @@ namespace Yumm_Back_End.Models.Restaurants
 {
     public class Restaurant
     {
-
+        [Key]
         public int RestaurantId { get; set; }
 
         [Required]
@@ -17,6 +17,7 @@ namespace Yumm_Back_End.Models.Restaurants
 
         public string Description { get; set; }
 
+        [Required]
         public string ClientId { get; set; }
         public ApplicationUser Client { get; set; }
 
