@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Yumm_Back_End.Models.Clients;
 using Yumm_Back_End.Models.Restaurants;
 
 namespace Yumm_Back_End.Data
@@ -32,8 +33,15 @@ namespace Yumm_Back_End.Data
 
         public DbSet<Item> Items { get; set; }
 
-      
+        public DbSet<Working_Hours> Working_Hours { get; set; }
 
         #endregion
+
+
+        #region Client Entities
+
+        //public DbSet<Client> Clients { get; set; }
+        #endregion
+
     }
 }

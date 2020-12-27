@@ -313,6 +313,37 @@ namespace Yumm_Back_End.Migrations
                     b.ToTable("Restaurants");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Working_Hours", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("ClosingHours")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("OpeningHours")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RestaurantId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Weekday")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("Working_Hours");
+                });
+
             modelBuilder.Entity("Yumm_Back_End.Models.ApplicationUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
@@ -389,6 +420,15 @@ namespace Yumm_Back_End.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Working_Hours", b =>
+                {
+                    b.HasOne("Yumm_Back_End.Models.Restaurants.Restaurant", "Restaurant")
+                        .WithMany()
+                        .HasForeignKey("RestaurantId");
+
+                    b.Navigation("Restaurant");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.ApplicationUser", b =>
