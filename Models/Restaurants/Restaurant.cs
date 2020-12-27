@@ -18,8 +18,8 @@ namespace Yumm_Back_End.Models.Restaurants
         public string Description { get; set; }
 
         [Required]
-        public string ClientId { get; set; }
-        public ApplicationUser Client { get; set; }
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
 
 
         [Timestamp]

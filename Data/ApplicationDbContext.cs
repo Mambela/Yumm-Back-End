@@ -15,7 +15,25 @@ namespace Yumm_Back_End.Data
 
         }
 
-        public DbSet<Restaurant>  Restaurants { get; set; }
 
+        #region Restaurant Entities
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            
+            builder.Entity<Item>()
+                .Property(I => I.Price)
+                .HasPrecision(18, 2);
+            
+            base.OnModelCreating(builder);
+        }
+        public DbSet<Restaurant> Restaurants { get; set; }
+
+        public DbSet<Category> Categories { get; set; }
+
+        public DbSet<Item> Items { get; set; }
+
+      
+
+        #endregion
     }
 }
