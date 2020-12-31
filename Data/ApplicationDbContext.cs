@@ -21,22 +21,23 @@ namespace Yumm_Back_End.Data
 
         }
 
-
-        #region Restaurant Entities
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            
+
             builder.Entity<Item>()
                 .Property(I => I.Price)
                 .HasPrecision(18, 2);
 
-           
-            
+            builder.Entity<Location>().Property(L => L.Lat).HasPrecision(8,6);
+            builder.Entity<Location>().Property(L => L.Lng).HasPrecision(9,6);
 
-           // SeedUser(builder);
+
+            // SeedUser(builder);
 
             base.OnModelCreating(builder);
         }
+        #region Restaurant Entities
+
         public DbSet<Restaurant> Restaurants { get; set; }
 
         public DbSet<Category> Categories { get; set; }
@@ -60,6 +61,8 @@ namespace Yumm_Back_End.Data
         public DbSet<Neighbourhood> Neighbourhoods { get; set; }
 
         public DbSet<Street> Streets { get; set; }
+
+        public DbSet<Location> Locations { get; set; }
         #endregion
 
 
