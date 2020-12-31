@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Restaurant\" />
-    <Folder Include="Models\Address\" />
     <Folder Include="Models\Drivers\" />
     <Folder Include="Models\Support Team\" />
   </ItemGroup>

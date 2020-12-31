@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models;
+using Yumm_Back_End.Models.Address;
 using Yumm_Back_End.Models.Clients;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Models.Shared;
@@ -29,6 +30,9 @@ namespace Yumm_Back_End.Data
                 .Property(I => I.Price)
                 .HasPrecision(18, 2);
 
+           
+            
+
            // SeedUser(builder);
 
             base.OnModelCreating(builder);
@@ -46,9 +50,16 @@ namespace Yumm_Back_End.Data
         #endregion
 
 
-        #region Client Entities
+        #region Address Entities
 
-        //public DbSet<Client> Clients { get; set; }
+        public DbSet<Province> Provinces { get; set; }
+        public DbSet<City> Cities { get; set; }
+
+        public DbSet<Commune> Communes { get; set; }
+
+        public DbSet<Neighbourhood> Neighbourhoods { get; set; }
+
+        public DbSet<Street> Streets { get; set; }
         #endregion
 
 
