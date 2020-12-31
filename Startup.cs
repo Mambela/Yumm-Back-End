@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Yumm_Back_End.Configuration;
 using Yumm_Back_End.Data;
 using Yumm_Back_End.Models;
 using Yumm_Back_End.Repository;
@@ -36,6 +37,7 @@ namespace Yumm_Back_End
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
@@ -60,14 +62,7 @@ namespace Yumm_Back_End
 
 
 
-            //Adding Authentication
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-
-            });
+            
                 //.AddJwtBearer(options =>
                 //{
                 //    options.SaveToken = true;
@@ -86,6 +81,39 @@ namespace Yumm_Back_End
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Yumm_Back_End", Version = "v1" });
             });
+
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+
+            //configure the services
+
+            services.Configure<AppSettings>(appSettingsSection);
+
+            var appSettings = appSettingsSection.Get<AppSettings>();
+
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+
+
+            //Adding Authentication
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options => 
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuerSigningKey = false,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+            });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,6 +129,10 @@ namespace Yumm_Back_End
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 
             app.UseAuthentication();
             app.UseAuthorization();

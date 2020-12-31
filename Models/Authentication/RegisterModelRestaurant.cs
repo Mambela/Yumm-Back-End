@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Yumm_Back_End.Models
+namespace Yumm_Back_End.Models.Authentication
 {
     public class RegisterModelRestaurant
     {

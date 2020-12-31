@@ -1,10 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using Yumm_Back_End.Configuration;
+using Yumm_Back_End.Data;
 using Yumm_Back_End.Models;
+using Yumm_Back_End.Models.Authentication;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Repository._Auth;
 using Yumm_Back_End.Repository._Restaurant;
@@ -16,23 +24,111 @@ namespace Yumm_Back_End.Repository
 
         public UserManager<ApplicationUser> _userManager;
         public RoleManager<IdentityRole> _roleManager;
+        public readonly ApplicationDbContext _dbContext;
+
+        public readonly AppSettings _appSettings;
+
         public IConfiguration _configuration;
         public IRestaurantRepository _restaurantRepo;
  
 
        
         public AuthenticationRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, 
-            IConfiguration configuration, IRestaurantRepository restaurantRepo)
+            IConfiguration configuration, IRestaurantRepository restaurantRepo, ApplicationDbContext dbContext, IOptions<AppSettings> appSettings)
         {
 
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
-            _restaurantRepo = restaurantRepo; 
+            _dbContext = dbContext;
+            _restaurantRepo = restaurantRepo;
+            _appSettings = appSettings.Value;
 
         }
 
+        #region Authentication 
+        #region Restaurant
+        public async Task<AuthenticatedUser> AuthenticateRestaurant(string password,string email = null, string phoneNumber = null)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            string currentRole="";
 
+            if (user != null && await _userManager.CheckPasswordAsync(user,password))
+            {
+                //Inside here it means that the user has been found!!!!
+
+
+                //fetch the Data of the Restaurant
+                Restaurant restaurant = _dbContext.Restaurants.Single(r => r.UserId ==user.Id);
+
+                Console.WriteLine("\n\n Restaurant Name "+restaurant.Name);
+                
+                // fetch all the roles associate to this user
+                var userRoles = await _userManager.GetRolesAsync(user);
+
+
+                //the claims that will be added to the token when it gets created
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName)
+                };
+
+                foreach (var userRole in userRoles)
+                {
+                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                    currentRole = userRole;
+                    
+                }
+
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+
+
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(authClaims),
+                    Expires = DateTime.UtcNow.AddDays(7),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+
+
+                //return the Restaurant data to the user
+                AuthenticatedUser authUser = new AuthenticatedUser {
+                    Id = restaurant.RestaurantId,
+                    Name = restaurant.Name,
+                    Token = tokenHandler.WriteToken(token),
+                    role = currentRole
+
+                };
+
+
+                Console.WriteLine(userRoles);
+
+                return authUser;
+            }
+
+
+            return null;
+
+            
+        }
+        #endregion
+
+        #region Client
+        #endregion
+
+        #region Drivers
+        #endregion
+
+        #region Support Team
+        #endregion
+
+        #endregion
+
+        #region Registration 
         public bool RegisterClient()
         {
             throw new NotImplementedException();
@@ -88,7 +184,8 @@ namespace Yumm_Back_End.Repository
         {
             throw new NotImplementedException();
         }
+        #endregion
 
-      
+
     }
 }
