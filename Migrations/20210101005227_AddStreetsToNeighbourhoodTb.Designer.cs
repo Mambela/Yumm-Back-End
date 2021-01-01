@@ -10,8 +10,8 @@ using Yumm_Back_End.Data;
 namespace Yumm_Back_End.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201231110153_AddStreetsToNeighbourhood")]
-    partial class AddStreetsToNeighbourhood
+    [Migration("20210101005227_AddStreetsToNeighbourhoodTb")]
+    partial class AddStreetsToNeighbourhoodTb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -208,6 +208,47 @@ namespace Yumm_Back_End.Migrations
                     b.ToTable("Communes");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Address.Location", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("BuildingType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Commune")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Lat")
+                        .HasPrecision(8, 6)
+                        .HasColumnType("decimal(8,6)");
+
+                    b.Property<decimal>("Lng")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<string>("Neighbourhood")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Number")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Province")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Location");
+                });
+
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Neighbourhood", b =>
                 {
                     b.Property<int>("Id")
@@ -268,13 +309,7 @@ namespace Yumm_Back_End.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("NeighbourhoodId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StreetId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("StreetsId")
+                    b.Property<int>("NeighbourhoodId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedDate")
@@ -283,8 +318,6 @@ namespace Yumm_Back_End.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("NeighbourhoodId");
-
-                    b.HasIndex("StreetsId");
 
                     b.ToTable("Streets");
                 });
@@ -592,15 +625,13 @@ namespace Yumm_Back_End.Migrations
 
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Street", b =>
                 {
-                    b.HasOne("Yumm_Back_End.Models.Address.Neighbourhood", null)
+                    b.HasOne("Yumm_Back_End.Models.Address.Neighbourhood", "Neighbourhoods")
                         .WithMany("Streets")
-                        .HasForeignKey("NeighbourhoodId");
+                        .HasForeignKey("NeighbourhoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Yumm_Back_End.Models.Address.Street", "Streets")
-                        .WithMany()
-                        .HasForeignKey("StreetsId");
-
-                    b.Navigation("Streets");
+                    b.Navigation("Neighbourhoods");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Item", b =>

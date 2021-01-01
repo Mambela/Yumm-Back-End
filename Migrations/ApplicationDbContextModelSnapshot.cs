@@ -307,13 +307,7 @@ namespace Yumm_Back_End.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("NeighbourhoodId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StreetId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("StreetsId")
+                    b.Property<int>("NeighbourhoodId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedDate")
@@ -322,8 +316,6 @@ namespace Yumm_Back_End.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("NeighbourhoodId");
-
-                    b.HasIndex("StreetsId");
 
                     b.ToTable("Streets");
                 });
@@ -631,15 +623,13 @@ namespace Yumm_Back_End.Migrations
 
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Street", b =>
                 {
-                    b.HasOne("Yumm_Back_End.Models.Address.Neighbourhood", null)
+                    b.HasOne("Yumm_Back_End.Models.Address.Neighbourhood", "Neighbourhoods")
                         .WithMany("Streets")
-                        .HasForeignKey("NeighbourhoodId");
+                        .HasForeignKey("NeighbourhoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Yumm_Back_End.Models.Address.Street", "Streets")
-                        .WithMany()
-                        .HasForeignKey("StreetsId");
-
-                    b.Navigation("Streets");
+                    b.Navigation("Neighbourhoods");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Item", b =>

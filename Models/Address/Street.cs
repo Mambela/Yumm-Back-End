@@ -14,7 +14,7 @@ namespace Yumm_Back_End.Models.Address
 
         public string Name { get; set; }
 
-        public int StreetId { get; set; }
-        public Street Streets { get; set; }
+        public int NeighbourhoodId { get; set; }
+        public Neighbourhood Neighbourhoods { get; set; }
     }
 }

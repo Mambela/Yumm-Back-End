@@ -2,12 +2,19 @@
 
 namespace Yumm_Back_End.Migrations
 {
-    public partial class AddLocationsToDB : Migration
+    public partial class AddStreetsToNeighbourhoodTb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<int>(
+                name: "NeighbourhoodId",
+                table: "Streets",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
             migrationBuilder.CreateTable(
-                name: "Locations",
+                name: "Location",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -24,14 +31,39 @@ namespace Yumm_Back_End.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Locations", x => x.Id);
+                    table.PrimaryKey("PK_Location", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Streets_NeighbourhoodId",
+                table: "Streets",
+                column: "NeighbourhoodId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Streets_Neighbourhoods_NeighbourhoodId",
+                table: "Streets",
+                column: "NeighbourhoodId",
+                principalTable: "Neighbourhoods",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Streets_Neighbourhoods_NeighbourhoodId",
+                table: "Streets");
+
             migrationBuilder.DropTable(
-                name: "Locations");
+                name: "Location");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Streets_NeighbourhoodId",
+                table: "Streets");
+
+            migrationBuilder.DropColumn(
+                name: "NeighbourhoodId",
+                table: "Streets");
         }
     }
 }
