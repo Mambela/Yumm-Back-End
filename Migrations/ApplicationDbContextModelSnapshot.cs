@@ -242,6 +242,9 @@ namespace Yumm_Back_End.Migrations
                     b.Property<string>("Province")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("StreetName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Locations");

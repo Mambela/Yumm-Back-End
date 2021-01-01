@@ -29,6 +29,7 @@ using Yumm_Back_End.Repository._AddressRepository.CityRepository;
 using Yumm_Back_End.Repository._AddressRepository.CommuneRepository;
 using Yumm_Back_End.Repository._AddressRepository.StreetRepository;
 using Yumm_Back_End.Repository._AddressRepository.NeighbourhoodRepository;
+using Yumm_Back_End.Repository._AddressRepository.LocationRepository;
 
 namespace Yumm_Back_End
 {
@@ -59,6 +60,8 @@ namespace Yumm_Back_End
             services.AddScoped<ICommuneRepository, CommuneRepository>();
             services.AddScoped<IStreetRepository, StreetRepository>();
             services.AddScoped<INeighbourhoodRepository, NeighbourhoodRepository>();
+            services.AddScoped<ILocationRepository, LocationRepository>();
+            
 
 
             services.AddAutoMapper(typeof(YummMapping));

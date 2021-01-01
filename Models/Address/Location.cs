@@ -19,6 +19,8 @@ namespace Yumm_Back_End.Models.Address
 
         public string Neighbourhood{ get; set; }
 
+        public string StreetName { get; set; }
+
         public string BuildingType { get; set; }
 
         public string Number { get; set; }

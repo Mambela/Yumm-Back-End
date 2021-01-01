@@ -37,6 +37,7 @@ namespace Yumm_Back_End.Controllers.Address
             if (_IComRepo.CommuneExists(communeDTO.Name))
             {
                 ModelState.AddModelError("", $"Commune already exists in the records!");
+                return StatusCode(404, ModelState);
             }
 
             var communeObj = _mapper.Map<Commune>(communeDTO);
