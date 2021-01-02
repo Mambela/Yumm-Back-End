@@ -11,7 +11,7 @@ namespace Yumm_Back_End.Models.Restaurants
     public class Restaurant:BaseEntity
     {
         [Key]
-        public int RestaurantId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -21,6 +21,11 @@ namespace Yumm_Back_End.Models.Restaurants
         [Required]
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
+
+        public int RestaurantTypeId { get; set; }
+        public RestaurantType RestaurantType { get; set; }
+
+        public ICollection<Item> Items { get; set; }
 
 
 

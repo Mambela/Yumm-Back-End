@@ -11,15 +11,15 @@ namespace Yumm_Back_End.Repository._Restaurant
         //Check if a username of the restaurant exists
 
         ICollection<Restaurant> GetRestaurants();
+
+        ICollection<Restaurant> GetRestaurantsInType(int typeId);
         Restaurant GetRestaurant(int restaurantI);
 
-        bool IsUniqueUser(string username);
+        bool RestaurantExist(string name);
 
-        bool IsUniquePhone(int phoneNumber);
+        bool RestaurantExist(int restaurantId);
 
-        bool IsUniqueEmail(string emailAddress);
-
-        bool CreateRestaurant(Restaurant restaurant);
+       Task <bool> CreateRestaurant(Restaurant restaurant);
 
         bool UpdateResturant(Restaurant restaurant);
 

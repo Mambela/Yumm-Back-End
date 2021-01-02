@@ -61,7 +61,7 @@ namespace Yumm_Back_End
             services.AddScoped<IStreetRepository, StreetRepository>();
             services.AddScoped<INeighbourhoodRepository, NeighbourhoodRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
-            
+            services.AddScoped<IRestaurantTypeRepository, RestaurantTypeRepository>();
 
 
             services.AddAutoMapper(typeof(YummMapping));
@@ -79,21 +79,6 @@ namespace Yumm_Back_End
               .AddEntityFrameworkStores<ApplicationDbContext>()
              .AddDefaultTokenProviders();
 
-
-
-
-            
-                //.AddJwtBearer(options =>
-                //{
-                //    options.SaveToken = true;
-                //    options.RequireHttpsMetadata = false;
-                //    options.TokenValidationParameters = new TokenValidationParameters()
-                //    {
-                //        ValidateIssuer = false,
-                //        ValidateAudience = false,
-                //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(confi))
-                //    };
-                //});
 
 
             services.AddControllers();

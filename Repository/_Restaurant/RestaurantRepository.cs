@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,55 +20,59 @@ namespace Yumm_Back_End.Repository
         }
 
 
-        public bool CreateRestaurant(Restaurant restaurant)
+        public async Task<bool> CreateRestaurant(Restaurant restaurant)
         {
 
-            _dbContext.Restaurants.Add(restaurant);
-            
-            //throw new NotImplementedException();
+            await _dbContext.Restaurants.AddAsync(restaurant);
 
             return Save();
         }
 
         public bool DeleteRestaurant(Restaurant restaurant)
         {
-            throw new NotImplementedException();
+            _dbContext.Restaurants.Remove(restaurant);
+
+            return Save();
+
         }
 
-        public Restaurant GetRestaurant(int restaurantI)
+        public Restaurant GetRestaurant(int restaurantId)
         {
-            throw new NotImplementedException();
+            return _dbContext.Restaurants.FirstOrDefault(r => r.Id == restaurantId);
         }
 
         public ICollection<Restaurant> GetRestaurants()
         {
-            throw new NotImplementedException();
-        }
-
-        public bool IsUniqueEmail(string emailAddress)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsUniquePhone(int phoneNumber)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsUniqueUser(string username)
-        {
-            throw new NotImplementedException();
+            return _dbContext.Restaurants.ToList();
         }
 
 
         public bool UpdateResturant(Restaurant restaurant)
         {
-            throw new NotImplementedException();
+
+            _dbContext.Restaurants.Update(restaurant);
+
+            return Save();
         }
 
         public bool Save()
         {
             return _dbContext.SaveChanges() >= 0;
+        }
+
+        public bool RestaurantExist(string name)
+        {
+            return _dbContext.Restaurants.Any(r => r.Name == name);
+        }
+
+        public bool RestaurantExist(int restaurantId)
+        {
+            return _dbContext.Restaurants.Any(r => r.Id == restaurantId);
+        }
+
+        public ICollection<Restaurant> GetRestaurantsInType(int typeId)
+        {
+            return _dbContext.Restaurants.Include(rt => rt.RestaurantType).Where(rt => rt.RestaurantTypeId == typeId).ToList();
         }
     }
 }

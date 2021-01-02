@@ -97,7 +97,7 @@ namespace Yumm_Back_End.Repository
 
                 //return the Restaurant data to the user
                 AuthenticatedUser authUser = new AuthenticatedUser {
-                    Id = restaurant.RestaurantId,
+                    Id = restaurant.Id,
                     Name = restaurant.Name,
                     Token = tokenHandler.WriteToken(token),
                     role = currentRole
@@ -176,7 +176,7 @@ namespace Yumm_Back_End.Repository
 
             Console.WriteLine("Last inserted user" + user.Id);
 
-            return _restaurantRepo.CreateRestaurant(restaurant);
+            return await _restaurantRepo.CreateRestaurant(restaurant);
 
         }
 

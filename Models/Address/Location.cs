@@ -31,6 +31,8 @@ namespace Yumm_Back_End.Models.Address
 
         public Decimal Lng { get; set; }
 
+        public virtual ICollection<ApplicationUser> Users{ get; set; }
+
 
     }
 }
