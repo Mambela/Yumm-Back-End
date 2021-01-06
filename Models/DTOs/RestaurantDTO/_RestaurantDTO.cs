@@ -8,7 +8,7 @@ namespace Yumm_Back_End.Models.DTOs.RestaurantDTO
 {
     public class _RestaurantDTO
     {
-        public int RestaurantId { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 

@@ -22,6 +22,10 @@ namespace Yumm_Back_End.Mapper
             CreateMap<Street, StreetDTO>().ReverseMap();
             CreateMap<RestaurantType, RestaurantTypeDTO>().ReverseMap();
             CreateMap<Restaurant, _RestaurantDTO>().ReverseMap();
+            CreateMap<Category, CategoryDTO>().ReverseMap();
+            CreateMap<Item, ItemDTO>().ReverseMap();
+            CreateMap<Item, ItemDTORegister>().ReverseMap();
+
         }
     }
 }

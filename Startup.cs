@@ -30,6 +30,9 @@ using Yumm_Back_End.Repository._AddressRepository.CommuneRepository;
 using Yumm_Back_End.Repository._AddressRepository.StreetRepository;
 using Yumm_Back_End.Repository._AddressRepository.NeighbourhoodRepository;
 using Yumm_Back_End.Repository._AddressRepository.LocationRepository;
+using Yumm_Back_End.Repository._FoodCategory;
+using Yumm_Back_End.Repository._MenuRepository;
+using Yumm_Back_End.Services;
 
 namespace Yumm_Back_End
 {
@@ -53,6 +56,7 @@ namespace Yumm_Back_End
 
 
             //
+            
             services.AddScoped<IAuthRepository, AuthenticationRepository>();
             services.AddScoped<IRestaurantRepository, RestaurantRepository>();
             services.AddScoped<IProvinceRepository, ProvinceRepository>();
@@ -62,7 +66,9 @@ namespace Yumm_Back_End
             services.AddScoped<INeighbourhoodRepository, NeighbourhoodRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
             services.AddScoped<IRestaurantTypeRepository, RestaurantTypeRepository>();
-
+            services.AddScoped<ICategoryRepository, CategoryRepository>();   
+            services.AddScoped<IItemRepository,ItemRepository>();
+           
 
             services.AddAutoMapper(typeof(YummMapping));
 

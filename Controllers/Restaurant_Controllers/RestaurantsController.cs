@@ -127,7 +127,7 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
 
         public IActionResult UpdateRestaurant([FromBody] _RestaurantDTO restaurantDTO, int restaurantId)
         {
-            if (restaurantDTO == null || restaurantDTO.RestaurantId == restaurantId)
+            if (restaurantDTO == null || restaurantDTO.Id == restaurantId)
             {
                 return BadRequest(ModelState);
             }
