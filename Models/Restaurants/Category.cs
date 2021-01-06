@@ -14,10 +14,10 @@ namespace Yumm_Back_End.Models.Restaurants
 
         [Required]
         public String Name { get; set; }
-        
 
 
-        
-         
+        public ICollection<Item> items { get; set; }
+
+
     }
 }

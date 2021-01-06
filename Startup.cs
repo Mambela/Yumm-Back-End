@@ -20,8 +20,19 @@ using Yumm_Back_End.Configuration;
 using Yumm_Back_End.Data;
 using Yumm_Back_End.Models;
 using Yumm_Back_End.Repository;
+using Yumm_Back_End.Repository._AddressRepository.ProvinceRepository;
 using Yumm_Back_End.Repository._Auth;
 using Yumm_Back_End.Repository._Restaurant;
+using AutoMapper;
+using Yumm_Back_End.Mapper;
+using Yumm_Back_End.Repository._AddressRepository.CityRepository;
+using Yumm_Back_End.Repository._AddressRepository.CommuneRepository;
+using Yumm_Back_End.Repository._AddressRepository.StreetRepository;
+using Yumm_Back_End.Repository._AddressRepository.NeighbourhoodRepository;
+using Yumm_Back_End.Repository._AddressRepository.LocationRepository;
+using Yumm_Back_End.Repository._FoodCategory;
+using Yumm_Back_End.Repository._MenuRepository;
+using Yumm_Back_End.Services;
 
 namespace Yumm_Back_End
 {
@@ -43,8 +54,23 @@ namespace Yumm_Back_End
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+
+            //
+            
             services.AddScoped<IAuthRepository, AuthenticationRepository>();
             services.AddScoped<IRestaurantRepository, RestaurantRepository>();
+            services.AddScoped<IProvinceRepository, ProvinceRepository>();
+            services.AddScoped<ICityRepository, CityRepository>();
+            services.AddScoped<ICommuneRepository, CommuneRepository>();
+            services.AddScoped<IStreetRepository, StreetRepository>();
+            services.AddScoped<INeighbourhoodRepository, NeighbourhoodRepository>();
+            services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<IRestaurantTypeRepository, RestaurantTypeRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();   
+            services.AddScoped<IItemRepository,ItemRepository>();
+           
+
+            services.AddAutoMapper(typeof(YummMapping));
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -59,21 +85,6 @@ namespace Yumm_Back_End
               .AddEntityFrameworkStores<ApplicationDbContext>()
              .AddDefaultTokenProviders();
 
-
-
-
-            
-                //.AddJwtBearer(options =>
-                //{
-                //    options.SaveToken = true;
-                //    options.RequireHttpsMetadata = false;
-                //    options.TokenValidationParameters = new TokenValidationParameters()
-                //    {
-                //        ValidateIssuer = false,
-                //        ValidateAudience = false,
-                //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(confi))
-                //    };
-                //});
 
 
             services.AddControllers();
