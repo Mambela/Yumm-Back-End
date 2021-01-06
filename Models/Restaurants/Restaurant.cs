@@ -28,7 +28,5 @@ namespace Yumm_Back_End.Models.Restaurants
         public ICollection<Item> Items { get; set; }
 
 
-
-
     }
 }

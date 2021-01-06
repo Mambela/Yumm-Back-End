@@ -432,7 +432,7 @@ namespace Yumm_Back_End.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
@@ -444,6 +444,9 @@ namespace Yumm_Back_End.Migrations
 
                     b.Property<int>("Duration")
                         .HasColumnType("int");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ItemName")
                         .HasMaxLength(255)
@@ -673,8 +676,10 @@ namespace Yumm_Back_End.Migrations
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Item", b =>
                 {
                     b.HasOne("Yumm_Back_End.Models.Restaurants.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId");
+                        .WithMany("items")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Yumm_Back_End.Models.Restaurants.Restaurant", "Restaurant")
                         .WithMany("Items")
@@ -738,6 +743,11 @@ namespace Yumm_Back_End.Migrations
             modelBuilder.Entity("Yumm_Back_End.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Category", b =>
+                {
+                    b.Navigation("items");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Restaurant", b =>
