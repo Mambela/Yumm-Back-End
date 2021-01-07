@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models.Shared;
+using Yumm_Back_End.Models.User;
 
 namespace Yumm_Back_End.Models.Restaurants
 

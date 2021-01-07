@@ -14,10 +14,11 @@ using Yumm_Back_End.Data;
 using Yumm_Back_End.Models;
 using Yumm_Back_End.Models.Authentication;
 using Yumm_Back_End.Models.Restaurants;
-using Yumm_Back_End.Repository._Auth;
+using Yumm_Back_End.Models.User;
+
 using Yumm_Back_End.Repository._Restaurant;
 
-namespace Yumm_Back_End.Repository
+namespace Yumm_Back_End.Repository._Auth
 {
     public class AuthenticationRepository : IAuthRepository
     {
@@ -181,6 +182,11 @@ namespace Yumm_Back_End.Repository
         }
 
         public bool RegisterSupportTeam()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> RegisterClientAsync()
         {
             throw new NotImplementedException();
         }

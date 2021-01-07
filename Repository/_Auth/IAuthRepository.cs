@@ -12,11 +12,12 @@ namespace Yumm_Back_End.Repository._Auth
         bool RegisterDriver();
 
         bool RegisterClient();
+
         Task<bool> RegisterRestaurantAsync(string Email, string password, string phoneNumber, string name, string Description);
-
-
         Task<AuthenticatedUser> AuthenticateRestaurant(string password,string email = null, string phoneNumber = null );
-            
+
+        Task<bool> RegisterClientAsync();
+
 
 
         bool RegisterSupportTeam();

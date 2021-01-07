@@ -25,7 +25,7 @@ namespace Yumm_Back_End.Controllers.Authentication
 
         }
 
-
+        #region Restaurant Auth Methods
         [HttpPost]
         [Route("Restaurant/Register")]
         public async Task<IActionResult> RegisterRestaurant([FromBody] RegisterModelRestaurant model)
@@ -46,5 +46,20 @@ namespace Yumm_Back_End.Controllers.Authentication
 
             return Ok(authResult);
         }
+        #endregion
+
+        #region  Client Auth Methods
+
+        [HttpPost]
+        [Route("Client/Register")]
+        public async Task<IActionResult> RegisterClient([FromBody] RegisterModelRestaurant model)
+        {
+            var register = await _authRepo.RegisterRestaurantAsync(model.Email, model.Password, model.PhoneNumber, model.Name, model.Description);
+
+            return Ok(model);
+        }
+
+        #endregion
+
     }
 }

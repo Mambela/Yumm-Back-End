@@ -12,6 +12,7 @@ using Yumm_Back_End.Models.Clients;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Models.Shared;
 using Yumm_Back_End.Models.Tickets;
+using Yumm_Back_End.Models.User;
 
 namespace Yumm_Back_End.Data
 {

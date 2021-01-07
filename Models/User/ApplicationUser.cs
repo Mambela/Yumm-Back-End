@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Yumm_Back_End.Models.Address;
 using Yumm_Back_End.Models.Restaurants;
 
-namespace Yumm_Back_End.Models
+namespace Yumm_Back_End.Models.User
 {
     public class ApplicationUser : IdentityUser
     {

@@ -33,6 +33,7 @@ using Yumm_Back_End.Repository._AddressRepository.LocationRepository;
 using Yumm_Back_End.Repository._ProductCategory;
 using Yumm_Back_End.Repository._MenuRepository;
 using Yumm_Back_End.Services;
+using Yumm_Back_End.Models.User;
 
 namespace Yumm_Back_End
 {
