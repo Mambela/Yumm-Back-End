@@ -565,6 +565,22 @@ namespace Yumm_Back_End.Migrations
                     b.ToTable("Working_Hours");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Tickets.Ticket_Type", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Ticket_Types");
+                });
+
             modelBuilder.Entity("ApplicationUserLocation", b =>
                 {
                     b.HasOne("Yumm_Back_End.Models.Address.Location", null)

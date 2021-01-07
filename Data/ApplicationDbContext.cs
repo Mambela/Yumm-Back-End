@@ -11,6 +11,7 @@ using Yumm_Back_End.Models.Address;
 using Yumm_Back_End.Models.Clients;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Models.Shared;
+using Yumm_Back_End.Models.Tickets;
 
 namespace Yumm_Back_End.Data
 {
@@ -170,6 +171,10 @@ namespace Yumm_Back_End.Data
                  cancellationToken));
         }
 
+        #endregion
+
+        #region Tickets 
+        public DbSet<Ticket_Type> Ticket_Types { get; set; }
         #endregion
     }
 }
