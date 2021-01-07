@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.Restaurants;
-using Yumm_Back_End.Repository._FoodCategory;
+using Yumm_Back_End.Repository._ProductCategory;
 
 namespace Yumm_Back_End.Controllers.Menu_Controllers
 {

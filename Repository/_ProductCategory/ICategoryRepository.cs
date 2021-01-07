@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models.Restaurants;
 
-namespace Yumm_Back_End.Repository._FoodCategory
+namespace Yumm_Back_End.Repository._ProductCategory
 {
     public interface ICategoryRepository
     {

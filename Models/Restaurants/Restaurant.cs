@@ -25,7 +25,7 @@ namespace Yumm_Back_End.Models.Restaurants
         public int RestaurantTypeId { get; set; }
         public RestaurantType RestaurantType { get; set; }
 
-        public ICollection<Item> Items { get; set; }
+        public ICollection<Product> Products { get; set; }
 
 
     }

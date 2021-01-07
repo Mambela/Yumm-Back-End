@@ -7,26 +7,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Data;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
+using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Services;
 using Yumm_Back_End.Services.Response;
 
 namespace Yumm_Back_End.Repository._MenuRepository
 {
-    public class ItemRepository : IItemRepository
+    public class ProductRepository : IProductRepository
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IWebHostEnvironment _webHostEnvironment;
         
 
-        public ItemRepository(ApplicationDbContext dbContext, IWebHostEnvironment webHostenvironment)
+        public ProductRepository(ApplicationDbContext dbContext, IWebHostEnvironment webHostenvironment)
         {
             _dbContext = dbContext;
             _webHostEnvironment = webHostenvironment;
  
         }
 
-        public async Task<bool> CreateItem(Item item)
+        public async Task<bool> CreateItem(Product item)
         {
 
             await _dbContext.Items.AddAsync(item);
@@ -34,7 +35,7 @@ namespace Yumm_Back_End.Repository._MenuRepository
             return Save();
         }
 
-        public bool DeleteItem(Item item)
+        public bool DeleteItem(Product item)
         {
 
             _dbContext.Items.Remove(item);
@@ -44,18 +45,18 @@ namespace Yumm_Back_End.Repository._MenuRepository
 
        
 
-        public Item GetItem(int itemId)
+        public Product GetItem(int itemId)
         {
             return _dbContext.Items.FirstOrDefault(i => i.Id == itemId);
         }
 
-        public ICollection<Item> GetItems()
+        public ICollection<Product> GetItems()
         {
 
             return _dbContext.Items.ToList();
         }
 
-        public ICollection<Item> GetItemsInCategory(int categoryId)
+        public ICollection<Product> GetItemsInCategory(int categoryId)
         {
             return _dbContext.Items.Include(r => r.Category).Where(c => c.CategoryId == categoryId).ToList();
         }
@@ -82,7 +83,7 @@ namespace Yumm_Back_End.Repository._MenuRepository
             return _dbContext.SaveChanges() >= 0;
         }
 
-        public async Task<MediaResponse> SaveFoodImage(ItemDTORegister objectFile)
+        public async Task<MediaResponse> SaveProductImage(CreateProductDTO objectFile)
         {
             //Few Classes required to Save the image correctly;
             
@@ -158,7 +159,7 @@ namespace Yumm_Back_End.Repository._MenuRepository
             }
         }
 
-        public bool UpdateItem(Item item)
+        public bool UpdateItem(Product item)
         {
 
             _dbContext.Items.Update(item);
@@ -166,5 +167,9 @@ namespace Yumm_Back_End.Repository._MenuRepository
             return Save();
         }
 
+        public Task<MediaResponse> DeleteProductImage(UpdateProductDTO objectFile, string previousImage)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

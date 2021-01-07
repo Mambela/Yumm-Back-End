@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Yumm_Back_End.Models.DTOs.RestaurantDTO
+namespace Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO
 {
-    public class ItemDTORegister
+    public class CreateProductDTO
     {
         //public int Id { get; set; }
 

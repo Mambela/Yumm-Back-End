@@ -12,6 +12,7 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Repository._MediaRepository;
+using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
 
 namespace Yumm_Back_End.Controllers
 {
@@ -35,7 +36,7 @@ namespace Yumm_Back_End.Controllers
         }
 
         [HttpPost]
-        public async Task<string> PostAsync([FromForm] ItemDTORegister objectFile)
+        public async Task<string> PostAsync([FromForm] CreateProductDTO objectFile)
         {
 
             var path = await _mediaRepository.SaveFoodImage(objectFile);

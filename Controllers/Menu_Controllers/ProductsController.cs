@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
+using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Repository._MenuRepository;
 using Yumm_Back_End.Services.Response;
@@ -14,19 +15,21 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ItemsController : ControllerBase
+    public class ProductsController : ControllerBase
     {
-        private readonly IItemRepository _itemRepository;
+        private readonly IProductRepository _itemRepository;
         private readonly IMapper _mapper;
+        private MediaResponse uploadResponse;
 
-        public ItemsController(IItemRepository itemRepository, IMapper mapper)
+        public ProductsController(IProductRepository itemRepository, IMapper mapper)
         {
             _itemRepository = itemRepository;
             _mapper = mapper;
+            uploadResponse = new MediaResponse();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateFoodItem([FromForm] ItemDTORegister itemDto)
+        public async Task<IActionResult> CreateFoodItem([FromForm] CreateProductDTO itemDto)
         {
 
 
@@ -40,9 +43,9 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                 return BadRequest(ModelState);
             }
 
-            MediaResponse uploadResponse = new MediaResponse();
+            
 
-            uploadResponse = await _itemRepository.SaveFoodImage(itemDto);
+            uploadResponse = await _itemRepository.SaveProductImage(itemDto);
 
             if (!uploadResponse.Success)
                 {
@@ -66,7 +69,7 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                 return BadRequest(ModelState);
             }
 
-            var objItem = _mapper.Map<Item>(itemDto);
+            var objItem = _mapper.Map<Product>(itemDto);
 
             if (!await _itemRepository.CreateItem(objItem))
             {
@@ -89,7 +92,7 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                 return NotFound();
             }
 
-            var objDto = _mapper.Map<ItemDTO>(itemObj);
+            var objDto = _mapper.Map<ProductDTO>(itemObj);
 
             return Ok(objDto);
         }
@@ -99,11 +102,11 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
         {
             var itemList = _itemRepository.GetItems();
 
-            var itemDto = new List<ItemDTO>();
+            var itemDto = new List<ProductDTO>();
 
             foreach (var item in itemList)
             {
-                itemDto.Add(_mapper.Map<ItemDTO>(item));
+                itemDto.Add(_mapper.Map<ProductDTO>(item));
             }
 
             return Ok(itemDto);
@@ -114,25 +117,48 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
         {
             var itemList = _itemRepository.GetItemsInCategory(categoryId);
 
-            var itemDto = new List<ItemDTO>();
+            var itemDto = new List<ProductDTO>();
 
             foreach (var item in itemList)
             {
-                itemDto.Add(_mapper.Map<ItemDTO>(item));
+                itemDto.Add(_mapper.Map<ProductDTO>(item));
             }
 
             return Ok(itemDto);
         }
 
         [HttpPatch]
-        public IActionResult UpdateItem([FromBody] ItemDTO itemDto, int itemId)
+        public async Task<IActionResult> UpdateItemAsync([FromForm] UpdateProductDTO itemDto, int itemId)
         { 
-            if(itemDto == null || itemDto.Id == itemId)
+
+            if(itemDto == null || itemDto.Id != itemId)
             {
                 return BadRequest(ModelState);
               }
 
-            var itemObj = _mapper.Map<Item>(itemDto);
+            if (itemDto.Files == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+            var objForImage = _mapper.Map<CreateProductDTO>(itemDto);
+
+
+            uploadResponse = await _itemRepository.SaveProductImage(objForImage);
+
+            if (!uploadResponse.Success)
+            {
+                ModelState.AddModelError("", $" " + uploadResponse.Message);
+                return StatusCode(500, ModelState);
+            }
+
+
+            itemDto.ImagePath = uploadResponse.Message;
+
+
+
+            var itemObj = _mapper.Map<Product>(itemDto);
 
             if (!_itemRepository.UpdateItem(itemObj))
                 {

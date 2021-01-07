@@ -25,7 +25,7 @@ namespace Yumm_Back_End.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
-            builder.Entity<Item>()
+            builder.Entity<Product>()
                 .Property(I => I.Price)
                 .HasPrecision(18, 2);
 
@@ -43,7 +43,7 @@ namespace Yumm_Back_End.Data
 
         public DbSet<Category> Categories { get; set; }
 
-        public DbSet<Item> Items { get; set; }
+        public DbSet<Product> Items { get; set; }
 
         public DbSet<Working_Hours> Working_Hours { get; set; }
 
