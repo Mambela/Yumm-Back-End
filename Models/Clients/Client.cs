@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Yumm_Back_End.Models.Shared;
 
 namespace Yumm_Back_End.Models.Clients
 {
-    public class Client
+    public class Client: BaseEntity
     {
         public int Id { get; set; }
 
@@ -22,8 +23,6 @@ namespace Yumm_Back_End.Models.Clients
         [Required]
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
-
-        [Timestamp]
-        public byte[] Timestamp { get; set; }
+ 
     }
 }
