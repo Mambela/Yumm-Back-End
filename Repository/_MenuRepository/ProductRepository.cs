@@ -30,7 +30,7 @@ namespace Yumm_Back_End.Repository._MenuRepository
         public async Task<bool> CreateItem(Product item)
         {
 
-            await _dbContext.Items.AddAsync(item);
+            //await _dbContext.Products.AddAsync(item);
 
             return Save();
         }
@@ -38,7 +38,7 @@ namespace Yumm_Back_End.Repository._MenuRepository
         public bool DeleteItem(Product item)
         {
 
-            _dbContext.Items.Remove(item);
+            //_dbContext.Products.Remove(item);
 
             return Save();
         }
@@ -47,30 +47,30 @@ namespace Yumm_Back_End.Repository._MenuRepository
 
         public Product GetItem(int itemId)
         {
-            return _dbContext.Items.FirstOrDefault(i => i.Id == itemId);
+            return _dbContext.Products.FirstOrDefault(i => i.Id == itemId);
         }
 
         public ICollection<Product> GetItems()
         {
 
-            return _dbContext.Items.ToList();
+            return _dbContext.Products.ToList();
         }
 
         public ICollection<Product> GetItemsInCategory(int categoryId)
         {
-            return _dbContext.Items.Include(r => r.Category).Where(c => c.CategoryId == categoryId).ToList();
+            return _dbContext.Products.Include(r => r.category).Where(c => c.categoryId == categoryId).ToList();
         }
 
         public bool ItemExists(int itemId, int restaurantId)
         {
 
-            return _dbContext.Items.Any(i => i.Id == itemId);
+            return _dbContext.Products.Any(i => i.Id == itemId);
         }
 
         public bool ItemExists(string name, int restaurantId, int categoryId)
         {
 
-            return _dbContext.Items.Any(i => i.ItemName == name && i.RestaurantId == restaurantId && i.CategoryId == categoryId);
+            return _dbContext.Products.Any(i => i.Name == name && i.RestaurantId == restaurantId && i.categoryId == categoryId);
         }
 
         public bool ItemExists(int itemId)
@@ -162,7 +162,7 @@ namespace Yumm_Back_End.Repository._MenuRepository
         public bool UpdateItem(Product item)
         {
 
-            _dbContext.Items.Update(item);
+            _dbContext.Products.Update(item);
 
             return Save();
         }

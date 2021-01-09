@@ -19,21 +19,6 @@ namespace Yumm_Back_End.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.1");
 
-            modelBuilder.Entity("ApplicationUserLocation", b =>
-                {
-                    b.Property<int>("LocationsId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UsersId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("LocationsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ApplicationUserLocation");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -228,16 +213,10 @@ namespace Yumm_Back_End.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<string>("BuildingType")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Commune")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Lat")
@@ -249,9 +228,6 @@ namespace Yumm_Back_End.Migrations
                         .HasColumnType("decimal(9,6)");
 
                     b.Property<string>("Neighbourhood")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Number")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Province")
@@ -338,69 +314,71 @@ namespace Yumm_Back_End.Migrations
                     b.ToTable("Streets");
                 });
 
-            modelBuilder.Entity("Yumm_Back_End.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Yumm_Back_End.Models.Address.UsersLocations", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("AccessFailedCount")
+                    b.Property<int>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
+                    b.Property<int>("Unit")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserId", "LocationId");
+
+                    b.HasIndex("LocationId");
+
+                    b.ToTable("UsersLocations");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Clients.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)");
 
-                    b.Property<string>("SecurityStamp")
+                    b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers");
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Category", b =>
@@ -425,15 +403,12 @@ namespace Yumm_Back_End.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Item", b =>
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -446,9 +421,10 @@ namespace Yumm_Back_End.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ImagePath")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("ItemName")
+                    b.Property<string>("Name")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -465,13 +441,16 @@ namespace Yumm_Back_End.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.Property<int>("categoryId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("CategoryId");
+                    b.HasKey("Id");
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("Items");
+                    b.HasIndex("categoryId");
+
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Restaurant", b =>
@@ -565,35 +544,69 @@ namespace Yumm_Back_End.Migrations
                     b.ToTable("Working_Hours");
                 });
 
-            modelBuilder.Entity("Yumm_Back_End.Models.Tickets.Ticket_Type", b =>
+            modelBuilder.Entity("Yumm_Back_End.Models.User.ApplicationUser", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Ticket_Types");
-                });
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
 
-            modelBuilder.Entity("ApplicationUserLocation", b =>
-                {
-                    b.HasOne("Yumm_Back_End.Models.Address.Location", null)
-                        .WithMany()
-                        .HasForeignKey("LocationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasOne("Yumm_Back_End.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -607,7 +620,7 @@ namespace Yumm_Back_End.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Yumm_Back_End.Models.ApplicationUser", null)
+                    b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -616,7 +629,7 @@ namespace Yumm_Back_End.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Yumm_Back_End.Models.ApplicationUser", null)
+                    b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -631,7 +644,7 @@ namespace Yumm_Back_End.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Yumm_Back_End.Models.ApplicationUser", null)
+                    b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -640,7 +653,7 @@ namespace Yumm_Back_End.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Yumm_Back_End.Models.ApplicationUser", null)
+                    b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -689,21 +702,51 @@ namespace Yumm_Back_End.Migrations
                     b.Navigation("Neighbourhoods");
                 });
 
-            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Item", b =>
+            modelBuilder.Entity("Yumm_Back_End.Models.Address.UsersLocations", b =>
                 {
-                    b.HasOne("Yumm_Back_End.Models.Restaurants.Category", "Category")
-                        .WithMany("items")
-                        .HasForeignKey("CategoryId")
+                    b.HasOne("Yumm_Back_End.Models.Address.Location", "Location")
+                        .WithMany("Users2Locations")
+                        .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", "User")
+                        .WithMany("Locations2Users")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Location");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Clients.Client", b =>
+                {
+                    b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", "User")
+                        .WithOne("Client")
+                        .HasForeignKey("Yumm_Back_End.Models.Clients.Client", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Product", b =>
+                {
                     b.HasOne("Yumm_Back_End.Models.Restaurants.Restaurant", "Restaurant")
-                        .WithMany("Items")
+                        .WithMany("Products")
                         .HasForeignKey("RestaurantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.HasOne("Yumm_Back_End.Models.Restaurants.Category", "category")
+                        .WithMany("Products")
+                        .HasForeignKey("categoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("category");
 
                     b.Navigation("Restaurant");
                 });
@@ -716,7 +759,7 @@ namespace Yumm_Back_End.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Yumm_Back_End.Models.ApplicationUser", "User")
+                    b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", "User")
                         .WithOne("Restaurant")
                         .HasForeignKey("Yumm_Back_End.Models.Restaurants.Restaurant", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -746,6 +789,11 @@ namespace Yumm_Back_End.Migrations
                     b.Navigation("Neighbourhoods");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Address.Location", b =>
+                {
+                    b.Navigation("Users2Locations");
+                });
+
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Neighbourhood", b =>
                 {
                     b.Navigation("Streets");
@@ -756,23 +804,27 @@ namespace Yumm_Back_End.Migrations
                     b.Navigation("Cities");
                 });
 
-            modelBuilder.Entity("Yumm_Back_End.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Restaurant");
-                });
-
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Category", b =>
                 {
-                    b.Navigation("items");
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Restaurant", b =>
                 {
-                    b.Navigation("Items");
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.RestaurantType", b =>
                 {
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.User.ApplicationUser", b =>
+                {
+                    b.Navigation("Client");
+
+                    b.Navigation("Locations2Users");
+
                     b.Navigation("Restaurant");
                 });
 #pragma warning restore 612, 618

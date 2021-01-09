@@ -22,17 +22,17 @@ namespace Yumm_Back_End.Models.Address
 
         public string StreetName { get; set; }
 
-        public string BuildingType { get; set; }
+        //public string BuildingType { get; set; }
 
-        public string Number { get; set; }
+        //public string Number { get; set; }
 
-        public string Description { get; set; }
+        //public string Description { get; set; }
 
         public Decimal Lat { get; set; }
 
         public Decimal Lng { get; set; }
 
-        public virtual ICollection<ApplicationUser> Users{ get; set; }
+        public virtual ICollection<UsersLocations> Users2Locations { get; set; }
 
 
     }

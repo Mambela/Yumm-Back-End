@@ -2,10 +2,46 @@
 
 namespace Yumm_Back_End.Migrations
 {
-    public partial class associateUsersToLocations : Migration
+    public partial class removeUserLocationRelationship : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ApplicationUserLocation");
+
+            migrationBuilder.DropColumn(
+                name: "BuildingType",
+                table: "Locations");
+
+            migrationBuilder.DropColumn(
+                name: "Description",
+                table: "Locations");
+
+            migrationBuilder.DropColumn(
+                name: "Number",
+                table: "Locations");
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn<string>(
+                name: "BuildingType",
+                table: "Locations",
+                type: "nvarchar(max)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                table: "Locations",
+                type: "nvarchar(max)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Number",
+                table: "Locations",
+                type: "nvarchar(max)",
+                nullable: true);
+
             migrationBuilder.CreateTable(
                 name: "ApplicationUserLocation",
                 columns: table => new
@@ -34,12 +70,6 @@ namespace Yumm_Back_End.Migrations
                 name: "IX_ApplicationUserLocation_UsersId",
                 table: "ApplicationUserLocation",
                 column: "UsersId");
-        }
-
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
-                name: "ApplicationUserLocation");
         }
     }
 }

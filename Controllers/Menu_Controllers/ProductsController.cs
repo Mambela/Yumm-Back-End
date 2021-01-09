@@ -73,7 +73,7 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
 
             if (!await _itemRepository.CreateItem(objItem))
             {
-                ModelState.AddModelError("", $"Something went wrong when Saving the record {objItem.ItemName}");
+                ModelState.AddModelError("", $"Something went wrong when Saving the record {objItem.Name}");
             }
 
 
@@ -162,7 +162,7 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
 
             if (!_itemRepository.UpdateItem(itemObj))
                 {
-                ModelState.AddModelError("", $"Something went wrong when updating the record {itemObj.ItemName}");
+                ModelState.AddModelError("", $"Something went wrong when updating the record {itemObj.Name}");
                 return StatusCode(500, ModelState);
             }
 
@@ -184,7 +184,7 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
             var objItem = _itemRepository.GetItem(itemId);
             if (!_itemRepository.DeleteItem(objItem))
                 {
-                    ModelState.AddModelError("", $"Something went wrong when deleting the record {objItem.ItemName}");
+                    ModelState.AddModelError("", $"Something went wrong when deleting the record {objItem.Name}");
                     return StatusCode(500, ModelState);
                 }
 

@@ -2,27 +2,27 @@
 
 namespace Yumm_Back_End.Migrations
 {
-    public partial class associateItemsToRestaurant : Migration
+    public partial class AddCategoriesToProducts : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
-                name: "RestaurantId",
-                table: "Items",
+                name: "categoryId",
+                table: "Products",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Items_RestaurantId",
-                table: "Items",
-                column: "RestaurantId");
+                name: "IX_Products_categoryId",
+                table: "Products",
+                column: "categoryId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Items_Restaurants_RestaurantId",
-                table: "Items",
-                column: "RestaurantId",
-                principalTable: "Restaurants",
+                name: "FK_Products_Categories_categoryId",
+                table: "Products",
+                column: "categoryId",
+                principalTable: "Categories",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
         }
@@ -30,16 +30,16 @@ namespace Yumm_Back_End.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Items_Restaurants_RestaurantId",
-                table: "Items");
+                name: "FK_Products_Categories_categoryId",
+                table: "Products");
 
             migrationBuilder.DropIndex(
-                name: "IX_Items_RestaurantId",
-                table: "Items");
+                name: "IX_Products_categoryId",
+                table: "Products");
 
             migrationBuilder.DropColumn(
-                name: "RestaurantId",
-                table: "Items");
+                name: "categoryId",
+                table: "Products");
         }
     }
 }

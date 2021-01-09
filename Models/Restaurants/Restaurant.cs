@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Yumm_Back_End.Models.Address;
 using Yumm_Back_End.Models.Shared;
 using Yumm_Back_End.Models.User;
 
@@ -25,6 +26,10 @@ namespace Yumm_Back_End.Models.Restaurants
 
         public int RestaurantTypeId { get; set; }
         public RestaurantType RestaurantType { get; set; }
+
+        
+        //public int LocationId { get; set; }
+        //public Location Location { get; set; }
 
         public ICollection<Product> Products { get; set; }
 

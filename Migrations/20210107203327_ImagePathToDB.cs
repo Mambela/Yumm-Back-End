@@ -2,14 +2,15 @@
 
 namespace Yumm_Back_End.Migrations
 {
-    public partial class addImagePathToFoodItem : Migration
+    public partial class ImagePathToDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
                 name: "ImagePath",
-                table: "Items",
-                type: "nvarchar(max)",
+                table: "Products",
+                type: "nvarchar(255)",
+                maxLength: 255,
                 nullable: true);
         }
 
@@ -17,7 +18,7 @@ namespace Yumm_Back_End.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "ImagePath",
-                table: "Items");
+                table: "Products");
         }
     }
 }

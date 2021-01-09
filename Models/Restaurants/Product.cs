@@ -13,7 +13,7 @@ namespace Yumm_Back_End.Models.Restaurants
         public int Id { get; set; }
 
         [StringLength(255)]
-        public string ItemName { get; set; }
+        public string Name { get; set; }
 
        
         public decimal Price { get; set; }
@@ -23,11 +23,12 @@ namespace Yumm_Back_End.Models.Restaurants
         [StringLength(500)]
         public string Description { get; set; }
 
-        public int CategoryId { get; set; }
-        public Category Category { get; set; }
+        public int categoryId { get; set; }
+        public Category category { get; set; }
 
         public int Duration { get; set; }
 
+        [MaxLength(255)]
         public string ImagePath { get; set; }
 
         public int RestaurantId { get; set; }
