@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models.Address;
+using Yumm_Back_End.Models.Clients;
 using Yumm_Back_End.Models.Restaurants;
 
 namespace Yumm_Back_End.Models.User
@@ -12,6 +13,8 @@ namespace Yumm_Back_End.Models.User
     {
         public virtual Restaurant Restaurant { get; set; }
 
-        public virtual ICollection<Location> Locations { get; set; }
+        public virtual Client Client { get; set; }
+
+        public virtual ICollection<UsersLocations> Locations2Users { get; set; }
     }
 }

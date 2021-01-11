@@ -24,7 +24,6 @@
   <ItemGroup>
     <Folder Include="Models\Drivers\" />
     <Folder Include="Models\Support Team\" />
-    <Folder Include="Repository\_ClientRepository\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

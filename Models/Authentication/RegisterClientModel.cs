@@ -22,6 +22,12 @@ namespace Yumm_Back_End.Models.Authentication
         [Required]
         public string Password { get; set; }
 
+        [Required]
+        public string ConfirmPassword { get; set; }
+
+
+        public char Gender { get; set; }
+
 
     }
 }

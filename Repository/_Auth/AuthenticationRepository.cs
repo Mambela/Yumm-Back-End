@@ -13,9 +13,10 @@ using Yumm_Back_End.Configuration;
 using Yumm_Back_End.Data;
 using Yumm_Back_End.Models;
 using Yumm_Back_End.Models.Authentication;
+using Yumm_Back_End.Models.Clients;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Models.User;
-
+using Yumm_Back_End.Repository._ClientRepository;
 using Yumm_Back_End.Repository._Restaurant;
 
 namespace Yumm_Back_End.Repository._Auth
@@ -31,11 +32,12 @@ namespace Yumm_Back_End.Repository._Auth
 
         public IConfiguration _configuration;
         public IRestaurantRepository _restaurantRepo;
+        public IClientRepository _clientRepo;
  
 
        
         public AuthenticationRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, 
-            IConfiguration configuration, IRestaurantRepository restaurantRepo, ApplicationDbContext dbContext, IOptions<AppSettings> appSettings)
+            IConfiguration configuration, IRestaurantRepository restaurantRepo, ApplicationDbContext dbContext, IOptions<AppSettings> appSettings,IClientRepository clientRepository)
         {
 
             _userManager = userManager;
@@ -43,7 +45,9 @@ namespace Yumm_Back_End.Repository._Auth
             _configuration = configuration;
             _dbContext = dbContext;
             _restaurantRepo = restaurantRepo;
+            _clientRepo = clientRepository;
             _appSettings = appSettings.Value;
+            
 
         }
 
@@ -119,6 +123,62 @@ namespace Yumm_Back_End.Repository._Auth
         #endregion
 
         #region Client
+        public async Task<AuthenticatedUser> AuthenticatedClient(string password, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            string currentRole = null;
+            if (user != null && await _userManager.CheckPasswordAsync(user, password))
+            {
+                //INside here it means that the user is found 
+
+
+                //fetch the data required
+
+                Client client = _dbContext.Clients.Single(c => c.UserId == user.Id);
+
+
+                var userRoles = await _userManager.GetRolesAsync(user);
+
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name,user.UserName)
+                };
+
+                foreach (var userRole in userRoles)
+                {
+                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                    currentRole = userRole;
+                }
+
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(authClaims),
+                    Expires = DateTime.UtcNow.AddDays(7),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+
+                AuthenticatedUser authUser = new AuthenticatedUser
+                {
+                    Id = client.Id,
+                    Name = client.FirstName,
+                    Surname = client.LastName
+                    ,Token = tokenHandler.WriteToken(token),
+                    role = currentRole
+
+                };
+
+                return authUser;
+            }
+
+            return null;
+        }
+
         #endregion
 
         #region Drivers
@@ -186,10 +246,41 @@ namespace Yumm_Back_End.Repository._Auth
             throw new NotImplementedException();
         }
 
-        public Task<bool> RegisterClientAsync()
+        public async Task<bool> RegisterClientAsync(RegisterClientModel model)
         {
-            throw new NotImplementedException();
+            ApplicationUser user = new ApplicationUser
+            {
+                Email = model.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.Email,
+                PhoneNumber = model.PhoneNumber
+            };
+
+            var clientResult = await _userManager.CreateAsync(user, model.Password);
+
+            if (!clientResult.Succeeded)
+                return false;
+
+            if (!await _roleManager.RoleExistsAsync(UserRoles.CLIENT))
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.CLIENT));
+
+            if (await _roleManager.RoleExistsAsync(UserRoles.CLIENT))
+            {
+                await _userManager.AddToRoleAsync(user, UserRoles.CLIENT);
+            }
+
+            Client client = new Client 
+            { 
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Gender = model.Gender,
+                UserId = user.Id
+            };
+
+            return await _clientRepo.CreateClient(client);
         }
+
+       
         #endregion
 
 

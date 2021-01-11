@@ -30,21 +30,37 @@ namespace Yumm_Back_End.Data
                 .Property(I => I.Price)
                 .HasPrecision(18, 2);
 
+            
+            //Locations Builder
             builder.Entity<Location>().Property(L => L.Lat).HasPrecision(8,6);
             builder.Entity<Location>().Property(L => L.Lng).HasPrecision(9,6);
+
+
+            //Associating Locations To user
+            builder.Entity<UsersLocations>().HasKey(x => new {x.UserId,x.LocationId});
+
+
+            builder.Entity<UsersLocations>()
+                .HasOne(l =>l.Location)
+                .WithMany(u => u.Users2Locations).HasForeignKey(l => l.LocationId);
+
+            builder.Entity<UsersLocations>()
+                .HasOne(u => u.User)
+                .WithMany(u => u.Locations2Users).HasForeignKey(u => u.UserId);
 
 
             // SeedUser(builder);
 
             base.OnModelCreating(builder);
         }
+       
         #region Restaurant Entities
 
         public DbSet<Restaurant> Restaurants { get; set; }
 
         public DbSet<Category> Categories { get; set; }
 
-        public DbSet<Product> Items { get; set; }
+        public DbSet<Product> Products { get; set; }
 
         public DbSet<Working_Hours> Working_Hours { get; set; }
 
@@ -113,7 +129,7 @@ namespace Yumm_Back_End.Data
 
         #region Client Entities
 
-        //public DbSet<Client> Clients { get; set; }
+        public DbSet<Client> Clients { get; set; }
         #endregion
 
 
@@ -175,7 +191,7 @@ namespace Yumm_Back_End.Data
         #endregion
 
         #region Tickets 
-        public DbSet<Ticket_Type> Ticket_Types { get; set; }
+      //  public DbSet<Ticket_Type> Ticket_Types { get; set; }
         #endregion
     }
 }
