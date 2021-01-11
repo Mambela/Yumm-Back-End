@@ -23,6 +23,9 @@
     <Folder Include="Models\Address\" />
     <Folder Include="Models\Drivers\" />
     <Folder Include="Models\Support Team\" />
+    <Folder Include="Repository\_AddressRepository\LocationRepository\DriverLocationRepository\" />
+    <Folder Include="Repository\_AddressRepository\LocationRepository\RestaurantLocationRepository\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
