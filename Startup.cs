@@ -35,6 +35,8 @@ using Yumm_Back_End.Repository._MenuRepository;
 using Yumm_Back_End.Services;
 using Yumm_Back_End.Models.User;
 using Yumm_Back_End.Repository._ClientRepository;
+using Yumm_Back_End.Repository._AddressRepository.UserLocationRepository;
+using Yumm_Back_End.Repository._UserRepository;
 
 namespace Yumm_Back_End
 {
@@ -71,6 +73,8 @@ namespace Yumm_Back_End
             services.AddScoped<ICategoryRepository, CategoryRepository>();   
             services.AddScoped<IProductRepository,ProductRepository>();
             services.AddScoped<IClientRepository,ClientRepository>();
+            services.AddScoped<IUserLocationRepository,UserLocationRepository>();
+            services.AddScoped<IUserRepository,UserRepository>();
            
 
             services.AddAutoMapper(typeof(YummMapping));

@@ -10,8 +10,8 @@ using Yumm_Back_End.Data;
 namespace Yumm_Back_End.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210107215205_addRelationshipLocationUser")]
-    partial class addRelationshipLocationUser
+    [Migration("20210111202301_removeTextEntitiesToLocation")]
+    partial class removeTextEntitiesToLocation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -215,12 +215,6 @@ namespace Yumm_Back_End.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Commune")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal>("Lat")
                         .HasPrecision(8, 6)
                         .HasColumnType("decimal(8,6)");
@@ -228,15 +222,6 @@ namespace Yumm_Back_End.Migrations
                     b.Property<decimal>("Lng")
                         .HasPrecision(9, 6)
                         .HasColumnType("decimal(9,6)");
-
-                    b.Property<string>("Neighbourhood")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Province")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StreetName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -328,9 +313,11 @@ namespace Yumm_Back_End.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Unit")
@@ -344,6 +331,43 @@ namespace Yumm_Back_End.Migrations
                     b.HasIndex("LocationId");
 
                     b.ToTable("UsersLocations");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Clients.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Category", b =>
@@ -670,18 +694,29 @@ namespace Yumm_Back_End.Migrations
             modelBuilder.Entity("Yumm_Back_End.Models.Address.UsersLocations", b =>
                 {
                     b.HasOne("Yumm_Back_End.Models.Address.Location", "Location")
-                        .WithMany("Users2Locations")
+                        .WithMany("UsersLocations")
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", "User")
-                        .WithMany("Locations2Users")
+                        .WithMany("UsersLocations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Location");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Clients.Client", b =>
+                {
+                    b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", "User")
+                        .WithOne("Client")
+                        .HasForeignKey("Yumm_Back_End.Models.Clients.Client", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -745,7 +780,7 @@ namespace Yumm_Back_End.Migrations
 
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Location", b =>
                 {
-                    b.Navigation("Users2Locations");
+                    b.Navigation("UsersLocations");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Neighbourhood", b =>
@@ -775,9 +810,11 @@ namespace Yumm_Back_End.Migrations
 
             modelBuilder.Entity("Yumm_Back_End.Models.User.ApplicationUser", b =>
                 {
-                    b.Navigation("Locations2Users");
+                    b.Navigation("Client");
 
                     b.Navigation("Restaurant");
+
+                    b.Navigation("UsersLocations");
                 });
 #pragma warning restore 612, 618
         }

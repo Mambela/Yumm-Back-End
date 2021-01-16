@@ -10,8 +10,8 @@ using Yumm_Back_End.Data;
 namespace Yumm_Back_End.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210109210614_addClientsToDb")]
-    partial class addClientsToDb
+    [Migration("20210112174452_ChangeUserUnitToText")]
+    partial class ChangeUserUnitToText
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -215,11 +215,11 @@ namespace Yumm_Back_End.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Commune")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CommuneId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Lat")
                         .HasPrecision(8, 6)
@@ -229,16 +229,26 @@ namespace Yumm_Back_End.Migrations
                         .HasPrecision(9, 6)
                         .HasColumnType("decimal(9,6)");
 
-                    b.Property<string>("Neighbourhood")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("NeighbourhoodId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Province")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ProvinceId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("StreetName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("StreetId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("CommuneId");
+
+                    b.HasIndex("NeighbourhoodId");
+
+                    b.HasIndex("ProvinceId");
+
+                    b.HasIndex("StreetId");
 
                     b.ToTable("Locations");
                 });
@@ -328,16 +338,30 @@ namespace Yumm_Back_End.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Lat")
+                        .HasPrecision(8, 6)
+                        .HasColumnType("decimal(8,6)");
+
+                    b.Property<decimal>("Lng")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Unit")
-                        .HasColumnType("int");
+                    b.Property<string>("Unit")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("_StreetSetByUser")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId", "LocationId");
 
@@ -682,6 +706,49 @@ namespace Yumm_Back_End.Migrations
                     b.Navigation("City");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Address.Location", b =>
+                {
+                    b.HasOne("Yumm_Back_End.Models.Address.City", "City")
+                        .WithMany("Locations")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yumm_Back_End.Models.Address.Commune", "Commune")
+                        .WithMany("Locations")
+                        .HasForeignKey("CommuneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yumm_Back_End.Models.Address.Neighbourhood", "Neighbourhood")
+                        .WithMany("Locations")
+                        .HasForeignKey("NeighbourhoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yumm_Back_End.Models.Address.Province", "Province")
+                        .WithMany("Locations")
+                        .HasForeignKey("ProvinceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yumm_Back_End.Models.Address.Street", "Street")
+                        .WithMany()
+                        .HasForeignKey("StreetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+
+                    b.Navigation("Commune");
+
+                    b.Navigation("Neighbourhood");
+
+                    b.Navigation("Province");
+
+                    b.Navigation("Street");
+                });
+
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Neighbourhood", b =>
                 {
                     b.HasOne("Yumm_Back_End.Models.Address.Commune", "Commune")
@@ -707,13 +774,13 @@ namespace Yumm_Back_End.Migrations
             modelBuilder.Entity("Yumm_Back_End.Models.Address.UsersLocations", b =>
                 {
                     b.HasOne("Yumm_Back_End.Models.Address.Location", "Location")
-                        .WithMany("Users2Locations")
+                        .WithMany("UsersLocations")
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", "User")
-                        .WithMany("Locations2Users")
+                        .WithMany("UsersLocations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -784,26 +851,34 @@ namespace Yumm_Back_End.Migrations
             modelBuilder.Entity("Yumm_Back_End.Models.Address.City", b =>
                 {
                     b.Navigation("Communes");
+
+                    b.Navigation("Locations");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Commune", b =>
                 {
+                    b.Navigation("Locations");
+
                     b.Navigation("Neighbourhoods");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Location", b =>
                 {
-                    b.Navigation("Users2Locations");
+                    b.Navigation("UsersLocations");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Neighbourhood", b =>
                 {
+                    b.Navigation("Locations");
+
                     b.Navigation("Streets");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Province", b =>
                 {
                     b.Navigation("Cities");
+
+                    b.Navigation("Locations");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Category", b =>
@@ -825,9 +900,9 @@ namespace Yumm_Back_End.Migrations
                 {
                     b.Navigation("Client");
 
-                    b.Navigation("Locations2Users");
-
                     b.Navigation("Restaurant");
+
+                    b.Navigation("UsersLocations");
                 });
 #pragma warning restore 612, 618
         }

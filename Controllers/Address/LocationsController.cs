@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models.Address;
+using Yumm_Back_End.Models.DTOs.AddressDTO;
+using Yumm_Back_End.Models.DTOs.AddressDTO.Location;
 using Yumm_Back_End.Repository._AddressRepository.LocationRepository;
 
 namespace Yumm_Back_End.Controllers.Address
@@ -15,20 +18,24 @@ namespace Yumm_Back_End.Controllers.Address
     {
 
         private readonly ILocationRepository _locRepo;
+        private readonly IMapper _mapper;
 
-        public LocationsController(ILocationRepository locRepo)
+        public LocationsController(ILocationRepository locRepo,IMapper mapper)
         {
+            _mapper = mapper;
             _locRepo = locRepo;
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateLocation([FromBody] Location location)
+        public async Task<IActionResult> CreateLocation([FromBody] LocationCreateDTO locationDTO)
         {
 
-            if (location == null)
+            if (locationDTO == null)
             {
                 return BadRequest(ModelState);
             }
+
+            var location = _mapper.Map<Location>(locationDTO);
 
 
             if (_locRepo.LocationExists(location))
@@ -41,7 +48,7 @@ namespace Yumm_Back_End.Controllers.Address
 
             if (!await _locRepo.CreateLocation(location))
             {
-                ModelState.AddModelError("", $"Something went wrog when saving the Location in {location.StreetName}");
+                //ModelState.AddModelError("", $"Something went wrog when saving the Location in {location.StreetName}");
 
                 return StatusCode(500, ModelState);
             }
@@ -55,29 +62,70 @@ namespace Yumm_Back_End.Controllers.Address
         {
             var locationList = _locRepo.GetLocations();
 
-            return Ok(locationList);
+
+            var locationDTOList = new List<LocationDTO>();
+
+
+            foreach (var location in locationList)
+            {
+                LocationDTO locationObj = new LocationDTO
+                {
+                    Id = location.Id,
+                    Province = location.Province.Name,
+                    City =location.City.Name,
+                    Commune = location.Commune.Name,
+                    Neighbourhood = location.Neighbourhood.Name,
+                    Street = location.Street.Name,
+                    Lat = location.Lat,
+                    Lng = location.Lng
+                };
+
+                locationDTOList.Add(locationObj);
+
+            }
+
+
+            
+
+            return Ok(locationDTOList);
         }
 
 
         [HttpGet("{locationId:int}", Name = "GetLocation")]
         public IActionResult GetLocation(int locationId)
         {
-            var locationsList = _locRepo.GetLocation(locationId);
+            var locationObj = _locRepo.GetLocation(locationId);
 
-            if (locationsList == null)
+            if (locationObj == null)
             {
                 ModelState.AddModelError("", $"Location doesn't exist in the records!");
                 return StatusCode(404, ModelState);
 
             }
 
-            return Ok(locationsList);
+
+            LocationDTO location = new LocationDTO
+            {
+                Id = locationObj.Id,
+                Province = locationObj.Province.Name,
+                City = locationObj.City.Name,
+                Commune = locationObj.Commune.Name,
+                Neighbourhood = locationObj.Neighbourhood.Name,
+                Street = locationObj.Street.Name,
+                Lat = locationObj.Lat,
+                Lng = locationObj.Lng
+                
+
+            };
+
+
+            return Ok(location);
         }
 
-        [HttpGet("GetLocationInNeighbourhood/{hoodName}")]
-        public IActionResult GetLocationInNeighbourhood(string hoodName)
+        [HttpGet("GetLocationInNeighbourhood/{hoodId:int}")]
+        public IActionResult GetLocationInNeighbourhood(int hoodId)
         {
-            var locationList = _locRepo.GetLocationsInNeighbourhood(hoodName);
+            var locationList = _locRepo.GetLocationsInNeighbourhood(hoodId);
 
             if (locationList == null)
             {
@@ -85,20 +133,44 @@ namespace Yumm_Back_End.Controllers.Address
                 return StatusCode(404, ModelState);
             }
 
-            return Ok(locationList);
+
+            var locationDTOList = new List<LocationDTO>();
+
+
+            foreach (var location in locationList)
+            {
+                LocationDTO locationObj = new LocationDTO
+                {
+                    Id = location.Id,
+                    Province = location.Province.Name,
+                    City = location.City.Name,
+                    Commune = location.Commune.Name,
+                    Neighbourhood = location.Neighbourhood.Name,
+                    Street = location.Street.Name,
+                    Lat = location.Lat,
+                    Lng = location.Lng
+                };
+
+                locationDTOList.Add(locationObj);
+
+            }
+
+            return Ok(locationDTOList);
         }
 
         [HttpPatch]
-        public IActionResult Updatelocation([FromBody] Location location, int locationId)
+        public IActionResult Updatelocation([FromBody] LocationCreateDTO locationDTO, int locationId)
         {
-            if (location == null || location.Id != locationId)
+            if (locationDTO == null || locationDTO.Id != locationId)
             {
                 return BadRequest(ModelState);
             }
 
+            var location = _mapper.Map<Location>(locationDTO);
+
             if (!_locRepo.UpdateLocation(location))
             {
-                ModelState.AddModelError("", $"Something went wrong while updating the record with the street {location.StreetName}");
+                //ModelState.AddModelError("", $"Something went wrong while updating the record with the street {location.StreetName}");
                 return StatusCode(500, ModelState);
             }
 

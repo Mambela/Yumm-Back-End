@@ -18,6 +18,8 @@ namespace Yumm_Back_End.Models.Authentication
 
         public string Description { get; set; }
 
+        public int RestaurantTypeId { get; set; }
+
 
     }
 }

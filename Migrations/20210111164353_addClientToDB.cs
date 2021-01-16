@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Yumm_Back_End.Migrations
 {
-    public partial class addClientsToDb : Migration
+    public partial class addClientToDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

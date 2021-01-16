@@ -19,5 +19,7 @@ namespace Yumm_Back_End.Models.Address
         public Province Province { get; set; }
 
         public ICollection<Commune> Communes { get; set; }
+
+        public ICollection<Location> Locations { get; set; }
     }
 }

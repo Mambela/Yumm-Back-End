@@ -35,18 +35,21 @@ namespace Yumm_Back_End.Data
             builder.Entity<Location>().Property(L => L.Lat).HasPrecision(8,6);
             builder.Entity<Location>().Property(L => L.Lng).HasPrecision(9,6);
 
+            builder.Entity<UsersLocations>().Property(L => L.Lat).HasPrecision(8, 6);
+            builder.Entity<UsersLocations>().Property(L => L.Lng).HasPrecision(9, 6);
+
 
             //Associating Locations To user
             builder.Entity<UsersLocations>().HasKey(x => new {x.UserId,x.LocationId});
 
 
-            builder.Entity<UsersLocations>()
-                .HasOne(l =>l.Location)
-                .WithMany(u => u.Users2Locations).HasForeignKey(l => l.LocationId);
+            //builder.Entity<UsersLocations>()
+            //    .HasOne(l =>l.Location)
+            //    .WithMany(u => u.Users2Locations).HasForeignKey(l => l.LocationId);
 
-            builder.Entity<UsersLocations>()
-                .HasOne(u => u.User)
-                .WithMany(u => u.Locations2Users).HasForeignKey(u => u.UserId);
+            //builder.Entity<UsersLocations>()
+            //    .HasOne(u => u.User)
+            //    .WithMany(u => u.Locations2Users).HasForeignKey(u => u.UserId);
 
 
             // SeedUser(builder);
@@ -81,49 +84,12 @@ namespace Yumm_Back_End.Data
         public DbSet<Street> Streets { get; set; }
 
         public DbSet<Location> Locations { get; set; }
+
+        public DbSet<UsersLocations> UsersLocations { get; set; }
         #endregion
 
 
         //Seed SUPER ADMIN
-
-        private void SeedUser(ModelBuilder builder)
-        { 
-
-            string SUPER_ADMIN_ID =  "02174cf0–9412–4cfe - afbf - 59f706d72cf6";
-
-            string ROLE_ID = "341743f0-asd2–42de-afbf-59kkidelejk72cf6";
-
-            builder.Entity<IdentityRole>().HasData(new IdentityRole { 
-                Name = "SuperAdmin",
-                NormalizedName = "SuperAdmin",
-                Id = ROLE_ID,
-                ConcurrencyStamp = ROLE_ID
-            });
-
-            //Add user 
-            var superUser = new ApplicationUser
-            {
-                Id = SUPER_ADMIN_ID,
-                Email = "kevinDeveloper@yumm.com",
-                EmailConfirmed = true,
-                UserName = "kevinDeveloper@yumm.com"
-
-            };
-
-            PasswordHasher<ApplicationUser> appUser = new PasswordHasher<ApplicationUser>();
-
-            superUser.PasswordHash = appUser.HashPassword(superUser, "4kingmambela?");
-
-            //seed user
-
-            builder.Entity<ApplicationUser>().HasData(superUser);
-
-            builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
-            {
-                RoleId = ROLE_ID,
-                UserId = SUPER_ADMIN_ID
-            });
-        }
 
 
 

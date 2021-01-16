@@ -16,10 +16,16 @@ namespace Yumm_Back_End.Repository._AddressRepository.LocationRepository
 
         bool LocationExists(Location location);
 
+        Location UserCheckLocationExist(Location location);
+
+        bool UserCheckLocationExist(int locationId);
+
         bool LocationExists(int locationId);
 
+       
+
         Task<bool> CreateLocation(Location location);
-        ICollection<Location> GetLocationsInNeighbourhood(string hood);
+        ICollection<Location> GetLocationsInNeighbourhood(int hoodId);
 
 
         bool UpdateLocation(Location location);

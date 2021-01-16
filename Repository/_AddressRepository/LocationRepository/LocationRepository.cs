@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,31 +38,48 @@ namespace Yumm_Back_End.Repository._AddressRepository.LocationRepository
 
         public Location GetLocation(int locationId)
         {
-            return _dbContext.Locations.FirstOrDefault(l => l.Id == locationId);
+            return _dbContext.Locations.Include(p => p.Province)
+                    .Include(c => c.City)
+                    .Include(n => n.Neighbourhood)
+                    .Include(c => c.Commune)
+                    .Include(n => n.Neighbourhood)
+                    .Include(s => s.Street)
+                   .FirstOrDefault(l => l.Id == locationId);
         }
 
         public ICollection<Location> GetLocations()
         {
-            return _dbContext.Locations.ToList();
+            return _dbContext.Locations.Include(p =>p.Province)
+                .Include(c =>c.City)
+                .Include(n=>n.Neighbourhood)
+                .Include(c =>c.Commune)
+                .Include(n => n.Neighbourhood)
+                .Include(s =>s.Street)
+                .ToList();
         }
 
 
 
-        public ICollection<Location> GetLocationsInNeighbourhood(string hood)
+        public ICollection<Location> GetLocationsInNeighbourhood(int hoodId)
         {
-            return _dbContext.Locations.Where(l => l.Neighbourhood.Trim().ToLower() == hood.Trim().ToLower()).ToList();
+            
+            return _dbContext.Locations.Include(p => p.Province)
+                .Include(c => c.City)
+                .Include(c => c.Commune)
+                .Include(n => n.Neighbourhood).Where(n => n.NeighbourhoodId == hoodId)
+                .Include(s => s.Street)
+                .ToList();
 
         }
 
         public bool LocationExists(Location location)
         {
+            return _dbContext.Locations.Any(l =>l.Lat == location.Lat && l.Lng ==l.Lng);
+        }
 
-            //Check the Hood
-            return _dbContext.Locations.Any(
-                l => l.Neighbourhood.Trim().ToLower() == location.Neighbourhood.Trim().ToLower() &&
-                l.StreetName.Trim().ToLower() == location.StreetName.Trim().ToLower() &&
-                (l.Lat == location.Lat && l.Lng == location.Lng));
-
+        public Location UserCheckLocationExist(Location location)
+        {
+            return _dbContext.Locations.FirstOrDefault(l => l.Lat == location.Lat && l.Lng == l.Lng);
         }
 
         public bool LocationExists(int locationId)
@@ -69,6 +87,7 @@ namespace Yumm_Back_End.Repository._AddressRepository.LocationRepository
             return _dbContext.Locations.Any(l => l.Id == locationId);
         }
 
+        
         public bool Save()
         {
             return _dbContext.SaveChanges() >= 0;
@@ -81,5 +100,9 @@ namespace Yumm_Back_End.Repository._AddressRepository.LocationRepository
             return Save();
         }
 
+        public bool UserCheckLocationExist(int locationId)
+        {
+            return _dbContext.Locations.Any(l => l.Id == locationId);
+        }
     }
 }

@@ -7,6 +7,7 @@ using Yumm_Back_End.Models.Address;
 using Yumm_Back_End.Models.Clients;
 using Yumm_Back_End.Models.DTOs;
 using Yumm_Back_End.Models.DTOs.AddressDTO;
+using Yumm_Back_End.Models.DTOs.AddressDTO.Location;
 using Yumm_Back_End.Models.DTOs.ClientDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
@@ -32,6 +33,17 @@ namespace Yumm_Back_End.Mapper
             CreateMap<Commune, CommuneDTO>().ReverseMap();
             CreateMap<Neighbourhood, NeighbourhoodDTO>().ReverseMap();
             CreateMap<Street, StreetDTO>().ReverseMap();
+            CreateMap<Location, LocationCreateDTO>().ReverseMap();
+            CreateMap<Location, LocationDTO>().ReverseMap();
+
+            #region User Location
+            CreateMap<Location, CreateUserLocationDTO>().ReverseMap();
+            CreateMap<Location, UsersLocations>().ReverseMap();
+            CreateMap<UsersLocations, CreateUserLocationDTO>().ReverseMap();
+
+
+            #endregion
+
             #endregion
 
 

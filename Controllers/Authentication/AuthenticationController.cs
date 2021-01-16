@@ -30,7 +30,27 @@ namespace Yumm_Back_End.Controllers.Authentication
         [Route("Restaurant/Register")]
         public async Task<IActionResult> RegisterRestaurant([FromBody] RegisterModelRestaurant model)
         {
-            var register = await _authRepo.RegisterRestaurantAsync(model.Email, model.Password, model.PhoneNumber, model.Name, model.Description);
+            if (model == null)
+            {
+                return BadRequest();
+            }
+
+
+            if (!ModelState.IsValid)
+            {
+                return StatusCode(500,ModelState);
+            }
+
+
+
+            if (!await _authRepo.RegisterRestaurantAsync(model.Email, model.Password, model.PhoneNumber, model.Name, model.Description,model.RestaurantTypeId))
+            {
+                ModelState.AddModelError("", $"An error occurred while trying to register the Restaurant");
+
+                return StatusCode(500, ModelState);
+            }
+
+
 
             return Ok(model);
         }

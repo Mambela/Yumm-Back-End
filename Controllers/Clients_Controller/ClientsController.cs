@@ -61,7 +61,7 @@ namespace Yumm_Back_End.Controllers.Clients_Controller
 
             var clientDTo = new List<UserDTO>();
 
-            
+
 
             foreach (var client in clientList)
             {
@@ -71,7 +71,7 @@ namespace Yumm_Back_End.Controllers.Clients_Controller
                     FirstName = client.FirstName,
                     LastName = client.LastName,
                     PhoneNumber = client.User.PhoneNumber
-                    
+
                 };
 
                 clientDTo.Add(UserDTo);
@@ -132,7 +132,7 @@ namespace Yumm_Back_End.Controllers.Clients_Controller
                 PhoneNumber = clientObj.User.PhoneNumber
 
             };
-           // var clientDTO = _mapper.Map<ClientDTO>(clientObj);
+            // var clientDTO = _mapper.Map<ClientDTO>(clientObj);
 
             return Ok(clientDTO);
 

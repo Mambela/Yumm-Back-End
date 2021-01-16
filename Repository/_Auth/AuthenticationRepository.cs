@@ -168,7 +168,8 @@ namespace Yumm_Back_End.Repository._Auth
                     Id = client.Id,
                     Name = client.FirstName,
                     Surname = client.LastName
-                    ,Token = tokenHandler.WriteToken(token),
+                    ,
+                    Token = tokenHandler.WriteToken(token),
                     role = currentRole
 
                 };
@@ -202,7 +203,7 @@ namespace Yumm_Back_End.Repository._Auth
 
         
 
-        public async Task<bool> RegisterRestaurantAsync(string Email, string password, string phoneNumber, string name, string Description)
+        public async Task<bool> RegisterRestaurantAsync(string Email, string password, string phoneNumber, string name, string Description, int RestaurantId)
         {
 
             ApplicationUser user = new ApplicationUser
@@ -231,7 +232,8 @@ namespace Yumm_Back_End.Repository._Auth
             {
                 Name = name,
                 Description = Description,
-                UserId = user.Id
+                UserId = user.Id,
+                RestaurantTypeId = RestaurantId
             };
 
 
@@ -269,8 +271,8 @@ namespace Yumm_Back_End.Repository._Auth
                 await _userManager.AddToRoleAsync(user, UserRoles.CLIENT);
             }
 
-            Client client = new Client 
-            { 
+            Client client = new Client
+            {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Gender = model.Gender,
@@ -278,6 +280,8 @@ namespace Yumm_Back_End.Repository._Auth
             };
 
             return await _clientRepo.CreateClient(client);
+
+           
         }
 
        

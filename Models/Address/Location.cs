@@ -12,27 +12,32 @@ namespace Yumm_Back_End.Models.Address
         [Key]
         public int Id { get; set; }
 
-        public string Province { get; set; }
+        public int ProvinceId { get; set; }
+        public Province Province { get; set; }
 
-        public string City { get; set; }
 
-        public string Commune { get; set; }
+        public int CityId { get; set; }
+        public City City { get; set; }
 
-        public string Neighbourhood{ get; set; }
 
-        public string StreetName { get; set; }
+        public int CommuneId { get; set; }
+        public Commune Commune { get; set; }
 
-        //public string BuildingType { get; set; }
+        public int NeighbourhoodId { get; set; }
+        public Neighbourhood Neighbourhood{ get; set; }
 
-        //public string Number { get; set; }
+        public int StreetId { get; set; }
+        public Street Street { get; set; }
 
-        //public string Description { get; set; }
 
         public Decimal Lat { get; set; }
 
         public Decimal Lng { get; set; }
 
-        public virtual ICollection<UsersLocations> Users2Locations { get; set; }
+        public virtual ICollection<UsersLocations> UsersLocations { get; set; }
+
+
+      
 
 
     }

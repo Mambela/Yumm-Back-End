@@ -16,5 +16,7 @@ namespace Yumm_Back_End.Models.Address
 
         public int NeighbourhoodId { get; set; }
         public Neighbourhood Neighbourhoods { get; set; }
+
+        
     }
 }

@@ -15,6 +15,6 @@ namespace Yumm_Back_End.Models.User
 
         public virtual Client Client { get; set; }
 
-        public virtual ICollection<UsersLocations> Locations2Users { get; set; }
+        public virtual ICollection<UsersLocations> UsersLocations { get; set; }
     }
 }

@@ -15,6 +15,7 @@ namespace Yumm_Back_End.Models.DTOs.RestaurantDTO
         public string Description { get; set; }
 
         public RestaurantTypeDTO RestaurantTypeDTO { get; set; }
+        public int RestaurantTypeId { get; set; }
 
     }
 }
