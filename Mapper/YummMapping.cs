@@ -10,6 +10,7 @@ using Yumm_Back_End.Models.DTOs.AddressDTO;
 using Yumm_Back_End.Models.DTOs.AddressDTO.Location;
 using Yumm_Back_End.Models.DTOs.ClientDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
+using Yumm_Back_End.Models.DTOs.RestaurantDTO.MenuDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Models.User;
@@ -20,7 +21,9 @@ namespace Yumm_Back_End.Mapper
     {
         public YummMapping()
         {
-
+            //var config = new MapperConfiguration(cfg => { 
+            //    cfg.Cre
+            //});
 
             #region User Mapping
             CreateMap<ApplicationUser,UserDTO>().ReverseMap();
@@ -48,9 +51,13 @@ namespace Yumm_Back_End.Mapper
 
 
             #region Restaurant Mappig
-            CreateMap<RestaurantType, RestaurantTypeDTO>().ReverseMap();
-            CreateMap<Restaurant, _RestaurantDTO>().ReverseMap();
-            CreateMap<Category, CategoryDTO>().ReverseMap();
+                
+                CreateMap<RestaurantType, RestaurantTypeDTO>().ReverseMap();
+                CreateMap<Restaurant, _RestaurantDTO>().ReverseMap();
+                CreateMap<Category, CategoryDTO>().ReverseMap();
+                CreateMap<Menu, CreateMenuDTO>().ReverseMap();
+                CreateMap<MenuGroup, CreateMenuGroupDTO>().ReverseMap();
+
             #endregion
 
 
@@ -60,6 +67,7 @@ namespace Yumm_Back_End.Mapper
             CreateMap<Product, CreateProductDTO>().ReverseMap();
             CreateMap<Product, UpdateProductDTO>().ReverseMap();
             CreateMap<CreateProductDTO, UpdateProductDTO>().ReverseMap();
+            
 
             #endregion
 

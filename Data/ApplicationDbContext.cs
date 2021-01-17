@@ -30,7 +30,11 @@ namespace Yumm_Back_End.Data
                 .Property(I => I.Price)
                 .HasPrecision(18, 2);
 
-            
+            builder.Entity<ProductExtras>()
+                   .Property(I => I.Price)
+                   .HasPrecision(18, 2);
+
+
             //Locations Builder
             builder.Entity<Location>().Property(L => L.Lat).HasPrecision(8,6);
             builder.Entity<Location>().Property(L => L.Lng).HasPrecision(9,6);
@@ -42,14 +46,6 @@ namespace Yumm_Back_End.Data
             //Associating Locations To user
             builder.Entity<UsersLocations>().HasKey(x => new {x.UserId,x.LocationId});
 
-
-            //builder.Entity<UsersLocations>()
-            //    .HasOne(l =>l.Location)
-            //    .WithMany(u => u.Users2Locations).HasForeignKey(l => l.LocationId);
-
-            //builder.Entity<UsersLocations>()
-            //    .HasOne(u => u.User)
-            //    .WithMany(u => u.Locations2Users).HasForeignKey(u => u.UserId);
 
 
             // SeedUser(builder);
@@ -65,9 +61,17 @@ namespace Yumm_Back_End.Data
 
         public DbSet<Product> Products { get; set; }
 
+
+        public DbSet<ProductExtras> ProductsExtras { get; set; }
+
         public DbSet<Working_Hours> Working_Hours { get; set; }
 
         public DbSet<RestaurantType> RestaurantTypes { get; set; }
+
+        public DbSet<Menu> Menus { get; set; }
+
+        public DbSet<MenuGroup> MenuGroups { get; set; }
+
 
         #endregion
 
@@ -99,7 +103,9 @@ namespace Yumm_Back_End.Data
         #endregion
 
 
-        #region Additional Database Modification
+        #region Additional Database Mods
+
+           // Entities added for created date and Update date. 
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
