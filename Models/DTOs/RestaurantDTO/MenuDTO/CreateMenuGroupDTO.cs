@@ -12,5 +12,8 @@ namespace Yumm_Back_End.Models.DTOs.RestaurantDTO.MenuDTO
         public string Name { get; set; }
 
         public int MenuId { get; set; }
+
+        public int OrderIndex { get; set; }
+
     }
 }

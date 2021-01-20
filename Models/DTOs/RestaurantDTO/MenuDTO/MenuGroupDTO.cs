@@ -13,7 +13,7 @@ namespace Yumm_Back_End.Models.DTOs.RestaurantDTO.MenuDTO
 
         public int MenuId { get; set; }
 
-        public string RestaurantName { get; set; }
+        public int OrderIndex { get; set; }
 
     }
 }

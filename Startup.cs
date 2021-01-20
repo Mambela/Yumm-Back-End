@@ -79,6 +79,7 @@ namespace Yumm_Back_End
             services.AddScoped<IUserRepository,UserRepository>();
             services.AddScoped<IMenuRepository, MenuRepository>();
             services.AddScoped<IMenuGroupRepository, MenuGroupRepository>();
+            services.AddScoped<IProductExtrasRepository, ProductExtrasRepository>();
            
 
             services.AddAutoMapper(typeof(YummMapping));

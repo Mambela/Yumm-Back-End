@@ -18,14 +18,14 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
         private IMenuGroupRepository _menuGroupRepo;
         private IMapper _mapper;
 
-        public MenuGroupsController(IMenuGroupRepository menuGroupRepo,IMapper mapper)
+        public MenuGroupsController(IMenuGroupRepository menuGroupRepo, IMapper mapper)
         {
             _menuGroupRepo = menuGroupRepo;
             _mapper = mapper;
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateMenuGroupAsync([FromBody] CreateMenuGroupDTO menuGroupDTO) 
+        public async Task<IActionResult> CreateMenuGroupAsync([FromBody] CreateMenuGroupDTO menuGroupDTO)
         {
             if (menuGroupDTO == null)
             {
@@ -64,7 +64,7 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
             return Ok(menuGroupObj);
         }
 
-        [HttpGet]
+        [HttpGet("{menuGroupId:int}",Name = "GetMenuGroup")]
         public IActionResult GetMenuGroup(int menuGroupId)
         {
             if(!_menuGroupRepo.CheckMenuGroupExist(menuGroupId))
@@ -82,36 +82,41 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
 
         }
 
-        [HttpGet]
+        [HttpGet("GetMenuGroupsInRestaurant/{restaurantId:int}")]
         public IActionResult GetMenuGroupsInRestaurant(int restaurantId)
         {
             var menuGroupList = _menuGroupRepo.GetRestaurantMenuGroups(restaurantId);
 
-            if (menuGroupList == null)
-            {
-                return NotFound();
-            }
+            //if (menuGroupList == null)
+            //{
+            //    return NotFound();
+            //}
 
-            var menuGroupInRestaurantList= new List<MenuGroupDTO>();
+            //var menuGroupInRestaurantList= new List<MenuGroupDTO>();
 
-            foreach (var menuGroupRestaurant in menuGroupList)
-            {
+            //foreach (var menuGroupRestaurant in menuGroupList)
+            //{
 
-                var menuGroupInRestaurant = new List<MenuGroup>();
+            //    var menuGroupInRestaurant = new List<MenuGroup>();
 
-                foreach (var menuGroup in menuGroupRestaurant.Menu.MenuGroups)
-                {
-                            
-                }
+            //    foreach (var menuGroup in menuGroupRestaurant.Menu.MenuGroups)
+            //    {
+
+            //        menuGroupInRestaurant.Add(menuGroup);
+
+            //    }
 
 
-                MenuGroupDTO mengrObj = new MenuGroupDTO 
-                {
-                    Id = menuGroupRestaurant.Id
-                };
-            }
+            //    MenuGroupsInRestaurantDTO mengrObj = new MenuGroupsInRestaurantDTO
+            //    {
+            //        Id = menuGroupRestaurant.Id,
+            //        Name  = menuGroupRestaurant.Name,
+            //        MenuId = menuGroupRestaurant.Menu.Id,
+            //        MenuGroup = menuGroupInRestaurant
+            //    };
+            //}
 
-            return Ok();
+            return NotFound();
         }
 
         [HttpDelete]

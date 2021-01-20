@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Yumm_Back_End.Models;
 using Yumm_Back_End.Models.Address;
 using Yumm_Back_End.Models.Clients;
+using Yumm_Back_End.Models.Orders;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Models.Shared;
 using Yumm_Back_End.Models.Tickets;
@@ -95,6 +96,10 @@ namespace Yumm_Back_End.Data
 
         //Seed SUPER ADMIN
 
+        #region Orders
+
+        public DbSet<Order> Orders { get; set; }
+        #endregion
 
 
         #region Client Entities

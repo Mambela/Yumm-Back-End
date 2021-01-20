@@ -57,6 +57,7 @@ namespace Yumm_Back_End.Mapper
                 CreateMap<Category, CategoryDTO>().ReverseMap();
                 CreateMap<Menu, CreateMenuDTO>().ReverseMap();
                 CreateMap<MenuGroup, CreateMenuGroupDTO>().ReverseMap();
+                CreateMap<MenuGroup, MenuGroupDTO>().ReverseMap();
 
             #endregion
 
@@ -67,6 +68,7 @@ namespace Yumm_Back_End.Mapper
             CreateMap<Product, CreateProductDTO>().ReverseMap();
             CreateMap<Product, UpdateProductDTO>().ReverseMap();
             CreateMap<CreateProductDTO, UpdateProductDTO>().ReverseMap();
+            CreateMap<ProductExtras, CreateProductExtrasDTO>().ReverseMap();
             
 
             #endregion

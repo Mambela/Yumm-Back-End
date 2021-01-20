@@ -18,8 +18,6 @@ namespace Yumm_Back_End.Models.Restaurants
 
         public Decimal Price { get; set; }
 
-        public string image { get; set; }
-
         public int ProductId { get; set; }
 
         public Product Product { get; set; }

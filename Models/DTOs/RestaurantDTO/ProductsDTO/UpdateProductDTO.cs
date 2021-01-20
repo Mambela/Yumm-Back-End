@@ -9,7 +9,7 @@ namespace Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO
     public class UpdateProductDTO
     {
         public int Id { get; set; }
-        public string ItemName { get; set; }
+        public string Name { get; set; }
 
         public decimal Price { get; set; }
 
@@ -21,6 +21,8 @@ namespace Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO
         public int Duration { get; set; }
 
         public int RestaurantId { get; set; }
+
+        public int MenuGroupId { get; set; }
 
         public string ImagePath { get; set; }
 

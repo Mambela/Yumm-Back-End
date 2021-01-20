@@ -18,181 +18,198 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductRepository _itemRepository;
+        private readonly IProductRepository _productRepo;
         private readonly IMapper _mapper;
         private MediaResponse uploadResponse;
 
-        //public ProductsController(IProductRepository itemRepository, IMapper mapper)
-        //{
-        //    _itemRepository = itemRepository;
-        //    _mapper = mapper;
-        //    uploadResponse = new MediaResponse();
-        //}
+        public ProductsController(IProductRepository productRepository, IMapper mapper)
+        {
+            _productRepo = productRepository;
+            _mapper = mapper;
+            uploadResponse = new MediaResponse();
+        }
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateFoodItem([FromForm] CreateProductDTO itemDto)
-        //{
-
-
-        //    if (itemDto == null)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    if (itemDto.Files == null)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-            
-
-        //    uploadResponse = await _itemRepository.SaveProductImage(itemDto);
-
-        //    if (!uploadResponse.Success)
-        //        {
-        //        ModelState.AddModelError("", $" "+uploadResponse.Message);
-        //        return StatusCode(500, ModelState);
-        //        }
-
-            
-        //    itemDto.ImagePath = uploadResponse.Message;
-           
+        [HttpPost]
+        public async Task<IActionResult> CreateFoodProduct([FromForm] CreateProductDTO productDto)
+        {
 
 
-        //    if (_itemRepository.ItemExists(itemDto.ItemName, itemDto.RestaurantId, itemDto.CategoryId))
-        //    {
-        //        ModelState.AddModelError("", $"Item that you are trying to add already Exists");
-        //        return StatusCode(404, ModelState);
-        //    }
+            if (productDto == null)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    var objItem = _mapper.Map<Product>(itemDto);
-
-        //    if (!await _itemRepository.CreateItem(objItem))
-        //    {
-        //        ModelState.AddModelError("", $"Something went wrong when Saving the record {objItem.Name}");
-        //    }
-
-
-        //    return Ok(objItem);
-
-
-        //}
-
-        //[HttpGet("{itemId:int}", Name = "GetItem")]
-        //public IActionResult GetItem(int itemId)
-        //{
-        //    var itemObj = _itemRepository.GetItem(itemId);
-
-        //    if (itemObj == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var objDto = _mapper.Map<ProductDTO>(itemObj);
-
-        //    return Ok(objDto);
-        //}
-
-        //[HttpGet]
-        //public IActionResult GetItems()
-        //{
-        //    var itemList = _itemRepository.GetItems();
-
-        //    var itemDto = new List<ProductDTO>();
-
-        //    foreach (var item in itemList)
-        //    {
-        //        itemDto.Add(_mapper.Map<ProductDTO>(item));
-        //    }
-
-        //    return Ok(itemDto);
-        //}
-
-        //[HttpGet("GetItemsInCategory/{categoryId:int}")]
-        //public IActionResult GetItemsInCategory(int categoryId)
-        //{
-        //    var itemList = _itemRepository.GetItemsInCategory(categoryId);
-
-        //    var itemDto = new List<ProductDTO>();
-
-        //    foreach (var item in itemList)
-        //    {
-        //        itemDto.Add(_mapper.Map<ProductDTO>(item));
-        //    }
-
-        //    return Ok(itemDto);
-        //}
-
-        //[HttpPatch]
-        //public async Task<IActionResult> UpdateItemAsync([FromForm] UpdateProductDTO itemDto, int itemId)
-        //{ 
-
-        //    if(itemDto == null || itemDto.Id != itemId)
-        //    {
-        //        return BadRequest(ModelState);
-        //      }
-
-        //    if (itemDto.Files == null)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-
-        //    var objForImage = _mapper.Map<CreateProductDTO>(itemDto);
-
-
-        //    uploadResponse = await _itemRepository.SaveProductImage(objForImage);
-
-        //    if (!uploadResponse.Success)
-        //    {
-        //        ModelState.AddModelError("", $" " + uploadResponse.Message);
-        //        return StatusCode(500, ModelState);
-        //    }
-
-
-        //    itemDto.ImagePath = uploadResponse.Message;
+            if (productDto.Files == null)
+            {
+                return BadRequest(ModelState);
+            }
 
 
 
-        //    var itemObj = _mapper.Map<Product>(itemDto);
+            uploadResponse = await _productRepo.SaveProductImage(productDto);
 
-        //    if (!_itemRepository.UpdateItem(itemObj))
-        //        {
-        //        ModelState.AddModelError("", $"Something went wrong when updating the record {itemObj.Name}");
-        //        return StatusCode(500, ModelState);
-        //    }
-
-        //    return NoContent();
-
-        //    }
-
-        //[HttpDelete]
-        //public IActionResult DeleteItem(int itemId)
-        //{
-            
-
-        //    if (!_itemRepository.ItemExists(itemId))
-        //    {
-        //        return NotFound();
-        //    }
+            if (!uploadResponse.Success)
+            {
+                ModelState.AddModelError("", $" " + uploadResponse.Message);
+                return StatusCode(500, ModelState);
+            }
 
 
-        //    var objItem = _itemRepository.GetItem(itemId);
-        //    if (!_itemRepository.DeleteItem(objItem))
-        //        {
-        //            ModelState.AddModelError("", $"Something went wrong when deleting the record {objItem.Name}");
-        //            return StatusCode(500, ModelState);
-        //        }
+            productDto.ImagePath = uploadResponse.Message;
 
 
-        //    return NoContent();
 
-        //}
+            if (_productRepo.ProductExists(productDto.Name, productDto.RestaurantId, productDto.CategoryId))
+            {
+                ModelState.AddModelError("", $"Product that you are trying to add already Exists");
+                return StatusCode(404, ModelState);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var objProduct = _mapper.Map<Product>(productDto);
+
+            if (!await _productRepo.CreateProduct(objProduct))
+            {
+                ModelState.AddModelError("", $"Something went wrong when Saving the record {objProduct.Name}");
+            }
+
+
+            return Ok(objProduct);
+
+
+        }
+
+        [HttpGet("{productId:int}", Name = "GetProduct")]
+        public IActionResult GetProduct(int productId)
+        {
+            var productObj = _productRepo.GetProduct(productId);
+
+            if (productObj == null)
+            {
+                return NotFound();
+            }
+
+            var objDto = _mapper.Map<ProductDTO>(productObj);
+
+            return Ok(objDto);
+        }
+
+        [HttpGet]
+        public IActionResult GetProducts()
+        {
+            var productList = _productRepo.GetProducts();
+
+            var productDto = new List<ProductDTO>();
+
+            foreach (var product in productList)
+            {
+                productDto.Add(_mapper.Map<ProductDTO>(product));
+            }
+
+            return Ok(productDto);
+        }
+
+        [HttpGet("GetProductsInCategory/{categoryId:int}")]
+        public IActionResult GetProductsInCategory(int categoryId)
+        {
+            var productList = _productRepo.GetProductsInCategory(categoryId);
+
+            var productDto = new List<ProductDTO>();
+
+            foreach (var product in productList)
+            {
+                productDto.Add(_mapper.Map<ProductDTO>(product));
+            }
+
+            return Ok(productDto);
+
+        }
+
+
+        [HttpGet("GetProductsInMenuGroup/{menuGroupId:int}")]
+        public IActionResult GetProductsInMenuGroup(int menuGroupId)
+        {
+            var productList = _productRepo.GetProductsInMenuGroup(menuGroupId);
+
+            var productDto = new List<ProductDTO>();
+
+            foreach (var product in productList)
+            {
+                productDto.Add(_mapper.Map<ProductDTO>(product));
+            }
+
+            return Ok(productDto);
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> UpdateProductAsync([FromForm] UpdateProductDTO productDto, int productId)
+        {
+
+            if (productDto == null || productDto.Id != productId)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (productDto.Files == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+            var objForImage = _mapper.Map<CreateProductDTO>(productDto);
+
+
+            uploadResponse = await _productRepo.SaveProductImage(objForImage);
+
+            if (!uploadResponse.Success)
+            {
+                ModelState.AddModelError("", $" " + uploadResponse.Message);
+                return StatusCode(500, ModelState);
+            }
+
+
+            productDto.ImagePath = uploadResponse.Message;
+
+
+
+            var productObj = _mapper.Map<Product>(productDto);
+
+            if (!_productRepo.UpdateProduct(productObj))
+            {
+                ModelState.AddModelError("", $"Something went wrong when updating the record {productObj.Name}");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteProduct(int productId)
+        {
+
+
+            if (!_productRepo.ProductExists(productId))
+            {
+                return NotFound();
+            }
+
+
+            var objProduct = _productRepo.GetProduct(productId);
+            if (!_productRepo.DeleteProduct(objProduct))
+            {
+                ModelState.AddModelError("", $"Something went wrong when deleting the record {objProduct.Name}");
+                return StatusCode(500, ModelState);
+            }
+
+
+            return NoContent();
+
+        }
 
     }
 }

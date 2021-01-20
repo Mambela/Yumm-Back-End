@@ -11,27 +11,32 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
 {
     public interface IProductRepository
     {
-        //ICollection<Product> GetItems();
+        ICollection<Product> GetProducts();
 
-        //ICollection<Product> GetItemsInCategory(int catgoryId);
+        ICollection<Product> GetProductsInCategory(int catgoryId);
 
-        //Product GetItem(int itemId);
+        ICollection<Product> GetProductsInRestaurant (int restaurantId);
 
-        //bool ItemExists(int itemId);
 
-        //bool ItemExists(string name,int restaurantId,int categoryId);
+        ICollection<Product> GetProductsInMenuGroup(int menuGroupId);
 
-        //Task<bool> CreateItem(Product item);
+        Product GetProduct(int productId);
 
-        //bool UpdateItem(Product item);
+        bool ProductExists(int productId);
 
-        //bool DeleteItem(Product item);
+        bool ProductExists(string name, int restaurantId, int categoryId);
 
-        //bool Save();
+        Task<bool> CreateProduct(Product product);
 
-        //Task<MediaResponse> SaveProductImage(CreateProductDTO objectFile);
+        bool UpdateProduct(Product product);
 
-        //Task<MediaResponse> DeleteProductImage(UpdateProductDTO objectFile,string previousImage);
-        
+        bool DeleteProduct(Product product);
+
+        bool Save();
+
+        Task<MediaResponse> SaveProductImage(CreateProductDTO objectfile);
+
+        Task<MediaResponse> DeleteProductImage(UpdateProductDTO objectfile, string previousimage);
+
     }
 }
