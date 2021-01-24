@@ -14,13 +14,11 @@ namespace Yumm_Back_End.Controllers.Media_Controllers
     public class MediasController : ControllerBase
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public MediasController(IWebHostEnvironment webHostenvironment)
-        private readonly IMediaRepository _mediaRepository;
-        public MediasController(IMediaRepository mediaRepository)
+        public MediasController(IWebHostEnvironment webHostenvironment) 
         {
             _webHostEnvironment = webHostenvironment;
-            _mediaRepository = mediaRepository;
         }
+        
 
         [HttpGet]
         public IActionResult GetProductImage(string name,int reference)

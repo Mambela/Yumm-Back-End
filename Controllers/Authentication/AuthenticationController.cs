@@ -25,12 +25,32 @@ namespace Yumm_Back_End.Controllers.Authentication
 
         }
 
-
+        #region Restaurant Auth Methods
         [HttpPost]
         [Route("Restaurant/Register")]
         public async Task<IActionResult> RegisterRestaurant([FromBody] RegisterModelRestaurant model)
         {
-            var register = await _authRepo.RegisterRestaurantAsync(model.Email, model.Password, model.PhoneNumber, model.Name, model.Description);
+            if (model == null)
+            {
+                return BadRequest();
+            }
+
+
+            if (!ModelState.IsValid)
+            {
+                return StatusCode(500,ModelState);
+            }
+
+
+
+            if (!await _authRepo.RegisterRestaurantAsync(model.Email, model.Password, model.PhoneNumber, model.Name, model.Description,model.RestaurantTypeId))
+            {
+                ModelState.AddModelError("", $"An error occurred while trying to register the Restaurant");
+
+                return StatusCode(500, ModelState);
+            }
+
+
 
             return Ok(model);
         }
@@ -46,5 +66,56 @@ namespace Yumm_Back_End.Controllers.Authentication
 
             return Ok(authResult);
         }
+        #endregion
+
+        #region  Client Auth Methods
+
+        [HttpPost]
+        [Route("Client/Register")]
+        public async Task<IActionResult> RegisterClient([FromBody] RegisterClientModel model)
+        {
+
+            if (model.Password != model.ConfirmPassword)
+            {
+                ModelState.AddModelError("", $"Password and Password Confirmation do not match");
+
+                return StatusCode(500, ModelState);
+            }
+
+
+            if (!ModelState.IsValid)
+            {
+                return StatusCode(500, ModelState);
+            }
+
+            var register = await _authRepo.RegisterClientAsync(model);
+
+            return Ok(model);
+        }
+
+
+        [HttpPost]
+        [Route("Client/Login")]
+        public async Task<IActionResult> LoginClient([FromBody] AuthModel model)
+        {
+
+            if (model == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+
+
+            var authResult = await _authRepo.AuthenticatedClient(model.Password, model.UserName);
+
+            return Ok(authResult);
+        }
+        #endregion
+
     }
 }

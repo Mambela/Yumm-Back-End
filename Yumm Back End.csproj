@@ -24,8 +24,8 @@
   <ItemGroup>
     <Folder Include="Models\Drivers\" />
     <Folder Include="Models\Support Team\" />
-    <Folder Include="Userimage\" />
-    <Folder Include="wwwroot\resources\" />
+    <Folder Include="wwwroot\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

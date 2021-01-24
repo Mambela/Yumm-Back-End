@@ -55,12 +55,12 @@ namespace Yumm_Back_End.Migrations
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
-            migrationBuilder.AddColumn<DateTime>(
-                name: "CreateDate",
-                table: "Items",
-                type: "datetime2",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+            //migrationBuilder.AddColumn<DateTime>(
+            //    name: "CreateDate",
+            //    table: "Items",
+            //    type: "datetime2",
+            //    nullable: false,
+            //    defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "UpdatedDate",

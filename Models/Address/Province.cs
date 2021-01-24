@@ -16,5 +16,7 @@ namespace Yumm_Back_End.Models.Address
 
         public ICollection<City> Cities { get; set; }
 
+        public ICollection<Location> Locations { get; set; }
+
     }
 }

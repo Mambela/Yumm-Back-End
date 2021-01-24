@@ -30,9 +30,15 @@ using Yumm_Back_End.Repository._AddressRepository.CommuneRepository;
 using Yumm_Back_End.Repository._AddressRepository.StreetRepository;
 using Yumm_Back_End.Repository._AddressRepository.NeighbourhoodRepository;
 using Yumm_Back_End.Repository._AddressRepository.LocationRepository;
-using Yumm_Back_End.Repository._FoodCategory;
+using Yumm_Back_End.Repository._ProductCategory;
 using Yumm_Back_End.Repository._MenuRepository;
 using Yumm_Back_End.Services;
+using Yumm_Back_End.Models.User;
+using Yumm_Back_End.Repository._ClientRepository;
+using Yumm_Back_End.Repository._AddressRepository.UserLocationRepository;
+using Yumm_Back_End.Repository._UserRepository;
+using Yumm_Back_End.Repository._MenuRepository._ProductRepository;
+using Yumm_Back_End.Repository._MenuRepository._MenuGroupRepository;
 
 namespace Yumm_Back_End
 {
@@ -67,7 +73,13 @@ namespace Yumm_Back_End
             services.AddScoped<ILocationRepository, LocationRepository>();
             services.AddScoped<IRestaurantTypeRepository, RestaurantTypeRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();   
-            services.AddScoped<IItemRepository,ItemRepository>();
+            services.AddScoped<IProductRepository,ProductRepository>();
+            services.AddScoped<IClientRepository,ClientRepository>();
+            services.AddScoped<IUserLocationRepository,UserLocationRepository>();
+            services.AddScoped<IUserRepository,UserRepository>();
+            services.AddScoped<IMenuRepository, MenuRepository>();
+            services.AddScoped<IMenuGroupRepository, MenuGroupRepository>();
+            services.AddScoped<IProductExtrasRepository, ProductExtrasRepository>();
            
 
             services.AddAutoMapper(typeof(YummMapping));

@@ -15,7 +15,7 @@ namespace Yumm_Back_End.Migrations
                 table: "Restaurants",
                 type: "int",
                 nullable: false,
-                defaultValue: 0,
+                defaultValue: 1,
                 oldClrType: typeof(int),
                 oldType: "int",
                 oldNullable: true);

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
+using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
 using Yumm_Back_End.Services;
 using Yumm_Back_End.Services.Response;
 
@@ -21,7 +22,7 @@ namespace Yumm_Back_End.Repository._MediaRepository
             _mediaResponse = mediaResponse;
             _mediaValidator = mediaValidator;
         }
-        public async Task<bool> SaveFoodImage(ItemDTORegister objectFile, string entity)
+        public async Task<bool> SaveFoodImage(CreateProductDTO objectFile, string entity)
         {
 
             Console.WriteLine(objectFile.Files.Length);
@@ -84,7 +85,7 @@ namespace Yumm_Back_End.Repository._MediaRepository
             }
         }
 
-        public Task<bool> SaveFoodImage(ItemDTORegister objectFile)
+        public Task<bool> SaveFoodImage(CreateProductDTO objectFile)
         {
             throw new NotImplementedException();
         }

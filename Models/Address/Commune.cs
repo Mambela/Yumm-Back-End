@@ -20,6 +20,8 @@ namespace Yumm_Back_End.Models.Address
 
         public ICollection<Neighbourhood> Neighbourhoods { get; set; }
 
+        public ICollection<Location> Locations { get; set; }
+
 
     }
 }
