@@ -77,11 +77,27 @@ namespace Yumm_Back_End.Controllers.Address
             if (!await _userLocRepo.CreateUserLocations(userlocation))
             {
                 ModelState.AddModelError("", $"An error occured while trying to save the user location");
-                return StatusCode(404, ModelState);
+                return StatusCode(500, ModelState);
             }
 
+            UserLocationDTO userLocationDTO = new UserLocationDTO
+            {
+                UserId = userlocation.UserId,
+                Name = userlocation.Name,
+                Unit = userlocation.Unit,
+                Description = userlocation.Description,
 
-            return StatusCode(201, userlocation);
+                LocationId = userlocation.LocationId,
+                City = userlocation.Location.City.Name,
+                Neighbourhood = userlocation.Location.Neighbourhood.Name,
+                Commune = userlocation.Location.Commune.Name,
+                Street = userlocation.Location.Street.Name,
+                Lat = userlocation.Lat,
+                Lng = userlocation.Lng
+            };
+
+
+            return StatusCode(201, userLocationDTO);
         }
 
 

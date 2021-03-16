@@ -40,7 +40,9 @@ namespace Yumm_Back_End.Repository._AddressRepository.UserLocationRepository
 
         public UsersLocations GetUserLocation(string userId, int locationId)
         {
-            return _dbContext.UsersLocations.FirstOrDefault(l => l.LocationId == locationId && l.UserId == userId);
+            return _dbContext.UsersLocations.Include(l => l.Location).Include(p => p.Location.Province)
+                .Include(c => c.Location.City).Include(m => m.Location.Commune).Include(m => m.Location.Neighbourhood).Include(m => m.Location.Street)
+                .FirstOrDefault(l => l.LocationId == locationId && l.UserId == userId);
         }
 
         public bool Save()

@@ -35,6 +35,10 @@ namespace Yumm_Back_End.Data
                    .Property(I => I.Price)
                    .HasPrecision(18, 2);
 
+            builder.Entity<Order>()
+                    .Property(P => P.Amount)
+                    .HasPrecision(18, 2);
+
 
             //Locations Builder
             builder.Entity<Location>().Property(L => L.Lat).HasPrecision(8,6);
@@ -46,6 +50,8 @@ namespace Yumm_Back_End.Data
 
             //Associating Locations To user
             builder.Entity<UsersLocations>().HasKey(x => new {x.UserId,x.LocationId});
+
+            //builder.Entity<OrdersProducts>().HasKey(x => new { x.OrderId, x.ProductId });
 
 
 
@@ -99,6 +105,12 @@ namespace Yumm_Back_End.Data
         #region Orders
 
         public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderStatus> OrderStatuses { get; set; }
+
+        public DbSet<OrdersProducts> OrdersProducts { get; set; }
+
+        public DbSet<OrderProductExtras> OrderProductExtras { get; set; }
         #endregion
 
 

@@ -9,9 +9,11 @@ using Yumm_Back_End.Models.DTOs;
 using Yumm_Back_End.Models.DTOs.AddressDTO;
 using Yumm_Back_End.Models.DTOs.AddressDTO.Location;
 using Yumm_Back_End.Models.DTOs.ClientDTO;
+using Yumm_Back_End.Models.DTOs.OrderDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO.MenuDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
+using Yumm_Back_End.Models.Orders;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Models.User;
 
@@ -81,6 +83,17 @@ namespace Yumm_Back_End.Mapper
             #endregion
 
 
+
+            #region Order Mapping
+
+            CreateMap<Order, CreateOrderDTO>().ReverseMap();
+            CreateMap<OrderStatus, OrderStatusDTO>().ReverseMap();
+            CreateMap<OrdersProducts, CreateOrderProductsDTO>().ReverseMap();
+            CreateMap<OrderProductExtras, CreateOrderProductExtrasDTO>().ReverseMap();
+            
+
+
+            #endregion
         }
     }
 }

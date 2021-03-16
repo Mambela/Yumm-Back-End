@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Yumm_Back_End.Models.Orders;
 using Yumm_Back_End.Models.User;
 
 namespace Yumm_Back_End.Models.Address
@@ -36,8 +37,10 @@ namespace Yumm_Back_End.Models.Address
 
         public virtual ICollection<UsersLocations> UsersLocations { get; set; }
 
+        public virtual ICollection<Order> Orders { get; set; }
 
-      
+
+
 
 
     }

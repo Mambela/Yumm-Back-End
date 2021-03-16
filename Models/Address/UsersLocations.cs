@@ -17,9 +17,13 @@ namespace Yumm_Back_End.Models.Address
 
         [Key,Column(Order = 0)]
         public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
+
 
         [Key, Column(Order = 1)]
         public int LocationId { get; set; }
+        public virtual Location Location { get; set; }
 
 
         /*-----------------------------------
@@ -42,12 +46,7 @@ namespace Yumm_Back_End.Models.Address
 
         public Decimal Lng { get; set; }
 
-
-        //----------------------------------
-        //Relationships
-
-        public virtual ApplicationUser User { get; set; }
-        public virtual Location Location { get; set; }
+     
 
     }
 }

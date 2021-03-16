@@ -405,6 +405,144 @@ namespace Yumm_Back_End.Migrations
                     b.ToTable("Clients");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Orders.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("PreparedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ReceivedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("isPaid")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("OrderStatusId");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Orders.OrderProductExtras", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrdersProductsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductExtrasId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrdersProductsId");
+
+                    b.HasIndex("ProductExtrasId");
+
+                    b.ToTable("OrderProductExtras");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Orders.OrderStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderStatuses");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Orders.OrdersProducts", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quatity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrdersProducts");
+                });
+
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -892,6 +1030,79 @@ namespace Yumm_Back_End.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Orders.Order", b =>
+                {
+                    b.HasOne("Yumm_Back_End.Models.Clients.Client", "Clients")
+                        .WithMany("Orders")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yumm_Back_End.Models.Address.Location", "Locations")
+                        .WithMany("Orders")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yumm_Back_End.Models.Orders.OrderStatus", "OrderStatus")
+                        .WithMany("Orders")
+                        .HasForeignKey("OrderStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yumm_Back_End.Models.Restaurants.Restaurant", "Restaurants")
+                        .WithMany("Orders")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Clients");
+
+                    b.Navigation("Locations");
+
+                    b.Navigation("OrderStatus");
+
+                    b.Navigation("Restaurants");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Orders.OrderProductExtras", b =>
+                {
+                    b.HasOne("Yumm_Back_End.Models.Orders.OrdersProducts", "OrdersProducts")
+                        .WithMany("OrderProductExtras")
+                        .HasForeignKey("OrdersProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yumm_Back_End.Models.Restaurants.ProductExtras", "ProductExtras")
+                        .WithMany("OrderProductExtras")
+                        .HasForeignKey("ProductExtrasId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrdersProducts");
+
+                    b.Navigation("ProductExtras");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Orders.OrdersProducts", b =>
+                {
+                    b.HasOne("Yumm_Back_End.Models.Orders.Order", "Order")
+                        .WithMany("OrdersProducts")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yumm_Back_End.Models.Restaurants.Product", "Product")
+                        .WithMany("OrdersProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Menu", b =>
                 {
                     b.HasOne("Yumm_Back_End.Models.Restaurants.Restaurant", "Restaurant")
@@ -988,6 +1199,8 @@ namespace Yumm_Back_End.Migrations
 
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Location", b =>
                 {
+                    b.Navigation("Orders");
+
                     b.Navigation("UsersLocations");
                 });
 
@@ -1003,6 +1216,26 @@ namespace Yumm_Back_End.Migrations
                     b.Navigation("Cities");
 
                     b.Navigation("Locations");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Clients.Client", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Orders.Order", b =>
+                {
+                    b.Navigation("OrdersProducts");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Orders.OrderStatus", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Orders.OrdersProducts", b =>
+                {
+                    b.Navigation("OrderProductExtras");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Category", b =>
@@ -1022,12 +1255,21 @@ namespace Yumm_Back_End.Migrations
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Product", b =>
                 {
+                    b.Navigation("OrdersProducts");
+
                     b.Navigation("ProductsExtras");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.ProductExtras", b =>
+                {
+                    b.Navigation("OrderProductExtras");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Restaurant", b =>
                 {
                     b.Navigation("Menu");
+
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.RestaurantType", b =>
