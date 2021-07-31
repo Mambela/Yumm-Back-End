@@ -20,7 +20,7 @@ namespace Yumm_Back_End.Controllers.Address
         private readonly ILocationRepository _locRepo;
         private readonly IMapper _mapper;
 
-        public LocationsController(ILocationRepository locRepo,IMapper mapper)
+        public LocationsController(ILocationRepository locRepo, IMapper mapper)
         {
             _mapper = mapper;
             _locRepo = locRepo;
@@ -48,7 +48,6 @@ namespace Yumm_Back_End.Controllers.Address
 
             if (!await _locRepo.CreateLocation(location))
             {
-                //ModelState.AddModelError("", $"Something went wrog when saving the Location in {location.StreetName}");
 
                 return StatusCode(500, ModelState);
             }
@@ -72,7 +71,7 @@ namespace Yumm_Back_End.Controllers.Address
                 {
                     Id = location.Id,
                     Province = location.Province.Name,
-                    City =location.City.Name,
+                    City = location.City.Name,
                     Commune = location.Commune.Name,
                     Neighbourhood = location.Neighbourhood.Name,
                     Street = location.Street.Name,
@@ -81,11 +80,7 @@ namespace Yumm_Back_End.Controllers.Address
                 };
 
                 locationDTOList.Add(locationObj);
-
             }
-
-
-            
 
             return Ok(locationDTOList);
         }
@@ -114,7 +109,7 @@ namespace Yumm_Back_End.Controllers.Address
                 Street = locationObj.Street.Name,
                 Lat = locationObj.Lat,
                 Lng = locationObj.Lng
-                
+
 
             };
 

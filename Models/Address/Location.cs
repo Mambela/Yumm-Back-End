@@ -24,7 +24,7 @@ namespace Yumm_Back_End.Models.Address
         public Commune Commune { get; set; }
 
         public int NeighbourhoodId { get; set; }
-        public Neighbourhood Neighbourhood{ get; set; }
+        public Neighbourhood Neighbourhood { get; set; }
 
         public int StreetId { get; set; }
         public Street Street { get; set; }
@@ -35,10 +35,6 @@ namespace Yumm_Back_End.Models.Address
         public Decimal Lng { get; set; }
 
         public virtual ICollection<UsersLocations> UsersLocations { get; set; }
-
-
-      
-
 
     }
 }
