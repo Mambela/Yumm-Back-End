@@ -9,14 +9,6 @@ namespace Yumm_Back_End.Models.DTOs.AddressDTO.Location
     {
         public int Id { get; set; }
 
-        public string  Province { get; set; }
-
-        public string  City { get; set; }
-
-        public string Commune { get; set; }
-
-        public string Neighbourhood { get; set; }
-
         public string Street { get; set; }
 
         public Decimal Lat { get; set; }

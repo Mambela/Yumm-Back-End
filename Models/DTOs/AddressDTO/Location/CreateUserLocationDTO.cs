@@ -33,9 +33,5 @@ namespace Yumm_Back_End.Models.DTOs.AddressDTO.Location
         //User Suggestion
         public string _StreetSetByUser { get; set; }
 
-
-
-
-
     }
 }
