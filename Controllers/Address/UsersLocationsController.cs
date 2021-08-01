@@ -119,9 +119,6 @@ namespace Yumm_Back_End.Controllers.Address
                     Description = userlocation.Description,
 
                     LocationId = location.Id,
-                    City = location.City.Name,
-                    Neighbourhood = location.Neighbourhood.Name,
-                    Commune = location.Commune.Name,
                     Street = location.Street.Name,
                     Lat = userlocation.Lat,
                     Lng = userlocation.Lng
@@ -152,9 +149,6 @@ namespace Yumm_Back_End.Controllers.Address
                 Description = userLocation.Description,
 
                 LocationId = location.Id,
-                City = location.City.Name,
-                Neighbourhood = location.Neighbourhood.Name,
-                Commune = location.Commune.Name,
                 Street = location.Street.Name,
                 Lat = userLocation.Lat,
                 Lng = userLocation.Lng
@@ -206,6 +200,6 @@ namespace Yumm_Back_End.Controllers.Address
 
             return StatusCode(204);
         }
-    
+
     }
 }

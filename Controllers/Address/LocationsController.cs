@@ -70,10 +70,6 @@ namespace Yumm_Back_End.Controllers.Address
                 LocationDTO locationObj = new LocationDTO
                 {
                     Id = location.Id,
-                    Province = location.Province.Name,
-                    City = location.City.Name,
-                    Commune = location.Commune.Name,
-                    Neighbourhood = location.Neighbourhood.Name,
                     Street = location.Street.Name,
                     Lat = location.Lat,
                     Lng = location.Lng
@@ -102,15 +98,9 @@ namespace Yumm_Back_End.Controllers.Address
             LocationDTO location = new LocationDTO
             {
                 Id = locationObj.Id,
-                Province = locationObj.Province.Name,
-                City = locationObj.City.Name,
-                Commune = locationObj.Commune.Name,
-                Neighbourhood = locationObj.Neighbourhood.Name,
                 Street = locationObj.Street.Name,
                 Lat = locationObj.Lat,
                 Lng = locationObj.Lng
-
-
             };
 
 
@@ -137,10 +127,6 @@ namespace Yumm_Back_End.Controllers.Address
                 LocationDTO locationObj = new LocationDTO
                 {
                     Id = location.Id,
-                    Province = location.Province.Name,
-                    City = location.City.Name,
-                    Commune = location.Commune.Name,
-                    Neighbourhood = location.Neighbourhood.Name,
                     Street = location.Street.Name,
                     Lat = location.Lat,
                     Lng = location.Lng

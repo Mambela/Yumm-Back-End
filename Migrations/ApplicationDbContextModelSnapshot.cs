@@ -213,10 +213,10 @@ namespace Yumm_Back_End.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("CityId")
+                    b.Property<int?>("CityId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CommuneId")
+                    b.Property<int?>("CommuneId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Lat")
@@ -227,10 +227,10 @@ namespace Yumm_Back_End.Migrations
                         .HasPrecision(9, 6)
                         .HasColumnType("decimal(9,6)");
 
-                    b.Property<int>("NeighbourhoodId")
+                    b.Property<int?>("NeighbourhoodId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProvinceId")
+                    b.Property<int?>("ProvinceId")
                         .HasColumnType("int");
 
                     b.Property<int>("StreetId")
@@ -403,6 +403,39 @@ namespace Yumm_Back_End.Migrations
                         .IsUnique();
 
                     b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Orders.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PreparedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<DateTime>("TakenOderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("isPaid")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Category", b =>
@@ -799,43 +832,27 @@ namespace Yumm_Back_End.Migrations
 
             modelBuilder.Entity("Yumm_Back_End.Models.Address.Location", b =>
                 {
-                    b.HasOne("Yumm_Back_End.Models.Address.City", "City")
+                    b.HasOne("Yumm_Back_End.Models.Address.City", null)
                         .WithMany("Locations")
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CityId");
 
-                    b.HasOne("Yumm_Back_End.Models.Address.Commune", "Commune")
+                    b.HasOne("Yumm_Back_End.Models.Address.Commune", null)
                         .WithMany("Locations")
-                        .HasForeignKey("CommuneId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CommuneId");
 
-                    b.HasOne("Yumm_Back_End.Models.Address.Neighbourhood", "Neighbourhood")
+                    b.HasOne("Yumm_Back_End.Models.Address.Neighbourhood", null)
                         .WithMany("Locations")
-                        .HasForeignKey("NeighbourhoodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NeighbourhoodId");
 
-                    b.HasOne("Yumm_Back_End.Models.Address.Province", "Province")
+                    b.HasOne("Yumm_Back_End.Models.Address.Province", null)
                         .WithMany("Locations")
-                        .HasForeignKey("ProvinceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProvinceId");
 
                     b.HasOne("Yumm_Back_End.Models.Address.Street", "Street")
                         .WithMany()
                         .HasForeignKey("StreetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("City");
-
-                    b.Navigation("Commune");
-
-                    b.Navigation("Neighbourhood");
-
-                    b.Navigation("Province");
 
                     b.Navigation("Street");
                 });

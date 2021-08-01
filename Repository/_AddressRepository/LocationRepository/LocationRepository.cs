@@ -38,43 +38,27 @@ namespace Yumm_Back_End.Repository._AddressRepository.LocationRepository
 
         public Location GetLocation(int locationId)
         {
-            return _dbContext.Locations.Include(p => p.Province)
-                    .Include(c => c.City)
-                    .Include(n => n.Neighbourhood)
-                    .Include(c => c.Commune)
-                    .Include(n => n.Neighbourhood)
-                    .Include(s => s.Street)
+            return _dbContext.Locations.Include(s => s.Street)
                    .FirstOrDefault(l => l.Id == locationId);
         }
 
         public ICollection<Location> GetLocations()
         {
-            return _dbContext.Locations.Include(p =>p.Province)
-                .Include(c =>c.City)
-                .Include(n=>n.Neighbourhood)
-                .Include(c =>c.Commune)
-                .Include(n => n.Neighbourhood)
-                .Include(s =>s.Street)
+            return _dbContext.Locations.Include(s => s.Street)
                 .ToList();
         }
 
-
-
         public ICollection<Location> GetLocationsInNeighbourhood(int hoodId)
         {
-            
-            return _dbContext.Locations.Include(p => p.Province)
-                .Include(c => c.City)
-                .Include(c => c.Commune)
-                .Include(n => n.Neighbourhood).Where(n => n.NeighbourhoodId == hoodId)
+
+            return _dbContext.Locations.Include(n => n.Street.Neighbourhoods).Where(n => n.Street.NeighbourhoodId == hoodId)
                 .Include(s => s.Street)
                 .ToList();
-
         }
 
         public bool LocationExists(Location location)
         {
-            return _dbContext.Locations.Any(l =>l.Lat == location.Lat && l.Lng ==l.Lng);
+            return _dbContext.Locations.Any(l => l.Lat == location.Lat && l.Lng == location.Lng && l.StreetId == location.StreetId);
         }
 
         public Location UserCheckLocationExist(Location location)
@@ -87,7 +71,7 @@ namespace Yumm_Back_End.Repository._AddressRepository.LocationRepository
             return _dbContext.Locations.Any(l => l.Id == locationId);
         }
 
-        
+
         public bool Save()
         {
             return _dbContext.SaveChanges() >= 0;
