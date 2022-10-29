@@ -41,7 +41,9 @@ namespace Yumm_Back_End.Controllers.Authentication
                 return StatusCode(500,ModelState);
             }
 
-
+            /*--------------------------------
+             * REGISER A USER 
+             --------------------------------*/
 
             if (!await _authRepo.RegisterRestaurantAsync(model.Email, model.Password, model.PhoneNumber, model.Name, model.Description,model.RestaurantTypeId))
             {
@@ -49,6 +51,12 @@ namespace Yumm_Back_End.Controllers.Authentication
 
                 return StatusCode(500, ModelState);
             }
+
+
+            /*--------------------------------
+             * VERIFY USER EMAIL 
+             --------------------------------*/
+
 
 
 
@@ -59,12 +67,36 @@ namespace Yumm_Back_End.Controllers.Authentication
         [HttpPost]
         [Route("Restaurant/Login")]
 
-        public async Task<IActionResult> ActionResult([FromBody] AuthModel model)
+        public async Task<IActionResult> RestaurantLogin([FromBody] AuthModel model)
         {
 
-            var authResult = await _authRepo.AuthenticateRestaurant(model.Password,model.UserName, null);
+            var authUser = await _authRepo.AuthenticateRestaurant(model.Password,model.UserName, null);
 
-            return Ok(authResult);
+            if (authUser == null)
+            {
+                return BadRequest("User not found. ");
+            }
+
+            if (!authUser.EmailVerified && !authUser.PhoneVerified)
+            {
+                return BadRequest("User not verified");
+            }
+
+
+
+            return Ok(authUser);
+        }
+
+
+        [HttpPost]
+        [Route("Restaurant/Verify")]
+
+        public async Task<IActionResult> VerifyRestaurant(string token)
+        {
+ 
+
+
+            return Ok();
         }
         #endregion
 

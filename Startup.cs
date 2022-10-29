@@ -57,7 +57,7 @@ namespace Yumm_Back_End
             services.AddCors();
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(Configuration.GetConnectionString("SIT_ENV"));
             });
 
 

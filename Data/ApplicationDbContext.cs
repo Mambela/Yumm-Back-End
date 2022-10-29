@@ -36,16 +36,16 @@ namespace Yumm_Back_End.Data
                    .HasPrecision(18, 2);
 
 
-            //Locations Builder
-            builder.Entity<Location>().Property(L => L.Lat).HasPrecision(8,6);
-            builder.Entity<Location>().Property(L => L.Lng).HasPrecision(9,6);
+            ////Locations Builder
+            //builder.Entity<Location>().Property(L => L.Lat).HasPrecision(8,6);
+            //builder.Entity<Location>().Property(L => L.Lng).HasPrecision(9,6);
 
-            builder.Entity<UsersLocations>().Property(L => L.Lat).HasPrecision(8, 6);
-            builder.Entity<UsersLocations>().Property(L => L.Lng).HasPrecision(9, 6);
+            //builder.Entity<UsersLocations>().Property(L => L.Lat).HasPrecision(8, 6);
+            //builder.Entity<UsersLocations>().Property(L => L.Lng).HasPrecision(9, 6);
 
 
-            //Associating Locations To user
-            builder.Entity<UsersLocations>().HasKey(x => new {x.UserId,x.LocationId});
+            ////Associating Locations To user
+            //  builder.Entity<UsersLocations>().HasKey(x => new {x.UserId,x.LocationId});
 
 
 
@@ -69,7 +69,7 @@ namespace Yumm_Back_End.Data
 
         public DbSet<RestaurantType> RestaurantTypes { get; set; }
 
-        public DbSet<Menu> Menus { get; set; }
+       public DbSet<Menu> Menus { get; set; }
 
         public DbSet<MenuGroup> MenuGroups { get; set; }
 
@@ -79,26 +79,26 @@ namespace Yumm_Back_End.Data
 
         #region Address Entities
 
-        public DbSet<Province> Provinces { get; set; }
-        public DbSet<City> Cities { get; set; }
+        //public DbSet<Province> Provinces { get; set; }
+        //public DbSet<City> Cities { get; set; }
 
-        public DbSet<Commune> Communes { get; set; }
+        //public DbSet<Commune> Communes { get; set; }
 
-        public DbSet<Neighbourhood> Neighbourhoods { get; set; }
+        //public DbSet<Neighbourhood> Neighbourhoods { get; set; }
 
-        public DbSet<Street> Streets { get; set; }
+        //public DbSet<Street> Streets { get; set; }
 
-        public DbSet<Location> Locations { get; set; }
+        //public DbSet<Location> Locations { get; set; }
 
-        public DbSet<UsersLocations> UsersLocations { get; set; }
+        //public DbSet<UsersLocations> UsersLocations { get; set; }
         #endregion
 
-
+        
         //Seed SUPER ADMIN
 
         #region Orders
 
-        public DbSet<Order> Orders { get; set; }
+        //public DbSet<Order> Orders { get; set; }
         #endregion
 
 

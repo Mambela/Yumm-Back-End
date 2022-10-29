@@ -33,11 +33,11 @@ namespace Yumm_Back_End.Repository._Auth
         public IConfiguration _configuration;
         public IRestaurantRepository _restaurantRepo;
         public IClientRepository _clientRepo;
- 
 
-       
-        public AuthenticationRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, 
-            IConfiguration configuration, IRestaurantRepository restaurantRepo, ApplicationDbContext dbContext, IOptions<AppSettings> appSettings,IClientRepository clientRepository)
+
+
+        public AuthenticationRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
+            IConfiguration configuration, IRestaurantRepository restaurantRepo, ApplicationDbContext dbContext, IOptions<AppSettings> appSettings, IClientRepository clientRepository)
         {
 
             _userManager = userManager;
@@ -47,153 +47,8 @@ namespace Yumm_Back_End.Repository._Auth
             _restaurantRepo = restaurantRepo;
             _clientRepo = clientRepository;
             _appSettings = appSettings.Value;
-            
-
-        }
-
-        #region Authentication 
-        #region Restaurant
-        public async Task<AuthenticatedUser> AuthenticateRestaurant(string password,string email = null, string phoneNumber = null)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            string currentRole="";
-
-            if (user != null && await _userManager.CheckPasswordAsync(user,password))
-            {
-                //Inside here it means that the user has been found!!!!
 
 
-                //fetch the Data of the Restaurant
-                Restaurant restaurant = _dbContext.Restaurants.Single(r => r.UserId ==user.Id);
-
-                Console.WriteLine("\n\n Restaurant Name "+restaurant.Name);
-                
-                // fetch all the roles associate to this user
-                var userRoles = await _userManager.GetRolesAsync(user);
-
-
-                //the claims that will be added to the token when it gets created
-                var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.UserName)
-                };
-
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                    currentRole = userRole;
-                    
-                }
-
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-
-
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(authClaims),
-                    Expires = DateTime.UtcNow.AddDays(7),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-
-
-                //return the Restaurant data to the user
-                AuthenticatedUser authUser = new AuthenticatedUser {
-                    Id = restaurant.Id,
-                    Name = restaurant.Name,
-                    Token = tokenHandler.WriteToken(token),
-                    role = currentRole
-
-                };
-
-
-                Console.WriteLine(userRoles);
-
-                return authUser;
-            }
-
-
-            return null;
-
-            
-        }
-        #endregion
-
-        #region Client
-        public async Task<AuthenticatedUser> AuthenticatedClient(string password, string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            string currentRole = null;
-            if (user != null && await _userManager.CheckPasswordAsync(user, password))
-            {
-                //INside here it means that the user is found 
-
-
-                //fetch the data required
-
-                Client client = _dbContext.Clients.Single(c => c.UserId == user.Id);
-
-
-                var userRoles = await _userManager.GetRolesAsync(user);
-
-                var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name,user.UserName)
-                };
-
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                    currentRole = userRole;
-                }
-
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(authClaims),
-                    Expires = DateTime.UtcNow.AddDays(7),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-
-                AuthenticatedUser authUser = new AuthenticatedUser
-                {
-                    Id = client.Id,
-                    Name = client.FirstName,
-                    Surname = client.LastName
-                    ,
-                    Token = tokenHandler.WriteToken(token),
-                    role = currentRole
-
-                };
-
-                return authUser;
-            }
-
-            return null;
-        }
-
-        #endregion
-
-        #region Drivers
-        #endregion
-
-        #region Support Team
-        #endregion
-
-        #endregion
-
-        #region Registration 
-        public bool RegisterClient()
-        {
-            throw new NotImplementedException();
         }
 
         public bool RegisterDriver()
@@ -201,46 +56,29 @@ namespace Yumm_Back_End.Repository._Auth
             throw new NotImplementedException();
         }
 
-        
-
-        public async Task<bool> RegisterRestaurantAsync(string Email, string password, string phoneNumber, string name, string Description, int RestaurantId)
+        public bool RegisterClient()
         {
+            throw new NotImplementedException();
+        }
 
-            ApplicationUser user = new ApplicationUser
-            {
-                Email = Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = Email,
-                PhoneNumber = phoneNumber
+        public Task<bool> RegisterRestaurantAsync(string Email, string password, string phoneNumber, string name, string Description, int RestaurantId)
+        {
+            throw new NotImplementedException();
+        }
 
-            };
+        public Task<AuthenticatedUser> AuthenticateRestaurant(string password, string email = null, string phoneNumber = null)
+        {
+            throw new NotImplementedException();
+        }
 
-            var result = await _userManager.CreateAsync(user, password);
+        public Task<AuthenticatedUser> AuthenticatedClient(string password, string email)
+        {
+            throw new NotImplementedException();
+        }
 
-            if (!result.Succeeded)
-                return false;
-
-            if (!await _roleManager.RoleExistsAsync(UserRoles.ADMIN))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.ADMIN));
-
-            if (await _roleManager.RoleExistsAsync(UserRoles.ADMIN))
-            {
-                await _userManager.AddToRoleAsync(user, UserRoles.ADMIN);
-            }
-
-            Restaurant restaurant = new Restaurant 
-            {
-                Name = name,
-                Description = Description,
-                UserId = user.Id,
-                RestaurantTypeId = RestaurantId
-            };
-
-
-            Console.WriteLine("Last inserted user" + user.Id);
-
-            return await _restaurantRepo.CreateRestaurant(restaurant);
-
+        public Task<bool> RegisterClientAsync(RegisterClientModel clientModel)
+        {
+            throw new NotImplementedException();
         }
 
         public bool RegisterSupportTeam()
@@ -248,43 +86,244 @@ namespace Yumm_Back_End.Repository._Auth
             throw new NotImplementedException();
         }
 
-        public async Task<bool> RegisterClientAsync(RegisterClientModel model)
-        {
-            ApplicationUser user = new ApplicationUser
-            {
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Email,
-                PhoneNumber = model.PhoneNumber
-            };
+        #region Authentication 
+        //#region Restaurant
+        //public async Task<AuthenticatedUser> AuthenticateRestaurant(string password,string email = null, string phoneNumber = null)
+        //{
+        //    var user = await _userManager.FindByEmailAsync(email);
+        //    string currentRole="";
 
-            var clientResult = await _userManager.CreateAsync(user, model.Password);
 
-            if (!clientResult.Succeeded)
-                return false;
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.CLIENT))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.CLIENT));
+        //    if (user != null && await _userManager.CheckPasswordAsync(user,password))
+        //    {
+        //        //Inside here it means that the user has been found!!!!
 
-            if (await _roleManager.RoleExistsAsync(UserRoles.CLIENT))
-            {
-                await _userManager.AddToRoleAsync(user, UserRoles.CLIENT);
-            }
 
-            Client client = new Client
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Gender = model.Gender,
-                UserId = user.Id
-            };
+        //        //fetch the Data of the Restaurant
+        //        Restaurant restaurant = _dbContext.Restaurants.Single(r => r.UserId ==user.Id);
 
-            return await _clientRepo.CreateClient(client);
+        //        Console.WriteLine("\n\n Restaurant Name "+restaurant.Name);
 
-           
-        }
+        //        // fetch all the roles associate to this user
+        //        var userRoles = await _userManager.GetRolesAsync(user);
 
-       
+
+        //        //the claims that will be added to the token when it gets created
+        //        var authClaims = new List<Claim>
+        //        {
+        //            new Claim(ClaimTypes.Name, user.UserName)
+        //        };
+
+        //        foreach (var userRole in userRoles)
+        //        {
+        //            authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+        //            currentRole = userRole;
+
+        //        }
+
+
+        //        var tokenHandler = new JwtSecurityTokenHandler();
+        //        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+
+
+        //        var tokenDescriptor = new SecurityTokenDescriptor
+        //        {
+        //            Subject = new ClaimsIdentity(authClaims),
+        //            Expires = DateTime.UtcNow.AddDays(7),
+        //            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        //        };
+
+        //        var token = tokenHandler.CreateToken(tokenDescriptor);
+
+
+        //        //return the Restaurant data to the user
+        //        AuthenticatedUser authUser = new AuthenticatedUser {
+        //            Id = restaurant.Id,
+        //            Name = restaurant.Name,
+        //            Token = tokenHandler.WriteToken(token),
+        //            role = currentRole,
+        //            EmailVerified = user.EmailConfirmed,
+        //            PhoneVerified = user.PhoneNumberConfirmed
+
+        //        };
+
+
+        //        Console.WriteLine(userRoles);
+
+        //        return authUser;
+        //    }
+
+
+        //    return null;
+
+
+        //}
+        //#endregion
+
+        //#region Client
+        //public async Task<AuthenticatedUser> AuthenticatedClient(string password, string email)
+        //{
+        //    var user = await _userManager.FindByEmailAsync(email);
+        //    string currentRole = null;
+        //    if (user != null && await _userManager.CheckPasswordAsync(user, password))
+        //    {
+        //        //INside here it means that the user is found 
+
+
+        //        //fetch the data required
+
+        //        Client client = _dbContext.Clients.Single(c => c.UserId == user.Id);
+
+
+        //        var userRoles = await _userManager.GetRolesAsync(user);
+
+        //        var authClaims = new List<Claim>
+        //        {
+        //            new Claim(ClaimTypes.Name,user.UserName)
+        //        };
+
+        //        foreach (var userRole in userRoles)
+        //        {
+        //            authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+        //            currentRole = userRole;
+        //        }
+
+
+        //        var tokenHandler = new JwtSecurityTokenHandler();
+        //        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+
+        //        var tokenDescriptor = new SecurityTokenDescriptor
+        //        {
+        //            Subject = new ClaimsIdentity(authClaims),
+        //            Expires = DateTime.UtcNow.AddDays(7),
+        //            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        //        };
+
+        //        var token = tokenHandler.CreateToken(tokenDescriptor);
+
+        //        AuthenticatedUser authUser = new AuthenticatedUser
+        //        {
+        //            Id = client.Id,
+        //            Name = client.FirstName,
+        //            Surname = client.LastName
+        //            ,
+        //            Token = tokenHandler.WriteToken(token),
+        //            role = currentRole
+
+        //        };
+
+        //        return authUser;
+        //    }
+
+        //    return null;
+        //}
+
+        //#endregion
+
+        //#region Drivers
+        //#endregion
+
+        //#region Support Team
+        //#endregion
+
+        //#endregion
+
+        //#region Registration 
+        //public bool RegisterClient()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public bool RegisterDriver()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+
+
+        //public async Task<bool> RegisterRestaurantAsync(string Email, string password, string phoneNumber, string name, string Description, int RestaurantId)
+        //{
+
+        //    ApplicationUser user = new ApplicationUser
+        //    {
+        //        Email = Email,
+        //        SecurityStamp = Guid.NewGuid().ToString(),
+        //        UserName = Email,
+        //        PhoneNumber = phoneNumber
+
+        //    };
+
+        //    var result = await _userManager.CreateAsync(user, password);
+
+        //    if (!result.Succeeded)
+        //        return false;
+
+        //    if (!await _roleManager.RoleExistsAsync(UserRoles.RESTAURANT))
+        //        await _roleManager.CreateAsync(new IdentityRole(UserRoles.RESTAURANT));
+
+        //    if (await _roleManager.RoleExistsAsync(UserRoles.RESTAURANT))
+        //    {
+        //        await _userManager.AddToRoleAsync(user, UserRoles.RESTAURANT);
+        //    }
+
+        //    Restaurant restaurant = new Restaurant 
+        //    {
+        //        Name = name,
+        //        Description = Description,
+        //        UserId = user.Id,
+        //        RestaurantTypeId = RestaurantId
+        //    };
+
+
+        //    Console.WriteLine("Last inserted user" + user.Id);
+
+        //    return await _restaurantRepo.CreateRestaurant(restaurant);
+
+        //}
+
+        //public bool RegisterSupportTeam()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public async Task<bool> RegisterClientAsync(RegisterClientModel model)
+        //{
+        //    ApplicationUser user = new ApplicationUser
+        //    {
+        //        Email = model.Email,
+        //        SecurityStamp = Guid.NewGuid().ToString(),
+        //        UserName = model.Email,
+        //        PhoneNumber = model.PhoneNumber
+        //    };
+
+        //    var clientResult = await _userManager.CreateAsync(user, model.Password);
+
+        //    if (!clientResult.Succeeded)
+        //        return false;
+
+        //    if (!await _roleManager.RoleExistsAsync(UserRoles.CLIENT))
+        //        await _roleManager.CreateAsync(new IdentityRole(UserRoles.CLIENT));
+
+        //    if (await _roleManager.RoleExistsAsync(UserRoles.CLIENT))
+        //    {
+        //        await _userManager.AddToRoleAsync(user, UserRoles.CLIENT);
+        //    }
+
+        //    Client client = new Client
+        //    {
+        //        FirstName = model.FirstName,
+        //        LastName = model.LastName,
+        //        Gender = model.Gender,
+        //        UserId = user.Id
+        //    };
+
+        //    return await _clientRepo.CreateClient(client);
+
+
+        //}
+
+
         #endregion
 
 

@@ -16,63 +16,109 @@ namespace Yumm_Back_End.Repository._AddressRepository.NeighbourhoodRepository
         {
             _dbContext = dbContext;
         }
-        public async Task<bool> CreateNeighbourhood(Neighbourhood neighbourhood)
+
+        public Task<bool> CreateNeighbourhood(Neighbourhood neighbourhood)
         {
-            await _dbContext.AddAsync(neighbourhood);
-
-            return Save();
+            throw new NotImplementedException();
         }
-        public bool UpdateNeighbourhood(Neighbourhood neighbourhood)
-        {
 
-            _dbContext.Neighbourhoods.Update(neighbourhood);
-
-            return Save();
-        }
         public bool DeleteNeighbourhood(Neighbourhood neighbourhood)
         {
-            _dbContext.Neighbourhoods.Remove(neighbourhood);
-
-            return Save();
+            throw new NotImplementedException();
         }
 
         public Neighbourhood GetNeighbourhood(int neighbourhoodId)
         {
-
-            return _dbContext.Neighbourhoods.FirstOrDefault(n => n.Id == neighbourhoodId);
+            throw new NotImplementedException();
         }
 
         public ICollection<Neighbourhood> GetNeighbourhoods()
         {
-            return _dbContext.Neighbourhoods.OrderBy(n => n.Name).ToList();
+            throw new NotImplementedException();
         }
 
         public ICollection<Neighbourhood> GetNeighbourhoodsInCommune(int communeId)
         {
-            return _dbContext.Neighbourhoods.Include(n => n.Commune).Where(n => n.CommuneId == communeId).ToList();   
+            throw new NotImplementedException();
         }
 
         public bool NeighbourhoodExists(string name)
         {
-            var value = _dbContext.Neighbourhoods.Any(n => n.Name == name);
-
-            return value;
+            throw new NotImplementedException();
         }
 
         public bool NeighbourhoodExists(int neighbourhoodId)
         {
-
-            var value = _dbContext.Neighbourhoods.Any(n => n.Id == neighbourhoodId);
-
-            return value;
-            
+            throw new NotImplementedException();
         }
 
         public bool Save()
         {
-            return _dbContext.SaveChanges() >= 0;
+            throw new NotImplementedException();
         }
 
-       
+        public bool UpdateNeighbourhood(Neighbourhood neighbourhood)
+        {
+            throw new NotImplementedException();
+        }
+        //public async Task<bool> CreateNeighbourhood(Neighbourhood neighbourhood)
+        //{
+        //    await _dbContext.AddAsync(neighbourhood);
+
+        //    return Save();
+        //}
+
+        //public bool UpdateNeighbourhood(Neighbourhood neighbourhood)
+        //{
+
+        //    _dbContext.Neighbourhoods.Update(neighbourhood);
+
+        //    return Save();
+        //}
+        //public bool DeleteNeighbourhood(Neighbourhood neighbourhood)
+        //{
+        //    _dbContext.Neighbourhoods.Remove(neighbourhood);
+
+        //    return Save();
+        //}
+
+        //public Neighbourhood GetNeighbourhood(int neighbourhoodId)
+        //{
+
+        //    return _dbContext.Neighbourhoods.FirstOrDefault(n => n.Id == neighbourhoodId);
+        //}
+
+        //public ICollection<Neighbourhood> GetNeighbourhoods()
+        //{
+        //    return _dbContext.Neighbourhoods.OrderBy(n => n.Name).ToList();
+        //}
+
+        //public ICollection<Neighbourhood> GetNeighbourhoodsInCommune(int communeId)
+        //{
+        //    return _dbContext.Neighbourhoods.Include(n => n.Commune).Where(n => n.CommuneId == communeId).ToList();   
+        //}
+
+        //public bool NeighbourhoodExists(string name)
+        //{
+        //    var value = _dbContext.Neighbourhoods.Any(n => n.Name == name);
+
+        //    return value;
+        //}
+
+        //public bool NeighbourhoodExists(int neighbourhoodId)
+        //{
+
+        //    var value = _dbContext.Neighbourhoods.Any(n => n.Id == neighbourhoodId);
+
+        //    return value;
+
+        //}
+
+        //public bool Save()
+        //{
+        //    return _dbContext.SaveChanges() >= 0;
+        //}
+
+
     }
 }

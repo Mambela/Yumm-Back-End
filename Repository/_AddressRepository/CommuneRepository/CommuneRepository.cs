@@ -17,64 +17,109 @@ namespace Yumm_Back_End.Repository._AddressRepository.CommuneRepository
         {
             _dbContext = dbContext;
         }
+
         public bool CommuneExists(string name)
         {
-            var value = _dbContext.Communes.Any(c => c.Name == name);
-
-            return value;
+            throw new NotImplementedException();
         }
 
         public bool CommuneExists(int communeId)
         {
-
-            var value = _dbContext.Communes.Any(c => c.Id == communeId);
-
-            return value;
+            throw new NotImplementedException();
         }
 
-        public async Task<bool> CreateCommune(Commune commune)
+        public Task<bool> CreateCommune(Commune commune)
         {
-            await _dbContext.Communes.AddAsync(commune);
-
-            return Save();
+            throw new NotImplementedException();
         }
 
         public bool DeleteCommune(Commune commune)
         {
-            _dbContext.Communes.Remove(commune);
-
-            return Save();
+            throw new NotImplementedException();
         }
 
         public Commune GetCommune(int communeId)
         {
-            return _dbContext.Communes.FirstOrDefault(c => c.Id == communeId);
+            throw new NotImplementedException();
         }
 
         public ICollection<Commune> GetCommunes()
         {
-            return _dbContext.Communes.OrderBy(c => c.Name).ToList();
+            throw new NotImplementedException();
         }
 
-        public ICollection<Commune> GetCommunesInCity(int cityId)
+        public ICollection<Commune> GetCommunesInCity(int communeId)
         {
-
-            return _dbContext.Communes.Include(c => c.City).Where(c => c.CityId == cityId).ToList();
-        
+            throw new NotImplementedException();
         }
 
         public bool Save()
         {
-            return _dbContext.SaveChanges() >= 0;   
+            throw new NotImplementedException();
         }
 
         public bool UpdateCommune(Commune commune)
         {
-
-            _dbContext.Communes.Update(commune);
-
-            return Save();
-            
+            throw new NotImplementedException();
         }
+        //public bool CommuneExists(string name)
+        //{
+        //    var value = _dbContext.Communes.Any(c => c.Name == name);
+
+        //    return value;
+        //}
+
+        //public bool CommuneExists(int communeId)
+        //{
+
+        //    var value = _dbContext.Communes.Any(c => c.Id == communeId);
+
+        //    return value;
+        //}
+
+        //public async Task<bool> CreateCommune(Commune commune)
+        //{
+        //    await _dbContext.Communes.AddAsync(commune);
+
+        //    return Save();
+        //}
+
+        //public bool DeleteCommune(Commune commune)
+        //{
+        //    _dbContext.Communes.Remove(commune);
+
+        //    return Save();
+        //}
+
+        //public Commune GetCommune(int communeId)
+        //{
+        //    return _dbContext.Communes.FirstOrDefault(c => c.Id == communeId);
+        //}
+
+        //public ICollection<Commune> GetCommunes()
+        //{
+        //    return _dbContext.Communes.OrderBy(c => c.Name).ToList();
+        //}
+
+        //public ICollection<Commune> GetCommunesInCity(int cityId)
+        //{
+
+        //    return _dbContext.Communes.Include(c => c.City).Where(c => c.CityId == cityId).ToList();
+
+        //}
+
+        //public bool Save()
+        //{
+        //    return _dbContext.SaveChanges() >= 0;   
+        //}
+
+        //public bool UpdateCommune(Commune commune)
+        //{
+
+        //    _dbContext.Communes.Update(commune);
+
+        //    return Save();
+
+        //}
     }
 }

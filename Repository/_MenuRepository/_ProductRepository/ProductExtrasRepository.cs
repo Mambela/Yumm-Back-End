@@ -17,58 +17,103 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
             _dbContext = dbContext;
         }
 
-        public async Task<bool> CreateProductExtras(ProductExtras productExtras)
+        public Task<bool> CreateProductExtras(ProductExtras productExtras)
         {
-
-           await _dbContext.ProductsExtras.AddAsync(productExtras);
-
-            return Save();
+            throw new NotImplementedException();
         }
 
         public bool DeleteProductExtra(ProductExtras productExtras)
         {
-            _dbContext.ProductsExtras.Remove(productExtras);
-
-            return Save();
+            throw new NotImplementedException();
         }
 
         public ProductExtras GetProductExtra(int productExtraId)
         {
-            return _dbContext.ProductsExtras.FirstOrDefault(p => p.Id == productExtraId);
+            throw new NotImplementedException();
         }
 
         public ICollection<ProductExtras> GetProductExtras()
         {
-            return _dbContext.ProductsExtras.ToList();
+            throw new NotImplementedException();
         }
 
         public ICollection<ProductExtras> GetProductExtras(int productId)
         {
-            return _dbContext.ProductsExtras.Where(e => e.ProductId == productId).ToList();
-        }
-
-        public bool UpdateProductExtra(ProductExtras productExtras)
-        {
-
-            _dbContext.ProductsExtras.Update(productExtras);
-
-            return Save();
-
-        }
-
-        public bool Save()
-        {
-            return _dbContext.SaveChanges() >= 0;
+            throw new NotImplementedException();
         }
 
         public bool ProductExtrasExist(int productExtraId)
         {
-            return _dbContext.ProductsExtras.Any(p => p.Id == productExtraId);
+            throw new NotImplementedException();
         }
 
         public bool ProductExtrasExist(string productExtra)
         {
-           return _dbContext.ProductsExtras.Any(p => p.Name.Trim().ToLower() == productExtra.Trim().ToLower());
+            throw new NotImplementedException();
         }
+
+        public bool Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UpdateProductExtra(ProductExtras productExtras)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public async Task<bool> CreateProductExtras(ProductExtras productExtras)
+        //{
+
+        //   await _dbContext.ProductsExtras.AddAsync(productExtras);
+
+        //    return Save();
+        //}
+
+        //public bool DeleteProductExtra(ProductExtras productExtras)
+        //{
+        //    _dbContext.ProductsExtras.Remove(productExtras);
+
+        //    return Save();
+        //}
+
+        //public ProductExtras GetProductExtra(int productExtraId)
+        //{
+        //    return _dbContext.ProductsExtras.FirstOrDefault(p => p.Id == productExtraId);
+        //}
+
+        //public ICollection<ProductExtras> GetProductExtras()
+        //{
+        //    return _dbContext.ProductsExtras.ToList();
+        //}
+
+        //public ICollection<ProductExtras> GetProductExtras(int productId)
+        //{
+        //    return _dbContext.ProductsExtras.Where(e => e.ProductId == productId).ToList();
+        //}
+
+        //public bool UpdateProductExtra(ProductExtras productExtras)
+        //{
+
+        //    _dbContext.ProductsExtras.Update(productExtras);
+
+        //    return Save();
+
+        //}
+
+        //public bool Save()
+        //{
+        //    return _dbContext.SaveChanges() >= 0;
+        //}
+
+        //public bool ProductExtrasExist(int productExtraId)
+        //{
+        //    return _dbContext.ProductsExtras.Any(p => p.Id == productExtraId);
+        //}
+
+        //public bool ProductExtrasExist(string productExtra)
+        //{
+        //   return _dbContext.ProductsExtras.Any(p => p.Name.Trim().ToLower() == productExtra.Trim().ToLower());
+        //}
     }
 }

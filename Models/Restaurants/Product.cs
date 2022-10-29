@@ -23,16 +23,16 @@ namespace Yumm_Back_End.Models.Restaurants
         [StringLength(500)]
         public string Description { get; set; }
 
-        public int categoryId { get; set; }
-        public Category category { get; set; }
+        //public int categoryId { get; set; }
+        //public Category category { get; set; }
 
         public int Duration { get; set; }
 
         [MaxLength(255)]
         public string ImagePath { get; set; }
 
-        public int MenuGroupId { get; set; }
-        public MenuGroup MenuGroup { get; set; }
+        //public int MenuGroupId { get; set; }
+        //public MenuGroup MenuGroup { get; set; }
 
 
         public ICollection<ProductExtras> ProductsExtras { get; set; }

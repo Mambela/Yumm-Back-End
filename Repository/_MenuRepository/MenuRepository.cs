@@ -12,58 +12,98 @@ namespace Yumm_Back_End.Repository._MenuRepository
     {
         private readonly ApplicationDbContext _dbContext;
 
-        public MenuRepository(ApplicationDbContext dbContext)
+        public Task<bool> CreateRestaurantMenu(Menu Menu)
         {
-            _dbContext = dbContext;
-        }
-
-        public async Task<bool> CreateRestaurantMenu(Menu Menu)
-        {
-
-            await _dbContext.Menus.AddAsync(Menu);
-
-            return Save();
-            
+            throw new NotImplementedException();
         }
 
         public bool DeleteMenu(Menu menu)
         {
-            _dbContext.Menus.Remove(menu);
-
-            return Save();
-        }
-
-        public ICollection<Menu> GetMenus()
-        {
-            return _dbContext.Menus.Include(m =>m.Restaurant).ToList();
+            throw new NotImplementedException();
         }
 
         public Menu GetMenu(int MenuId)
         {
-            return _dbContext.Menus.Include(m=>m.Restaurant).First(m => m.Id == MenuId);
+            throw new NotImplementedException();
+        }
+
+        public ICollection<Menu> GetMenus()
+        {
+            throw new NotImplementedException();
         }
 
         public ICollection<Menu> GetRestaurantMenus(int restaurantId)
         {
-            return _dbContext.Menus.Include(r =>r.Restaurant).Where(r => r.RestaurantId == restaurantId).ToList();
-        }
-
-        public bool Save()
-        {
-            return _dbContext.SaveChanges() >= 0;
-        }
-
-        public bool UpdateMenu(Menu menu)
-        {
-
-            _dbContext.Menus.Update(menu);
-            
-            return Save();
+            throw new NotImplementedException();
         }
 
         public bool MenuExists(int menuId)
         {
-            return _dbContext.Menus.Any(m => m.Id == menuId);
+            throw new NotImplementedException();
         }
+
+        public bool Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UpdateMenu(Menu menu)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public MenuRepository(ApplicationDbContext dbContext)
+        //{
+        //    _dbContext = dbContext;
+        //}
+
+        //public async Task<bool> CreateRestaurantMenu(Menu Menu)
+        //{
+
+        //    await _dbContext.Menus.AddAsync(Menu);
+
+        //    return Save();
+
+        //}
+
+        //public bool DeleteMenu(Menu menu)
+        //{
+        //    _dbContext.Menus.Remove(menu);
+
+        //    return Save();
+        //}
+
+        //public ICollection<Menu> GetMenus()
+        //{
+        //    return _dbContext.Menus.Include(m =>m.Restaurant).ToList();
+        //}
+
+        //public Menu GetMenu(int MenuId)
+        //{
+        //    return _dbContext.Menus.Include(m=>m.Restaurant).First(m => m.Id == MenuId);
+        //}
+
+        //public ICollection<Menu> GetRestaurantMenus(int restaurantId)
+        //{
+        //    return _dbContext.Menus.Include(r =>r.Restaurant).Where(r => r.RestaurantId == restaurantId).ToList();
+        //}
+
+        //public bool Save()
+        //{
+        //    return _dbContext.SaveChanges() >= 0;
+        //}
+
+        //public bool UpdateMenu(Menu menu)
+        //{
+
+        //    _dbContext.Menus.Update(menu);
+
+        //    return Save();
+        //}
+
+        //public bool MenuExists(int menuId)
+        //{
+        //    return _dbContext.Menus.Any(m => m.Id == menuId);
+        //}
     }
 }

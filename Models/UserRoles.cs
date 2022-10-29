@@ -12,8 +12,8 @@ namespace Yumm_Back_End.Models
         public const string DRIVER = "DRIVER";
         public const string CLIENT = "CLIENT";
         public const string RESTAURANT = "RESTAURANT";
-        public const string SUPPORTTEAM = "SUPPORT";
-        public const string SUPPORTTEAMMANAGER = "MANAGER";
+        public const string SUPPORTTEAM = "SUPPORTTEAM";
+        public const string SUPPORTTEAMMANAGER = "TEAMMANAGER";
 
 
 
