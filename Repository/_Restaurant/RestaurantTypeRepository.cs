@@ -15,111 +15,66 @@ namespace Yumm_Back_End.Repository._Restaurant
         public RestaurantTypeRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
+
         }
 
-        public Task<bool> CreateType(RestaurantType type)
+        public async Task<bool> CreateType(RestaurantType type)
         {
-            throw new NotImplementedException();
+
+            await _dbContext.RestaurantTypes.AddAsync(type);
+
+            return Save();
         }
 
         public bool DeleteType(int restaurantId)
         {
-            throw new NotImplementedException();
+            var type = GetRestaurantType(restaurantId);
+
+            _dbContext.RestaurantTypes.Remove(type);
+
+            return Save();
         }
 
         public ICollection<RestaurantType> GetRestaurantsInTypes(int id)
         {
-            throw new NotImplementedException();
+
+            return _dbContext.RestaurantTypes.Include(rt => rt.Restaurant).Where(r => r.Id == id).ToList();
+
         }
 
         public RestaurantType GetRestaurantType(int typeId)
         {
-            throw new NotImplementedException();
+            return _dbContext.RestaurantTypes.FirstOrDefault(t => t.Id == typeId);
         }
 
         public ICollection<RestaurantType> GetRestaurantTypes()
         {
-            throw new NotImplementedException();
+
+            return _dbContext.RestaurantTypes.ToList();
         }
 
         public bool Save()
         {
-            throw new NotImplementedException();
+            return _dbContext.SaveChanges() >= 0;
         }
 
         public bool TypeExists(string name)
         {
-            throw new NotImplementedException();
+
+            return _dbContext.RestaurantTypes.Any(rt => rt.Name == name);
         }
 
         public bool TypeExists(int typeId)
         {
-            throw new NotImplementedException();
+            return _dbContext.RestaurantTypes.Any(rt => rt.Id == typeId);
         }
 
         public bool UpdateType(RestaurantType type)
         {
-            throw new NotImplementedException();
+            _dbContext.RestaurantTypes.Update(type);
+
+            return Save();
+
         }
-
-
-        //public async  Task<bool> CreateType(RestaurantType type)
-        //{
-
-        //    await _dbContext.RestaurantTypes.AddAsync(type);
-
-        //    return Save();
-        //}
-
-        //public bool DeleteType(int restaurantId)
-        //{
-        //    var type = GetRestaurantType(restaurantId);
-
-        //      _dbContext.RestaurantTypes.Remove(type);
-
-        //    return Save();
-        //}
-
-        //public ICollection<RestaurantType> GetRestaurantsInTypes(int id)
-        //{
-
-        //    return _dbContext.RestaurantTypes.Include(rt => rt.Restaurant).Where(r => r.Id == id).ToList();
-
-        //}
-
-        //public RestaurantType GetRestaurantType(int typeId)
-        //{
-        //    return _dbContext.RestaurantTypes.FirstOrDefault(t => t.Id == typeId);
-        //}
-
-        //public ICollection<RestaurantType> GetRestaurantTypes()
-        //{
-
-        //    return _dbContext.RestaurantTypes.ToList();
-        //}
-
-        //public bool Save()
-        //{
-        //    return _dbContext.SaveChanges() >= 0;
-        //}
-
-        //public bool TypeExists(string name)
-        //{
-
-        //    return _dbContext.RestaurantTypes.Any(rt => rt.Name == name);
-        //}
-
-        //public bool TypeExists(int typeId)
-        //{
-        //    return _dbContext.RestaurantTypes.Any(rt => rt.Id == typeId);
-        //}
-
-        //public bool UpdateType(RestaurantType type)
-        //{
-        //    _dbContext.RestaurantTypes.Update(type);
-
-        //    return Save();
-
-        //}
     }
 }

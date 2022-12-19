@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models;
 using Yumm_Back_End.Models.Address;
+using Yumm_Back_End.Models.Authentication;
 using Yumm_Back_End.Models.Clients;
 using Yumm_Back_End.Models.Orders;
 using Yumm_Back_End.Models.Restaurants;
@@ -73,6 +74,8 @@ namespace Yumm_Back_End.Data
 
         public DbSet<MenuGroup> MenuGroups { get; set; }
 
+        public DbSet<SupportTeam> SupportTeams { get; set; }
+
 
         #endregion
 
@@ -93,18 +96,24 @@ namespace Yumm_Back_End.Data
         //public DbSet<UsersLocations> UsersLocations { get; set; }
         #endregion
 
-        
+
         //Seed SUPER ADMIN
 
         #region Orders
 
-        //public DbSet<Order> Orders { get; set; }
+        public DbSet<Order> Orders { get; set; }
         #endregion
 
 
         #region Client Entities
 
         public DbSet<Client> Clients { get; set; }
+        #endregion
+
+
+
+        #region Tickets 
+      //  public DbSet<Ticket_Type> Ticket_Types { get; set; }
         #endregion
 
 
@@ -165,10 +174,6 @@ namespace Yumm_Back_End.Data
                  cancellationToken));
         }
 
-        #endregion
-
-        #region Tickets 
-      //  public DbSet<Ticket_Type> Ticket_Types { get; set; }
         #endregion
     }
 }

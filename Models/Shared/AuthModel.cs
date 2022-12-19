@@ -9,7 +9,10 @@ namespace Yumm_Back_End.Models.Shared
     public class AuthModel
     {
 
+
+        public string PhoneNumber { get; set; }
         public string UserName { get; set; }
+
 
         [Required]
         public string Password { get; set; }

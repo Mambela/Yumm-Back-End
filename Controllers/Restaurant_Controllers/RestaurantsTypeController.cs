@@ -36,7 +36,7 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
             if (_restTypeRepo.TypeExists(restaurantType.Name))
             {
 
-                ModelState.AddModelError("", "Type already Exists!");
+                ModelState.AddModelError("error", "Type already Exists!");
                 return StatusCode(404, ModelState);
             }
 
@@ -48,7 +48,7 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
             var typeObj = _mapper.Map<RestaurantType>(restaurantType);
             if (!await _restTypeRepo.CreateType(typeObj))
             {
-                ModelState.AddModelError("", $"An error occurred while creating the type {restaurantType.Name}");
+                ModelState.AddModelError("error", $"An error occurred while creating the type {restaurantType.Name}");
 
                 return StatusCode(500, ModelState);
             }

@@ -8,6 +8,8 @@ namespace Yumm_Back_End.Models.Authentication
     public class RegisterModelRestaurant
     {
 
+        public string username { get; set; }
+
         public string Email { get; set; } //Will be used as username and email address
 
         public string Password { get; set; }

@@ -39,6 +39,8 @@ using Yumm_Back_End.Repository._AddressRepository.UserLocationRepository;
 using Yumm_Back_End.Repository._UserRepository;
 using Yumm_Back_End.Repository._MenuRepository._ProductRepository;
 using Yumm_Back_End.Repository._MenuRepository._MenuGroupRepository;
+using Yumm_Back_End.Services.Logger;
+using Yumm_Back_End.Repository._SupportTeamRepository;
 
 namespace Yumm_Back_End
 {
@@ -62,7 +64,7 @@ namespace Yumm_Back_End
 
 
             //
-            
+            #region Service Injection
             services.AddScoped<IAuthRepository, AuthenticationRepository>();
             services.AddScoped<IRestaurantRepository, RestaurantRepository>();
             services.AddScoped<IProvinceRepository, ProvinceRepository>();
@@ -80,7 +82,9 @@ namespace Yumm_Back_End
             services.AddScoped<IMenuRepository, MenuRepository>();
             services.AddScoped<IMenuGroupRepository, MenuGroupRepository>();
             services.AddScoped<IProductExtrasRepository, ProductExtrasRepository>();
-           
+            services.AddScoped<ILoggerService, LoggerService>();
+            services.AddScoped<ISupportTeamRepository, SupportTeamRepository>();
+            #endregion
 
             services.AddAutoMapper(typeof(YummMapping));
 
