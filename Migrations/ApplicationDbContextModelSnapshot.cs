@@ -340,6 +340,21 @@ namespace Yumm_Back_End.Migrations
                     b.ToTable("MenuGroups");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.MenuGroupsProducts", b =>
+                {
+                    b.Property<int>("MenuGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MenuGroupId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("MenuGroupsProducts");
+                });
+
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -361,6 +376,9 @@ namespace Yumm_Back_End.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<int>("MenuGroupId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -375,7 +393,14 @@ namespace Yumm_Back_End.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("categoryId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("MenuGroupId");
+
+                    b.HasIndex("categoryId");
 
                     b.ToTable("Products");
                 });
@@ -670,6 +695,44 @@ namespace Yumm_Back_End.Migrations
                     b.Navigation("Menu");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.MenuGroupsProducts", b =>
+                {
+                    b.HasOne("Yumm_Back_End.Models.Restaurants.MenuGroup", "MenuGroup")
+                        .WithMany()
+                        .HasForeignKey("MenuGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yumm_Back_End.Models.Restaurants.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MenuGroup");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Product", b =>
+                {
+                    b.HasOne("Yumm_Back_End.Models.Restaurants.MenuGroup", "MenuGroup")
+                        .WithMany("Products")
+                        .HasForeignKey("MenuGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yumm_Back_End.Models.Restaurants.Category", "category")
+                        .WithMany()
+                        .HasForeignKey("categoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("category");
+
+                    b.Navigation("MenuGroup");
+                });
+
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.ProductExtras", b =>
                 {
                     b.HasOne("Yumm_Back_End.Models.Restaurants.Product", "Product")
@@ -714,6 +777,11 @@ namespace Yumm_Back_End.Migrations
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Menu", b =>
                 {
                     b.Navigation("MenuGroups");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.MenuGroup", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Product", b =>

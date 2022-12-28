@@ -5,9 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Yumm_Back_End.Helper;
+using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Repository._Restaurant;
+using Yumm_Back_End.Services.PaginationService;
 
 namespace Yumm_Back_End.Controllers.Restaurant_Controllers
 {
@@ -17,11 +20,12 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
     {
         private readonly IRestaurantRepository _restaurantRepo;
         private readonly IMapper _mapper;
-
-        public RestaurantsController(IRestaurantRepository restRepo, IMapper mapper)
+        private readonly IUriService _uriService;
+        public RestaurantsController(IRestaurantRepository restRepo, IMapper mapper, IUriService uriService)
         {
             _restaurantRepo = restRepo;
             _mapper = mapper;
+            _uriService = uriService;
         }
 
         [HttpPost]
@@ -56,21 +60,67 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
 
         }
 
+        //[HttpGet]
+        //public IActionResult GetRestaurants()
+        //{
+        //    var restaurantList = _restaurantRepo.GetRestaurants();
+
+        //    var restaurantDTO = new List<_RestaurantDTO>();
+
+        //    foreach (var restaurant in restaurantList)
+        //    {
+        //        restaurantDTO.Add(_mapper.Map<_RestaurantDTO>(restaurant));
+        //    }
+
+        //    return Ok(restaurantDTO);
+        //}
+
+
         [HttpGet]
-        public IActionResult GetRestaurants()
+
+        public IActionResult GetPagedRestaurant([FromQuery] PaginationFilter filters)
         {
-            var restaurantList = _restaurantRepo.GetRestaurants();
-
-            var restaurantDTO = new List<_RestaurantDTO>();
-
-            foreach (var restaurant in restaurantList)
+            try
             {
-                restaurantDTO.Add(_mapper.Map<_RestaurantDTO>(restaurant));
+                TokenManager token = new TokenManager();
+                var route = Request.Path.Value;
+
+                var validFilter = new PaginationFilter(filters.PageNumber,filters.PageSize);
+
+                var pagedDataObj = _restaurantRepo.GetRestaurantsPaged(validFilter);
+
+                var pageDataDTO = new List<FullRestaurantDTO>();
+
+                foreach (var item in pagedDataObj)
+                {
+
+                    pageDataDTO.Add(
+                        new FullRestaurantDTO 
+                        {
+                            Id = item.Id,
+                            Description = item.Description,
+                            Email = item.User.Email,
+                            Name = item.Name,
+                            NoOfOrders = token.GenerateOrders(),
+                            Phone = item.User.PhoneNumber,
+                            RestaurantType = item.RestaurantType.Name
+                        }
+                        );
+
+                }
+
+                var totalRecords = pagedDataObj.Count();
+
+                var pagedResponse = PaginationHelper.CreatePageResponse<FullRestaurantDTO>(pageDataDTO, validFilter, totalRecords, _uriService, route);
+
+                return Ok(pagedResponse);
             }
+            catch (Exception ex)
+            {
 
-            return Ok(restaurantDTO);
+                throw;
+            }
         }
-
 
         [HttpGet("{restaurantId:int}", Name ="GetRestaurant")]
         public IActionResult GetRestaurant(int restaurantId)

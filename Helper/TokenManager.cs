@@ -35,5 +35,13 @@ namespace Yumm_Back_End.Helper
                 throw;
             }
         }
+
+        public int GenerateOrders()
+        {
+                Random rand = new Random();
+
+                return rand.Next(100, 999);
+
+        }
     }
 }

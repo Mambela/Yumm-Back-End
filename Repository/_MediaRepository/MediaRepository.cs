@@ -31,13 +31,6 @@ namespace Yumm_Back_End.Repository._MediaRepository
             return false;
 
 
-            //if (_mediaValidator.ValidateImageExtension(objectFile.GetType.ToString()).Errors)
-            //{ 
-
-            //}
-
-
-
             string reference = objectFile.RestaurantId.ToString();
 
             string resourceRoot = "\\resources\\", _entity = "\\" + entity + "\\", images = "\\images\\";

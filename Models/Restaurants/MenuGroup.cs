@@ -23,7 +23,7 @@ namespace Yumm_Back_End.Models.Restaurants
         public Menu Menu { get; set; }
 
 
-        //public ICollection<Product> Products { get; set; }
+        public ICollection<Product> Products { get; set; }
 
     }
 }

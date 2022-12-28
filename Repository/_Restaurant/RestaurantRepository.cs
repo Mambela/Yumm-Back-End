@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Data;
+using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Repository._Restaurant;
 
@@ -16,7 +17,6 @@ namespace Yumm_Back_End.Repository
         public RestaurantRepository(ApplicationDbContext context)
         {
             _dbContext = context;
-                
         }
 
 
@@ -71,6 +71,20 @@ namespace Yumm_Back_End.Repository
         }
 
         public ICollection<Restaurant> GetRestaurantsInType(int typeId)
+        {
+            return _dbContext.Restaurants.Include(rt => rt.RestaurantType).Where(rt => rt.RestaurantTypeId == typeId).ToList();
+        }
+
+        public List<Restaurant> GetRestaurantsPaged(PaginationFilter validFilter)
+        {
+           return _dbContext.Restaurants
+                .Include(rt =>rt.RestaurantType)
+                .Include(u =>u.User)
+                .Skip((validFilter.PageNumber -1)* validFilter.PageSize)
+                .Take(validFilter.PageSize).ToList(); 
+        }
+
+        public List<Restaurant> GetRestaurantsPagedByType(PaginationFilter validFilter , int typeId)
         {
             return _dbContext.Restaurants.Include(rt => rt.RestaurantType).Where(rt => rt.RestaurantTypeId == typeId).ToList();
         }

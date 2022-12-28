@@ -20,92 +20,52 @@ namespace Yumm_Back_End.Repository._ProductCategory
 
         public bool CategoryExists(int categoryId)
         {
-            throw new NotImplementedException();
+            return _dbContext.Categories.Any(c => c.Id == categoryId);
         }
 
-        public bool CategoryExists(string category)
+        public bool CategoryExists(string categoryName)
         {
-            throw new NotImplementedException();
+            return _dbContext.Categories.Any(c => c.Name == categoryName);
         }
 
-        public Task<bool> CreateCategory(Category category)
+        public async Task<bool> CreateCategory(Category category)
         {
-            throw new NotImplementedException();
+
+            await _dbContext.Categories.AddAsync(category);
+
+            return Save();
         }
 
         public bool DeleteCategory(Category category)
         {
-            throw new NotImplementedException();
+            _dbContext.Categories.Remove(category);
+
+            return Save();
         }
 
         public ICollection<Category> GetCategories()
         {
-            throw new NotImplementedException();
+            return _dbContext.Categories.ToList();
         }
 
         public Category GetCategory(int categoryId)
         {
-            throw new NotImplementedException();
+
+            return _dbContext.Categories.FirstOrDefault(c => c.Id == categoryId);
         }
 
         public bool Save()
         {
-            throw new NotImplementedException();
+            return _dbContext.SaveChanges() >= 0;
         }
 
         public bool UpdateCategory(Category category)
         {
-            throw new NotImplementedException();
+
+            _dbContext.Categories.Update(category);
+
+            return Save();
+
         }
-
-        //public bool CategoryExists(int categoryId)
-        //{
-        //    return _dbContext.Categories.Any(c => c.Id == categoryId);
-        //}
-
-        //public bool CategoryExists(string categoryName)
-        //{
-        //    return _dbContext.Categories.Any(c => c.Name == categoryName);
-        //}
-
-        //public async Task<bool> CreateCategory(Category category)
-        //{
-
-        //     await _dbContext.Categories.AddAsync(category);
-
-        //    return Save();
-        //}
-
-        //public bool DeleteCategory(Category category)
-        //{
-        //    _dbContext.Categories.Remove(category);
-
-        //    return Save();
-        //}
-
-        //public ICollection<Category> GetCategories()
-        //{
-        //    return _dbContext.Categories.ToList();
-        //}
-
-        //public Category GetCategory(int categoryId)
-        //{
-
-        //    return _dbContext.Categories.FirstOrDefault(c => c.Id == categoryId);
-        //}
-
-        //public bool Save()
-        //{
-        //    return _dbContext.SaveChanges() >= 0;
-        //}
-
-        //public bool UpdateCategory(Category category)
-        //{
-
-        //    _dbContext.Categories.Update(category);
-
-        //    return Save();
-
-        //}
     }
 }

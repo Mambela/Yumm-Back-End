@@ -9,7 +9,9 @@ using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Repository._MenuRepository;
+using Yumm_Back_End.Repository._MenuRepository._MenuGroupRepository;
 using Yumm_Back_End.Repository._MenuRepository._ProductRepository;
+using Yumm_Back_End.Services.Logger;
 using Yumm_Back_End.Services.Response;
 
 namespace Yumm_Back_End.Controllers.Menu_Controllers
@@ -19,13 +21,17 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductRepository _productRepo;
+        private readonly IMenuGroupRepository _menuGroupRepo;
         private readonly IMapper _mapper;
+        private readonly ILoggerService _loggerService;
         private MediaResponse uploadResponse;
 
-        public ProductsController(IProductRepository productRepository, IMapper mapper)
+        public ProductsController(IProductRepository productRepository, IMapper mapper, IMenuGroupRepository menuGroup, ILoggerService loggerService)
         {
+            _loggerService= loggerService;
             _productRepo = productRepository;
             _mapper = mapper;
+            _menuGroupRepo = menuGroup;
             uploadResponse = new MediaResponse();
         }
 
@@ -33,52 +39,85 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
         public async Task<IActionResult> CreateFoodProduct([FromForm] CreateProductDTO productDto)
         {
 
-
-            if (productDto == null)
+            try
             {
+
+
+                if (productDto == null)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                if (productDto.Files == null)
+                {
+                    return BadRequest(ModelState);
+                }
+
+
+
+                uploadResponse = await _productRepo.SaveProductImage(productDto);
+
+                if (!uploadResponse.Success)
+                {
+                    ModelState.AddModelError("", $" " + uploadResponse.Message);
+                    return StatusCode(500, ModelState);
+                }
+
+
+                productDto.ImagePath = uploadResponse.Message;
+
+
+
+                if (_productRepo.ProductExists(productDto.Name, productDto.RestaurantId, productDto.CategoryId))
+                {
+                    ModelState.AddModelError("", $"Product that you are trying to add already Exists");
+                    return StatusCode(404, ModelState);
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var objProduct = _mapper.Map<Product>(productDto);
+
+                if (!await _productRepo.CreateProduct(objProduct))
+                {
+                    ModelState.AddModelError("", $"Something went wrong when Saving the record {objProduct.Name}");
+
+                    return BadRequest(ModelState);
+                }
+
+
+                var menugroupProduct = new MenuGroupsProducts
+                {
+                    MenuGroupId = productDto.MenuGroupId,
+                    ProductId = objProduct.Id
+                };
+
+
+
+
+                //Associate Product To MenuGroup
+                if (!await _menuGroupRepo.AttachProductToMenugroup(menugroupProduct))
+                {
+                    ModelState.AddModelError("", $"Unable to attach product to menu group");
+
+                    return BadRequest(ModelState);
+                }
+
+                return StatusCode(StatusCodes.Status201Created, objProduct);
+
+            }
+            catch (Exception ex)
+            {
+
+                _loggerService.LogError("Error " + ex.Message);
+
+                ModelState.AddModelError("error", "Failed to complete product add process. Try again.");
+
                 return BadRequest(ModelState);
             }
-
-            if (productDto.Files == null)
-            {
-                return BadRequest(ModelState);
-            }
-
-
-
-            uploadResponse = await _productRepo.SaveProductImage(productDto);
-
-            if (!uploadResponse.Success)
-            {
-                ModelState.AddModelError("", $" " + uploadResponse.Message);
-                return StatusCode(500, ModelState);
-            }
-
-
-            productDto.ImagePath = uploadResponse.Message;
-
-
-
-            if (_productRepo.ProductExists(productDto.Name, productDto.RestaurantId, productDto.CategoryId))
-            {
-                ModelState.AddModelError("", $"Product that you are trying to add already Exists");
-                return StatusCode(404, ModelState);
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var objProduct = _mapper.Map<Product>(productDto);
-
-            if (!await _productRepo.CreateProduct(objProduct))
-            {
-                ModelState.AddModelError("", $"Something went wrong when Saving the record {objProduct.Name}");
-            }
-
-
-            return Ok(objProduct);
 
 
         }
