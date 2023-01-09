@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Data;
+using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.Restaurants;
 
 namespace Yumm_Back_End.Repository._ProductCategory
@@ -43,9 +45,22 @@ namespace Yumm_Back_End.Repository._ProductCategory
             return Save();
         }
 
+        public IList<Category> GetAllRestaurantCategories(int restaurantId)
+        {
+            throw new NotImplementedException();
+       
+        }
+
         public ICollection<Category> GetCategories()
         {
             return _dbContext.Categories.ToList();
+        }
+
+        public IList<Category> GetPagedCategories(PaginationFilter pagination)
+        {
+            
+            return _dbContext.Categories.Skip((pagination.PageNumber - 1) * pagination.PageSize)
+                  .Take(pagination.PageSize).ToList();
         }
 
         public Category GetCategory(int categoryId)
@@ -66,6 +81,11 @@ namespace Yumm_Back_End.Repository._ProductCategory
 
             return Save();
 
+        }
+
+        public int Count()
+        {
+            return _dbContext.Categories.Count();
         }
     }
 }

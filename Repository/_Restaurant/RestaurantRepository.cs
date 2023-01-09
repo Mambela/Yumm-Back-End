@@ -86,7 +86,26 @@ namespace Yumm_Back_End.Repository
 
         public List<Restaurant> GetRestaurantsPagedByType(PaginationFilter validFilter , int typeId)
         {
-            return _dbContext.Restaurants.Include(rt => rt.RestaurantType).Where(rt => rt.RestaurantTypeId == typeId).ToList();
+            return _dbContext.Restaurants.Include(rt => rt.RestaurantType)
+                .Include(u => u.User)
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .Where(rt => rt.RestaurantTypeId == typeId).ToList();
+        }
+
+        public List<Restaurant> GetRestaurantsByReference(PaginationFilter validFilter,string reference)
+        {
+            return _dbContext.Restaurants
+                .Include(rt => rt.RestaurantType)
+                .Include(u => u.User)
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                 .Where(r => r.Reference.ToLower().Contains(reference.ToLower())).ToList();
+        }
+
+        public int Count()
+        {
+            return _dbContext.Restaurants.Count();
         }
     }
 }

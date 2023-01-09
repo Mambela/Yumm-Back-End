@@ -5,7 +5,7 @@
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
 
-        public string? userId { get; set; }
+        public string? genericId { get; set; }
         public PaginationFilter()
         {
             this.PageNumber = 1;

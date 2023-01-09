@@ -11,10 +11,13 @@ namespace Yumm_Back_End.Repository._Restaurant
     {
         //Check if a username of the restaurant exists
 
+        int Count();
+
         ICollection<Restaurant> GetRestaurants();
 
         ICollection<Restaurant> GetRestaurantsInType(int typeId);
         Restaurant GetRestaurant(int restaurantI);
+        List<Restaurant> GetRestaurantsByReference(PaginationFilter validFilter,string reference);
 
         bool RestaurantExist(string name);
 

@@ -10,6 +10,7 @@ using Yumm_Back_End.Models;
 using Yumm_Back_End.Models.Address;
 using Yumm_Back_End.Models.Authentication;
 using Yumm_Back_End.Models.Clients;
+using Yumm_Back_End.Models.Drivers;
 using Yumm_Back_End.Models.Orders;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Models.Shared;
@@ -28,13 +29,12 @@ namespace Yumm_Back_End.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
-            builder.Entity<Product>()
-                .Property(I => I.Price)
-                .HasPrecision(18, 2);
-
             builder.Entity<ProductExtras>()
                    .Property(I => I.Price)
                    .HasPrecision(18, 2);
+
+            builder.Entity<ProductSize>()
+               .Property(i => i.Price).HasPrecision(18, 2);
 
 
             builder.Entity<MenuGroupsProducts>().HasKey(x => new { x.MenuGroupId, x.ProductId });
@@ -79,6 +79,8 @@ namespace Yumm_Back_End.Data
         public DbSet<MenuGroupsProducts> MenuGroupsProducts { get; set; }
 
         public DbSet<SupportTeam> SupportTeams { get; set; }
+        
+        public DbSet<ProductSize> ProductSizes { get; set; }
 
 
         #endregion
@@ -117,13 +119,21 @@ namespace Yumm_Back_End.Data
 
 
         #region Tickets 
-      //  public DbSet<Ticket_Type> Ticket_Types { get; set; }
+        //  public DbSet<Ticket_Type> Ticket_Types { get; set; }
         #endregion
 
 
-        #region Additional Database Mods
+        #region Drivers 
 
-           // Entities added for created date and Update date. 
+
+        public DbSet<Driver> Drivers { get; set; }
+
+        #endregion
+
+
+        #region Additional Database Configuration
+
+        // Entities added for created date and Update date. 
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {

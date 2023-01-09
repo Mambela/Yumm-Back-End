@@ -44,6 +44,8 @@ using Yumm_Back_End.Repository._SupportTeamRepository;
 using Yumm_Back_End.Services.PaginationService;
 using Microsoft.AspNetCore.Http;
 using Yumm_Back_End.Repository._MediaRepository;
+using Yumm_Back_End.Services.MediaService;
+using Yumm_Back_End.Repository._DriverRepository;
 
 namespace Yumm_Back_End
 {
@@ -84,10 +86,12 @@ namespace Yumm_Back_End
             services.AddScoped<IUserRepository,UserRepository>();
             services.AddScoped<IMenuRepository, MenuRepository>();
             services.AddScoped<IMenuGroupRepository, MenuGroupRepository>();
-           // services.AddScoped<IMediaRepository, MediaRepository>();
+            // services.AddScoped<IMediaRepository, MediaRepository>();
+            services.AddScoped<IDriverRepository,DriverRepository>();
             services.AddScoped<IProductExtrasRepository, ProductExtrasRepository>();
             services.AddScoped<ILoggerService, LoggerService>();
             services.AddScoped<ISupportTeamRepository, SupportTeamRepository>();
+            services.AddScoped<IMediaManager, MediaManager>();
             services.AddSingleton<IUriService>(o => 
             {
                 var accessor = o.GetRequiredService<IHttpContextAccessor>();
@@ -95,6 +99,9 @@ namespace Yumm_Back_End
                 var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
                 return new UriService(uri);
             });
+
+
+            services.AddScoped<IDriverRepository, DriverRepository>();
             #endregion
 
             services.AddAutoMapper(typeof(YummMapping));

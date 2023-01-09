@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Yumm_Back_End.Data;
 using Yumm_Back_End.Models.Authentication;
+using Yumm_Back_End.Models.DTOs.PaginationDTO;
 
 namespace Yumm_Back_End.Repository._SupportTeamRepository
 {
@@ -27,14 +29,29 @@ namespace Yumm_Back_End.Repository._SupportTeamRepository
             throw new System.NotImplementedException();
         }
 
-        public SupportTeam GetSupportTeam(int SupportTeamId)
+        public List<SupportTeam> GetAllSupportTeamByName(PaginationFilter filter, string reference)
         {
-            return _dbContext.SupportTeams.FirstOrDefault(s => s.Id == SupportTeamId);
+            return _dbContext.SupportTeams
+                .Include(u => u.User)
+               .Skip((filter.PageNumber - 1) * filter.PageSize)
+               .Take(filter.PageSize)
+               .Where(s =>s.Name.Contains(reference) || s.LastName.Contains(reference))
+               .ToList();
         }
 
-        public ICollection<SupportTeam> GetSupportTeams()
+        public SupportTeam GetSupportTeam(int SupportTeamId)
         {
-            return _dbContext.SupportTeams.ToList();
+            return _dbContext.SupportTeams
+                .Include(u => u.User).FirstOrDefault(s => s.Id == SupportTeamId);
+        }
+
+        public ICollection<SupportTeam> GetSupportTeams(PaginationFilter filter)
+        {
+            return _dbContext.SupportTeams
+                .Include(u => u.User)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize).ToList();
+           
         }
 
         public ICollection<SupportTeam> GetSupportTeamsInType(int typeId)
@@ -50,7 +67,7 @@ namespace Yumm_Back_End.Repository._SupportTeamRepository
         public bool SupportTeamExist(string name)
         {
 
-            return _dbContext.SupportTeams.Any(s => s.Name == name);
+            return _dbContext.SupportTeams.Any(s => s.Name.ToLower().Trim() == name.ToLower().Trim());
         }
 
         public bool SupportTeamExist(int SupportTeamId)

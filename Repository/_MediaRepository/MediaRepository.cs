@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
 using Yumm_Back_End.Services;
+using Yumm_Back_End.Services.MediaService;
 using Yumm_Back_End.Services.Response;
 
 namespace Yumm_Back_End.Repository._MediaRepository
@@ -15,8 +17,8 @@ namespace Yumm_Back_End.Repository._MediaRepository
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly MediaResponse _mediaResponse;
-        private readonly MediaValidator _mediaValidator;
-        public MediaRepository(IWebHostEnvironment webHostenvironment,MediaResponse mediaResponse, MediaValidator mediaValidator)
+        private readonly MediaManager _mediaValidator;
+        public MediaRepository(IWebHostEnvironment webHostenvironment,MediaResponse mediaResponse, MediaManager mediaValidator)
         {
             _webHostEnvironment = webHostenvironment;
             _mediaResponse = mediaResponse;
@@ -82,5 +84,7 @@ namespace Yumm_Back_End.Repository._MediaRepository
         {
             throw new NotImplementedException();
         }
+         
+        
     }
 }

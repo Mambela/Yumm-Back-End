@@ -225,6 +225,49 @@ namespace Yumm_Back_End.Migrations
                     b.ToTable("Clients");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Drivers.Driver", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<string>("ImageLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
+
+                    b.ToTable("Drivers");
+                });
+
             modelBuilder.Entity("Yumm_Back_End.Models.Orders.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -383,13 +426,6 @@ namespace Yumm_Back_End.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Size")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
@@ -438,6 +474,36 @@ namespace Yumm_Back_End.Migrations
                     b.ToTable("ProductsExtras");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.ProductSize", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Size")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductSizes");
+                });
+
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Restaurant", b =>
                 {
                     b.Property<int>("Id")
@@ -451,8 +517,14 @@ namespace Yumm_Back_End.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reference")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RestaurantTypeId")
@@ -536,6 +608,9 @@ namespace Yumm_Back_End.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<bool>("Blocked")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -673,6 +748,15 @@ namespace Yumm_Back_End.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Drivers.Driver", b =>
+                {
+                    b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", "User")
+                        .WithOne("Driver")
+                        .HasForeignKey("Yumm_Back_End.Models.Drivers.Driver", "UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Menu", b =>
                 {
                     b.HasOne("Yumm_Back_End.Models.Restaurants.Restaurant", "Restaurant")
@@ -723,7 +807,7 @@ namespace Yumm_Back_End.Migrations
                         .IsRequired();
 
                     b.HasOne("Yumm_Back_End.Models.Restaurants.Category", "category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("categoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -737,6 +821,17 @@ namespace Yumm_Back_End.Migrations
                 {
                     b.HasOne("Yumm_Back_End.Models.Restaurants.Product", "Product")
                         .WithMany("ProductsExtras")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.ProductSize", b =>
+                {
+                    b.HasOne("Yumm_Back_End.Models.Restaurants.Product", "Product")
+                        .WithMany("ProductSizes")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -774,6 +869,11 @@ namespace Yumm_Back_End.Migrations
                     b.Navigation("Restaurant");
                 });
 
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Menu", b =>
                 {
                     b.Navigation("MenuGroups");
@@ -787,6 +887,8 @@ namespace Yumm_Back_End.Migrations
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Product", b =>
                 {
                     b.Navigation("ProductsExtras");
+
+                    b.Navigation("ProductSizes");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Restaurant", b =>
@@ -802,6 +904,8 @@ namespace Yumm_Back_End.Migrations
             modelBuilder.Entity("Yumm_Back_End.Models.User.ApplicationUser", b =>
                 {
                     b.Navigation("Client");
+
+                    b.Navigation("Driver");
 
                     b.Navigation("Restaurant");
                 });

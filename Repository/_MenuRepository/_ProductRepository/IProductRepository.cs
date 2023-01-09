@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
 using Yumm_Back_End.Models.Restaurants;
@@ -14,11 +15,14 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
         ICollection<Product> GetProducts();
 
         ICollection<Product> GetProductsInCategory(int catgoryId);
+        ICollection<Product> GetProductsInCategory(PaginationFilter pagination,int catgoryId);
 
         ICollection<Product> GetProductsInRestaurant (int restaurantId);
+        ICollection<Product> GetProductsInRestaurant (PaginationFilter pagination,int restaurantId);
 
 
         ICollection<Product> GetProductsInMenuGroup(int menuGroupId);
+        ICollection<Product> GetProductsInMenuGroup(PaginationFilter pagination,int menuGroupId);
 
         Product GetProduct(int productId);
 
@@ -27,6 +31,7 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
         bool ProductExists(string name, int restaurantId, int categoryId);
 
         Task<bool> CreateProduct(Product product);
+        Task<bool> CreateProductSize(List<ProductSize> productSizes);
 
         bool UpdateProduct(Product product);
 
@@ -34,7 +39,7 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
 
         bool Save();
 
-        Task<MediaResponse> SaveProductImage(CreateProductDTO objectfile);
+        Task<MediaResponse> SaveProductImage(CreateProductDTO objectfile, int referenceId, string _entity);
 
         Task<MediaResponse> DeleteProductImage(UpdateProductDTO objectfile, string previousimage);
 

@@ -10,6 +10,7 @@ using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Repository._Restaurant;
+using Yumm_Back_End.Services;
 using Yumm_Back_End.Services.PaginationService;
 
 namespace Yumm_Back_End.Controllers.Restaurant_Controllers
@@ -31,32 +32,46 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRestaurant([FromBody] _RestaurantDTO restaurantDTO)
         {
-            if (restaurantDTO == null)
+            Generators gen = new Generators();
+
+            try
             {
-                return BadRequest(ModelState);
-            }
 
-            if (_restaurantRepo.RestaurantExist(restaurantDTO.Name))
-            {
-                ModelState.AddModelError("", $"The restaurant already exists!");
-                return StatusCode(404, ModelState);
-            }
+                if (restaurantDTO == null)
+                {
+                    return BadRequest(ModelState);
+                }
+                                 
+           
+                if (_restaurantRepo.RestaurantExist(restaurantDTO.Name))
+                {
+                    ModelState.AddModelError("", $"The restaurant already exists!");
+                    return StatusCode(404, ModelState);
+                }
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var restaurantObj = _mapper.Map<Restaurant>(restaurantDTO);
+                var restaurantObj = _mapper.Map<Restaurant>(restaurantDTO);
+                    restaurantObj.Reference = gen.GenereateRestaurantReference(restaurantDTO.Name);
 
-            if (!await _restaurantRepo.CreateRestaurant(restaurantObj))
-            {
-                ModelState.AddModelError("", $"An error occurred while creating the restaurant {restaurantDTO.Name}");
+                if (!await _restaurantRepo.CreateRestaurant(restaurantObj))
+                {
+                    ModelState.AddModelError("", $"An error occurred while creating the restaurant {restaurantDTO.Name}");
 
-                return StatusCode(500, ModelState);
-            }
+                    return StatusCode(500, ModelState);
+                }
 
             return Ok(restaurantObj);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
 
         }
 
@@ -103,7 +118,59 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
                             Name = item.Name,
                             NoOfOrders = token.GenerateOrders(),
                             Phone = item.User.PhoneNumber,
-                            RestaurantType = item.RestaurantType.Name
+                            RestaurantType = item.RestaurantType.Name,
+                               Reference = item.Reference,
+                            CreateDate = item.CreateDate,
+                            UpdatedDate = item.UpdatedDate
+                        }
+                        );
+
+                }
+
+                var totalRecords = pagedDataObj.Count();
+
+                var pagedResponse = PaginationHelper.CreatePageResponse<FullRestaurantDTO>(pageDataDTO, validFilter, totalRecords, _uriService, route);
+
+                return Ok(pagedResponse);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+
+        [HttpGet("PagedRestaurant/reference:string")]
+        public IActionResult GetPagedRestaurantByRef([FromQuery] PaginationFilter filters, string reference)
+        {
+            try
+            {
+                TokenManager token = new TokenManager();
+                var route = Request.Path.Value;
+
+                var validFilter = new PaginationFilter(filters.PageNumber, filters.PageSize);
+
+                var pagedDataObj = _restaurantRepo.GetRestaurantsByReference(validFilter,reference);
+
+                var pageDataDTO = new List<FullRestaurantDTO>();
+
+                foreach (var item in pagedDataObj)
+                {
+
+                    pageDataDTO.Add(
+                        new FullRestaurantDTO
+                        {
+                            Id = item.Id,
+                            Description = item.Description,
+                            Email = item.User.Email,
+                            Name = item.Name,
+                            NoOfOrders = token.GenerateOrders(),
+                            Phone = item.User.PhoneNumber,
+                            RestaurantType = item.RestaurantType.Name,
+                            Reference = item.Reference,
+                            CreateDate = item.CreateDate,
+                            UpdatedDate = item.UpdatedDate
                         }
                         );
 

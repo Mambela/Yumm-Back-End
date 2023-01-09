@@ -5,10 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models.Address;
 using Yumm_Back_End.Models.Clients;
+using Yumm_Back_End.Models.Drivers;
 using Yumm_Back_End.Models.DTOs;
 using Yumm_Back_End.Models.DTOs.AddressDTO;
 using Yumm_Back_End.Models.DTOs.AddressDTO.Location;
 using Yumm_Back_End.Models.DTOs.ClientDTO;
+using Yumm_Back_End.Models.DTOs.DriversDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO.MenuDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
@@ -69,7 +71,8 @@ namespace Yumm_Back_End.Mapper
             CreateMap<Product, UpdateProductDTO>().ReverseMap();
             CreateMap<CreateProductDTO, UpdateProductDTO>().ReverseMap();
             CreateMap<ProductExtras, CreateProductExtrasDTO>().ReverseMap();
-            
+            CreateMap<ProductSize, ProductSizesDTO>().ReverseMap();
+            CreateMap<Driver, CreateDriverDTO>().ReverseMap();
 
             #endregion
 

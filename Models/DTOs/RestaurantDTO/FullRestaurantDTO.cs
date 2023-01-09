@@ -1,8 +1,9 @@
 ﻿using System;
+using Yumm_Back_End.Models.Shared;
 
 namespace Yumm_Back_End.Models.DTOs.RestaurantDTO
 {
-    public class FullRestaurantDTO
+    public class FullRestaurantDTO :BaseEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -15,6 +16,9 @@ namespace Yumm_Back_End.Models.DTOs.RestaurantDTO
 
 
         public int NoOfOrders { get; set; }
+
+        public string Reference { get; set; }
+
 
 
     }

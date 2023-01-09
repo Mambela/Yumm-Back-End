@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
 using Yumm_Back_End.Models.Restaurants;
@@ -12,6 +14,7 @@ using Yumm_Back_End.Repository._MenuRepository;
 using Yumm_Back_End.Repository._MenuRepository._MenuGroupRepository;
 using Yumm_Back_End.Repository._MenuRepository._ProductRepository;
 using Yumm_Back_End.Services.Logger;
+using Yumm_Back_End.Services.PaginationService;
 using Yumm_Back_End.Services.Response;
 
 namespace Yumm_Back_End.Controllers.Menu_Controllers
@@ -25,14 +28,16 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
         private readonly IMapper _mapper;
         private readonly ILoggerService _loggerService;
         private MediaResponse uploadResponse;
+        private readonly IUriService _uriService;
 
-        public ProductsController(IProductRepository productRepository, IMapper mapper, IMenuGroupRepository menuGroup, ILoggerService loggerService)
+        public ProductsController(IProductRepository productRepository, IMapper mapper, IMenuGroupRepository menuGroup, ILoggerService loggerService, IUriService uriService)
         {
-            _loggerService= loggerService;
+            _loggerService = loggerService;
             _productRepo = productRepository;
             _mapper = mapper;
             _menuGroupRepo = menuGroup;
             uploadResponse = new MediaResponse();
+            _uriService = uriService;
         }
 
         [HttpPost]
@@ -41,7 +46,6 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
 
             try
             {
-
 
                 if (productDto == null)
                 {
@@ -53,18 +57,19 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                     return BadRequest(ModelState);
                 }
 
+               string _entity = "\\" + "restaurant" + "\\";
+                
 
-
-                uploadResponse = await _productRepo.SaveProductImage(productDto);
+                uploadResponse = await _productRepo.SaveProductImage(productDto,productDto.RestaurantId,_entity);
 
                 if (!uploadResponse.Success)
                 {
-                    ModelState.AddModelError("", $" " + uploadResponse.Message);
+                    ModelState.AddModelError("", $" " + uploadResponse.imagePath);
                     return StatusCode(500, ModelState);
                 }
 
 
-                productDto.ImagePath = uploadResponse.Message;
+                productDto.ImagePath = uploadResponse.imagePath;
 
 
 
@@ -89,6 +94,29 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                 }
 
 
+                var productSizeList = new List<ProductSize>();
+
+                //Associate product size to the  Product
+                foreach (var productProperty in productDto.Sizes)
+                {
+                    productSizeList.Add(new ProductSize
+                    {
+                        ProductId = objProduct.Id,
+                        Size = productProperty.Size,
+                        Price = productProperty.Price,
+
+                    });
+                }
+
+
+                if (!await _productRepo.CreateProductSize(productSizeList))
+                {
+                    ModelState.AddModelError("", $"Error occurred while trying to save product price and size");
+                    return BadRequest(ModelState);
+                }
+
+
+                //Associate Product To MenuGroup
                 var menugroupProduct = new MenuGroupsProducts
                 {
                     MenuGroupId = productDto.MenuGroupId,
@@ -98,7 +126,6 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
 
 
 
-                //Associate Product To MenuGroup
                 if (!await _menuGroupRepo.AttachProductToMenugroup(menugroupProduct))
                 {
                     ModelState.AddModelError("", $"Unable to attach product to menu group");
@@ -106,7 +133,10 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                     return BadRequest(ModelState);
                 }
 
-                return StatusCode(StatusCodes.Status201Created, objProduct);
+
+                productDto.Id = objProduct.Id;
+
+                return StatusCode(StatusCodes.Status201Created, productDto);
 
             }
             catch (Exception ex)
@@ -152,36 +182,110 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
             return Ok(productDto);
         }
 
-        [HttpGet("GetProductsInCategory/{categoryId:int}")]
-        public IActionResult GetProductsInCategory(int categoryId)
+        [HttpGet("ProductsInCategory/{categoryId:int}")]
+        public IActionResult ProductsInCategory(int categoryId, PaginationFilter pagination)
         {
-            var productList = _productRepo.GetProductsInCategory(categoryId);
-
-            var productDto = new List<ProductDTO>();
-
-            foreach (var product in productList)
+            try
             {
-                productDto.Add(_mapper.Map<ProductDTO>(product));
+
+
+                var productList = _productRepo.GetProductsInCategory(categoryId);
+                var route = Request.Path.Value;
+                var productDto = new List<ProductDTO>();
+
+                foreach (var product in productList)
+                {
+                    productDto.Add(_mapper.Map<ProductDTO>(product));
+                }
+
+                var validFilter = new PaginationFilter(pagination.PageNumber, pagination.PageSize);
+
+                var pageResponse = PaginationHelper.CreatePageResponse<ProductDTO>(productDto, validFilter, productDto.Count, _uriService, route);
+
+                return Ok(pageResponse);
             }
+            catch (Exception ex)
+            {
+                _loggerService.LogError("Error " + ex.Message);
+                ModelState.AddModelError("error", "Failed to complete product retrieval process. Try again.");
 
-            return Ok(productDto);
-
+                return BadRequest(ModelState);
+            }
         }
 
 
-        [HttpGet("GetProductsInMenuGroup/{menuGroupId:int}")]
-        public IActionResult GetProductsInMenuGroup(int menuGroupId)
+        [HttpGet("ProductsInRestauarant/restauarantId:int")]
+        public IActionResult ProductsInRestauarant(int restauarantId, [FromQuery] PaginationFilter pagination)
         {
-            var productList = _productRepo.GetProductsInMenuGroup(menuGroupId);
-
-            var productDto = new List<ProductDTO>();
-
-            foreach (var product in productList)
+            try
             {
-                productDto.Add(_mapper.Map<ProductDTO>(product));
-            }
+                var productList = _productRepo.GetProductsInRestaurant(pagination, restauarantId);
+                var route = Request.Path.Value;
+                var productDto = new List<ViewProductDTO>();
 
-            return Ok(productDto);
+                foreach (var product in productList)
+                {
+
+                    var productItem = new ViewProductDTO
+                    {
+                        Id = product.Id,
+                        Category = product.category.Name,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Duration = product.Duration,
+                        ImagePath = product.ImagePath,
+                        CategoryId = product.categoryId,
+                        MenuGroup = product.MenuGroup.Name,
+                        ProductSizes = _mapper.Map<IList<ProductSizesDTO>>(product.ProductSizes),
+                    };
+                    productDto.Add(productItem);
+                }
+
+                var validFilter = new PaginationFilter(pagination.PageNumber, pagination.PageSize);
+
+                var pageResponse = PaginationHelper.CreatePageResponse<ViewProductDTO>(productDto, validFilter, productDto.Count, _uriService, route);
+
+                return Ok(pageResponse);
+            }
+            catch (Exception ex)
+            {
+
+                _loggerService.LogError("Error " + ex.Message);
+                ModelState.AddModelError("error", "Failed to complete product retrieval process. Try again.");
+
+                return BadRequest(ModelState);
+
+            }
+        }
+
+        [HttpGet("GetProductsInMenuGroup/{menuGroupId:int}")]
+        public IActionResult GetProductsInMenuGroup(int menuGroupId, [FromQuery] PaginationFilter pagination)
+        {
+            try
+            {
+
+
+                var productList = _productRepo.GetProductsInMenuGroup(pagination, menuGroupId);
+                var route = Request.Path.Value;
+                var productDto = new List<ProductDTO>();
+
+                foreach (var product in productList)
+                {
+                    productDto.Add(_mapper.Map<ProductDTO>(product));
+                }
+                var validFilter = new PaginationFilter(pagination.PageNumber, pagination.PageSize);
+
+                var pageResponse = PaginationHelper.CreatePageResponse<ProductDTO>(productDto, validFilter, productDto.Count, _uriService, route);
+
+                return Ok(pageResponse);
+            }
+            catch (Exception ex)
+            {
+                _loggerService.LogError("Error " + ex.Message);
+                ModelState.AddModelError("error", "Failed to complete product retrieval process. Try again.");
+
+                return BadRequest(ModelState);
+            }
         }
 
         [HttpPatch]
@@ -201,17 +305,17 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
 
             var objForImage = _mapper.Map<CreateProductDTO>(productDto);
 
-
-            uploadResponse = await _productRepo.SaveProductImage(objForImage);
+            string entity = "\\" + "restaurant" + "\\";
+            uploadResponse = await _productRepo.SaveProductImage(objForImage,productDto.RestaurantId,entity);
 
             if (!uploadResponse.Success)
             {
-                ModelState.AddModelError("", $" " + uploadResponse.Message);
+                ModelState.AddModelError("", $" " + uploadResponse.imagePath);
                 return StatusCode(500, ModelState);
             }
 
 
-            productDto.ImagePath = uploadResponse.Message;
+            productDto.ImagePath = uploadResponse.imagePath;
 
 
 

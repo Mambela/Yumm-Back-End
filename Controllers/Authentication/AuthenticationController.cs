@@ -132,7 +132,7 @@ namespace Yumm_Back_End.Controllers.Authentication
                 if (!await _restaurantRepo.CreateRestaurant(restaurant))
                 {
                     ModelState.AddModelError("error", "error while trying to ");
-                    return BadRequest();
+                    return BadRequest(ModelState);
                 }
 
 
@@ -206,119 +206,7 @@ namespace Yumm_Back_End.Controllers.Authentication
 
 
 
-        [HttpPost]
-        [Route("Register/Supportteam")]
-        public async Task<IActionResult> CreateSupportTeamMember([FromBody] SupportTeamDTO supportTeamDTO)
-        {
-            try
-            {
-
-                if (supportTeamDTO == null)
-                {
-                    return BadRequest();
-                }
-
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                ApplicationUser user = new ApplicationUser
-                {
-                    Email = supportTeamDTO.Email,
-                    UserName = supportTeamDTO.Username,
-                    PhoneNumber = supportTeamDTO.PhoneNumber,
-                    SecurityStamp = Guid.NewGuid().ToString(),
-                };
-
-
-                var code = _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-                if (code == null)
-                {
-                    return BadRequest();
-                }
-
-
-                user.Token = code.Result;
-
-
-                var result = await _userManager.CreateAsync(user,supportTeamDTO.Password);
-
-                if (!result.Succeeded)
-                {
-                    var errorList = new List<string>();
-                    foreach (var error in result.Errors)
-                    {
-                        errorList.Add(error.Description);
-                    }
-
-                    return BadRequest(errorList);
-
-                }
-
-
-                if (!await _roleManager.RoleExistsAsync(UserRoles.SUPPORTTEAM))
-                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.SUPPORTTEAM));
-
-                if (await _roleManager.RoleExistsAsync(UserRoles.SUPPORTTEAM))
-                {
-                    await _userManager.AddToRoleAsync(user, UserRoles.SUPPORTTEAM);
-                }
-
-
-                SupportTeam supportTeam = new SupportTeam
-                {
-                    Name = supportTeamDTO.Name,
-                    LastName = supportTeamDTO.LastName,
-                    Gender = supportTeamDTO.Gender,
-                    IdNumber = supportTeamDTO.IdNumber,
-                    UserId = user.Id
-                };
-
-                if (! await _supportTeamRepository.CreateSupportTeam(supportTeam)) {
-
-                    ModelState.AddModelError("error", "error while trying to create support team");
-                    return BadRequest(ModelState);
-                }
-
-
-                EmailHelper emailHelper = new EmailHelper();
-
-                   var callBackUrl = BASEURL + "verifyuser?token=" + user.Token;
-
-                bool emailResponse = emailHelper.SendEmailMailTrapAsync(supportTeamDTO.Email, callBackUrl);
-
-                if (emailResponse)
-                {
-                    return StatusCode(StatusCodes.Status201Created,
-                            new
-                            {
-                                Message = "Restaurant Create Successfully. Email Verification sent successfully.",
-                                isSuccess = true
-                            });
-                }
-                else
-                {
-
-                    return StatusCode(StatusCodes.Status201Created,
-                            new
-                            {
-                                Message = "Restaurant Create Successfully. Email Verification not sent. Please request a new email verification. ",
-                                isSuccess = true
-                            });
-                }
-            }
-            catch (Exception ex)
-            {
-                _loggerService.LogError("error " + ex.Message + " inner exception " + ex.InnerException.Message);
-                ModelState.AddModelError("error", "Failed to process the request " + ex.Message);
-                return BadRequest(ModelState);
-            }
-        }
-
-
-
+       
         #endregion
 
         #region Verification EndPoints

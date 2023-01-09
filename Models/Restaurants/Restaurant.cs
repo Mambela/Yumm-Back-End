@@ -29,8 +29,9 @@ namespace Yumm_Back_End.Models.Restaurants
 
         public virtual Menu Menu { get; set; }
 
+        public string Reference { get; set; }
 
-        //public int LocationId { get; set; }
+        public int LocationId { get; set; }
         //public Location Location { get; set; }
 
         //   public ICollection<Product> Products { get; set; }
