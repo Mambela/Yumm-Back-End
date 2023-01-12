@@ -78,7 +78,8 @@ namespace Yumm_Back_End.Repository._Auth
 
 
                 //fetch the Data of the Restaurant
-                Restaurant restaurant = _dbContext.Restaurants.Single(r => r.UserId == user.Id);
+                Restaurant restaurant = _dbContext
+                    .Restaurants.Single();
 
                 Console.WriteLine("\n\n Restaurant Name " + restaurant.Name);
 
@@ -242,7 +243,7 @@ namespace Yumm_Back_End.Repository._Auth
             {
                 Name = name,
                 Description = Description,
-                UserId = user.Id,
+               // UserId = user.Id,
                 RestaurantTypeId = RestaurantId
             };
 

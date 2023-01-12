@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Data;
+using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.Restaurants;
 
 namespace Yumm_Back_End.Repository._Restaurant
@@ -16,6 +17,11 @@ namespace Yumm_Back_End.Repository._Restaurant
         {
             _dbContext = dbContext;
 
+        }
+
+        public int Count()
+        {
+            return _dbContext.RestaurantTypes.Count();
         }
 
         public async Task<bool> CreateType(RestaurantType type)
@@ -47,10 +53,14 @@ namespace Yumm_Back_End.Repository._Restaurant
             return _dbContext.RestaurantTypes.FirstOrDefault(t => t.Id == typeId);
         }
 
-        public ICollection<RestaurantType> GetRestaurantTypes()
+        public ICollection<RestaurantType> GetRestaurantTypes(PaginationFilter validFilter)
         {
 
-            return _dbContext.RestaurantTypes.ToList();
+            return _dbContext.RestaurantTypes
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .OrderBy(c =>c.Name)
+                .ToList();
         }
 
         public bool Save()

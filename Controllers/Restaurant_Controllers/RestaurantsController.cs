@@ -11,7 +11,9 @@ using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Repository._Restaurant;
 using Yumm_Back_End.Services;
+using Yumm_Back_End.Services.MediaService;
 using Yumm_Back_End.Services.PaginationService;
+using Yumm_Back_End.Services.Response;
 
 namespace Yumm_Back_End.Controllers.Restaurant_Controllers
 {
@@ -22,11 +24,13 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
         private readonly IRestaurantRepository _restaurantRepo;
         private readonly IMapper _mapper;
         private readonly IUriService _uriService;
-        public RestaurantsController(IRestaurantRepository restRepo, IMapper mapper, IUriService uriService)
+        private readonly IMediaManager mediaManager;
+        public RestaurantsController(IRestaurantRepository restRepo, IMapper mapper, IUriService uriService, IMediaManager _mediaManager)
         {
             _restaurantRepo = restRepo;
             _mapper = mapper;
             _uriService = uriService;
+            this.mediaManager = _mediaManager;
         }
 
         [HttpPost]
@@ -114,12 +118,13 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
                         {
                             Id = item.Id,
                             Description = item.Description,
-                            Email = item.User.Email,
+                            Email = item.Email,
                             Name = item.Name,
                             NoOfOrders = token.GenerateOrders(),
-                            Phone = item.User.PhoneNumber,
+                            Phone = item.PhoneNumber,
                             RestaurantType = item.RestaurantType.Name,
                                Reference = item.Reference,
+                               Logo = item.Logo,
                             CreateDate = item.CreateDate,
                             UpdatedDate = item.UpdatedDate
                         }
@@ -163,12 +168,13 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
                         {
                             Id = item.Id,
                             Description = item.Description,
-                            Email = item.User.Email,
+                            Email = item.Email,
                             Name = item.Name,
                             NoOfOrders = token.GenerateOrders(),
-                            Phone = item.User.PhoneNumber,
+                            Phone = item.PhoneNumber,
                             RestaurantType = item.RestaurantType.Name,
                             Reference = item.Reference,
+                            Logo = item.Logo,
                             CreateDate = item.CreateDate,
                             UpdatedDate = item.UpdatedDate
                         }
@@ -199,7 +205,7 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
                 return NotFound();
             }
 
-            var restaurantDTO = _mapper.Map<_RestaurantDTO>(restaurantObj);
+            var restaurantDTO = _mapper.Map<ViewRestauratDTO>(restaurantObj);
 
             return Ok(restaurantDTO);
 
@@ -242,23 +248,71 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
 
         [HttpPatch]
 
-        public IActionResult UpdateRestaurant([FromBody] _RestaurantDTO restaurantDTO, int restaurantId)
+        public async Task<IActionResult> UpdateRestaurantAsync([FromForm] _RestaurantDTO restaurantDTO, int restaurantId)
         {
-            if (restaurantDTO == null || restaurantDTO.Id == restaurantId)
+            try
             {
-                return BadRequest(ModelState);
+
+                    if (restaurantDTO == null || restaurantDTO.Id != restaurantId)
+                    {
+                                return BadRequest(ModelState);
+                    }
+
+                    MediaResponse uploadedResponse = new MediaResponse();
+
+                    if (restaurantDTO.Files != null)
+                    {
+                        string images = "\\images\\";
+                        string entity = "\\" + "restaurant" + "\\";
+                        string reference = "\\" + restaurantId.ToString() + "\\";
+                        uploadedResponse = await mediaManager.SaveImage(restaurantDTO.Files, reference, entity, images);
+                    }
+
+
+                    var restaurantObj = _restaurantRepo.GetRestaurant(restaurantId);
+
+                    if (restaurantObj == null)
+                    {
+                        ModelState.AddModelError("error", "Request restaurant not found.");
+
+                        return NotFound(ModelState);
+                    }
+
+
+                    restaurantObj.PhoneNumber = restaurantDTO.PhoneNumber;
+                    restaurantObj.Email = restaurantDTO.Email;
+                    restaurantObj.Name = restaurantDTO.Name;
+                    restaurantObj.Description = restaurantDTO.Description;
+                    restaurantObj.RestaurantTypeId = restaurantDTO.RestaurantTypeId;
+                
+                    restaurantObj.LocationId = restaurantDTO.LocationId;
+
+
+                    if (uploadedResponse.isSucess)
+                    {
+                            restaurantObj.Logo = uploadedResponse.imagePath;
+                    }
+
+
+
+                    if (!_restaurantRepo.Save())
+                    {
+                        ModelState.AddModelError("", $"Something went wrong while updating the restaurant {restaurantObj.Name}");
+
+                        return StatusCode(500, ModelState);
+                     }
+
+
+
+                    return NoContent();
+
             }
-
-            var restaurantObj = _mapper.Map<Restaurant>(restaurantDTO);
-
-            if(!_restaurantRepo.UpdateResturant(restaurantObj))
+            catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Something went wrong while updating the restaurant {restaurantObj.Name}");
 
-                return StatusCode(500, ModelState);
-             }
 
-            return NoContent();
+                throw;
+            }
         }
 
     }

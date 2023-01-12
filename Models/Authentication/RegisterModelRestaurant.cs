@@ -22,6 +22,22 @@ namespace Yumm_Back_End.Models.Authentication
 
         public int RestaurantTypeId { get; set; }
 
+        public int LocationId { get; set; }
+
+        public string UserRole { get; set; }
+
+        /// <summary>
+        /// /The Details below are user for the user manager 
+        /// </summary>
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+
+        public string RestaurantPhoneNumber { get; set; }
+
+        public string RestaurantEmail { get; set; }
+
 
     }
 }

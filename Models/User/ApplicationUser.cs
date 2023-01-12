@@ -13,7 +13,6 @@ namespace Yumm_Back_End.Models.User
 {
     public class ApplicationUser : IdentityUser
     {
-        public virtual Restaurant Restaurant { get; set; }
 
         public virtual Client Client { get; set; }
 

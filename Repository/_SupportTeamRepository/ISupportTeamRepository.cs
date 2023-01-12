@@ -24,6 +24,7 @@ namespace Yumm_Back_End.Repository._SupportTeamRepository
 
         bool DeleteSupportTeam(SupportTeam SupportTeam);
 
+        int Count();
         bool Save();
     }
 }

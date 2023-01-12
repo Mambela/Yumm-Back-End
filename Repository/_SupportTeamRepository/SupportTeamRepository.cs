@@ -17,6 +17,12 @@ namespace Yumm_Back_End.Repository._SupportTeamRepository
         {
             _dbContext = dbContext;
         }
+
+        public int Count()
+        {
+            return _dbContext.SupportTeams.Count();
+        }
+
         public async Task<bool> CreateSupportTeam(SupportTeam SupportTeam)
         {
              await _dbContext.SupportTeams.AddAsync(SupportTeam);

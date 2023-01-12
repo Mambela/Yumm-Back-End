@@ -32,7 +32,7 @@ namespace Yumm_Back_End.Services.MediaService
         public MediaResponse ValidateImage(string extension, long fileSize)
         {
 
-            _mediaResponse.Success = true;
+            _mediaResponse.isSucess = true;
 
             /*
              * Retrieve from the end of the extension to the an / so that we get just the type of the image
@@ -47,7 +47,7 @@ namespace Yumm_Back_End.Services.MediaService
 
             if (!supportedTypes.Contains(extension))
             {
-                _mediaResponse.Success = false;
+                _mediaResponse.isSucess = false;
                 _mediaResponse.imagePath = "Error! Only upload of images allowed";
 
                 return _mediaResponse;
@@ -58,7 +58,7 @@ namespace Yumm_Back_End.Services.MediaService
 
             if (fileSize / 1048 > ImageMaxSize)
             {
-                _mediaResponse.Success = false;
+                _mediaResponse.isSucess = false;
                 _mediaResponse.imagePath = "Error!  The file size is too large";
 
                 return _mediaResponse;
@@ -81,7 +81,7 @@ namespace Yumm_Back_End.Services.MediaService
 
             //_mediaResponse = new MediaResponse();
 
-            _mediaResponse.Success = true;
+            _mediaResponse.isSucess = true;
             _mediaResponse.imagePath = "Testin the response " + extension;
 
             return _mediaResponse;
@@ -140,7 +140,7 @@ namespace Yumm_Back_End.Services.MediaService
             //Validate the image
             mdResponse = ValidateImage(objectFile.Files.ContentType, objectFile.Files.Length);
 
-            if (!mdResponse.Success)
+            if (!mdResponse.isSucess)
                 return mdResponse;
 
             //Reduce size.
@@ -222,7 +222,7 @@ namespace Yumm_Back_End.Services.MediaService
             //Validate the image
             mdResponse = ValidateImage(imageObject.ContentType, imageObject.Length);
 
-            if (!mdResponse.Success)
+            if (!mdResponse.isSucess)
                 return null;
 
             //Reduce size.

@@ -19,6 +19,8 @@ namespace Yumm_Back_End.Repository._Restaurant
         Restaurant GetRestaurant(int restaurantI);
         List<Restaurant> GetRestaurantsByReference(PaginationFilter validFilter,string reference);
 
+        Task<bool> AssociateUserToRestaurant(RestaurantUser restaurantUser);
+
         bool RestaurantExist(string name);
 
         bool RestaurantExist(int restaurantId);

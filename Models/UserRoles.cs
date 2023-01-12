@@ -14,6 +14,9 @@ namespace Yumm_Back_End.Models
         public const string RESTAURANT = "RESTAURANT";
         public const string SUPPORTTEAM = "SUPPORTTEAM";
         public const string SUPPORTTEAMMANAGER = "TEAMMANAGER";
+        public const string RESTAURANTMANAGER = "RESTAURANTMANAGER";
+        public const string RESTAURANTSTAFF = "RESTAURANTSTAFF";
+        public const string RESTAURANTADMIN = "RESTAURANTADMIN";
 
 
 

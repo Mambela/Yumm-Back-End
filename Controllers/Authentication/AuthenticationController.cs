@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using Yumm_Back_End.Helper;
 using Yumm_Back_End.Models;
 using Yumm_Back_End.Models.Authentication;
+using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.DTOs.SupportTeamDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Models.Shared;
@@ -22,6 +23,7 @@ using Yumm_Back_End.Repository._Auth;
 using Yumm_Back_End.Repository._Restaurant;
 using Yumm_Back_End.Repository._SupportTeamRepository;
 using Yumm_Back_End.Repository._UserRepository;
+using Yumm_Back_End.Services;
 using Yumm_Back_End.Services.Logger;
 
 namespace Yumm_Back_End.Controllers.Authentication
@@ -65,6 +67,10 @@ namespace Yumm_Back_End.Controllers.Authentication
         {
             try
             {
+                RoleIdentifier roleIdentifier = new RoleIdentifier();
+                Generators gen = new Generators();
+
+
 
                 if (model == null)
                 {
@@ -77,16 +83,27 @@ namespace Yumm_Back_End.Controllers.Authentication
                     return StatusCode(500, ModelState);
                 }
 
+
+                //Distinguish the Role
+                var role = roleIdentifier.ChooseRole(model.UserRole);
+
+                if (role == null)
+                {
+                    ModelState.AddModelError("error", "failed to assign user role");
+
+                    return BadRequest(ModelState);
+                }
+
+
+
+                //Preate a User object for the restaurant
                 ApplicationUser user = new ApplicationUser
                 {
                     Email = model.Email,
                     SecurityStamp = Guid.NewGuid().ToString(),
                     UserName = model.Email,
-                    PhoneNumber = model.PhoneNumber,
-
+                    PhoneNumber = model.PhoneNumber
                 };
-
-
                 var code = _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                 if (code == null)
@@ -96,7 +113,7 @@ namespace Yumm_Back_End.Controllers.Authentication
 
                 user.Token = code.Result;
 
-
+                //Create user to the Database.
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (!result.Succeeded)
@@ -111,36 +128,68 @@ namespace Yumm_Back_End.Controllers.Authentication
                     return BadRequest(errorList);
 
                 }
+                           
 
-                if (!await _roleManager.RoleExistsAsync(UserRoles.RESTAURANT))
-                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.RESTAURANT));
 
-                if (await _roleManager.RoleExistsAsync(UserRoles.RESTAURANT))
+                //Create the Specific Role and or associate a role to a user 
+                if (!await _roleManager.RoleExistsAsync(role))
+                    await _roleManager.CreateAsync(new IdentityRole(role));
+
+                if (await _roleManager.RoleExistsAsync(role))
                 {
-                    await _userManager.AddToRoleAsync(user, UserRoles.RESTAURANT);
+                    await _userManager.AddToRoleAsync(user, role);
                 }
 
+
+
+
+                //Create the actual restaurant. 
                 Restaurant restaurant = new Restaurant
                 {
                     Name = model.Name,
                     Description = model.Description,
-                    UserId = user.Id,
-                    RestaurantTypeId = model.RestaurantTypeId
-                };
+                    RestaurantTypeId = model.RestaurantTypeId,
+                    LocationId = model.LocationId,
+                    PhoneNumber = model.RestaurantPhoneNumber,
+                    Email = model.RestaurantEmail,
+                    Reference = gen.GenereateRestaurantReference(model.Name)
+            };
 
 
                 if (!await _restaurantRepo.CreateRestaurant(restaurant))
                 {
-                    ModelState.AddModelError("error", "error while trying to ");
+                    ModelState.AddModelError("error", "error while trying to create restaurant.");
                     return BadRequest(ModelState);
                 }
+
+
+                //Prepare a user restaurant. 
+
+                RestaurantUser restaurantUser = new RestaurantUser {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    RestaurantId= restaurant.Id,
+                    UserId = user.Id,
+                };
+
+
+                //Associate a user to restaurant
+                if(! await _restaurantRepo.AssociateUserToRestaurant(restaurantUser))
+                {
+
+                    ModelState.AddModelError("error", "error while trying to associate user to restaurant.");
+                    return BadRequest(ModelState);
+                }
+
 
 
                 EmailHelper emailHelper = new EmailHelper();
 
                 var callBackUrl = BASEURL + "verifyuser?token=" + user.Token;
 
-                bool emailResponse = emailHelper.SendEmailMailTrapAsync(model.Email, callBackUrl);
+                //bool emailResponse = emailHelper.SendEmailMailTrapAsync(model.Email, callBackUrl);
+
+                bool emailResponse = false;
 
                 if (emailResponse)
                 {
@@ -164,8 +213,9 @@ namespace Yumm_Back_End.Controllers.Authentication
             }
             catch (Exception ex)
             {
-
-                throw;
+                _loggerService.LogError("Error occurred while attempting to create restaurant " + ex.Message);
+                ModelState.AddModelError("error", "failed to create a restaurant.");
+                return BadRequest(ModelState);
             }
         }
 
@@ -413,11 +463,11 @@ namespace Yumm_Back_End.Controllers.Authentication
                 {
                     fullName = user.Client.FirstName + " " + user.Client.LastName;
                 }
-                else if (user.Restaurant != null)
-                {
+                //else if (user.Restaurant != null)
+                //{
 
-                    fullName = user.Restaurant.Name;
-                }
+                //    fullName = user.Restaurant.Name;
+                //}
 
 
                 return Ok(new

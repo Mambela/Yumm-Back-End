@@ -166,7 +166,7 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
             //Validate the image
             mdResponse = _mediaManager.ValidateImage(objectFile.Files.ContentType, objectFile.Files.Length);
 
-            if (!mdResponse.Success)
+            if (!mdResponse.isSucess)
                 return mdResponse;
 
 

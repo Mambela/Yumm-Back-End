@@ -73,7 +73,9 @@ namespace Yumm_Back_End.Controllers.SupportTeam_Controllers
 
                 }
 
-                var pagedResponse = PaginationHelper.CreatePageResponse<ViewSupportTeamDTO>(pagedSupportTeam, filter, supportTeamObjList.Count, _uriService, route);
+                int totalRecords = _supportTeamRepository.Count();
+
+                var pagedResponse = PaginationHelper.CreatePageResponse<ViewSupportTeamDTO>(pagedSupportTeam, filter, totalRecords, _uriService, route);
 
                 return Ok(pagedResponse);
 

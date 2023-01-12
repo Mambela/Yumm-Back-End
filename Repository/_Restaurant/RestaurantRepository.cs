@@ -79,7 +79,7 @@ namespace Yumm_Back_End.Repository
         {
            return _dbContext.Restaurants
                 .Include(rt =>rt.RestaurantType)
-                .Include(u =>u.User)
+             //   .Include(u =>u.User)
                 .Skip((validFilter.PageNumber -1)* validFilter.PageSize)
                 .Take(validFilter.PageSize).ToList(); 
         }
@@ -87,7 +87,7 @@ namespace Yumm_Back_End.Repository
         public List<Restaurant> GetRestaurantsPagedByType(PaginationFilter validFilter , int typeId)
         {
             return _dbContext.Restaurants.Include(rt => rt.RestaurantType)
-                .Include(u => u.User)
+              //  .Include(u => u.User)
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .Where(rt => rt.RestaurantTypeId == typeId).ToList();
@@ -97,7 +97,7 @@ namespace Yumm_Back_End.Repository
         {
             return _dbContext.Restaurants
                 .Include(rt => rt.RestaurantType)
-                .Include(u => u.User)
+                //.Include(u => u.User)
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                  .Where(r => r.Reference.ToLower().Contains(reference.ToLower())).ToList();
@@ -106,6 +106,13 @@ namespace Yumm_Back_End.Repository
         public int Count()
         {
             return _dbContext.Restaurants.Count();
+        }
+
+        public async Task<bool> AssociateUserToRestaurant(RestaurantUser restaurantUser)
+        {
+            await _dbContext.RestaurantUsers.AddAsync(restaurantUser);
+
+            return Save();
         }
     }
 }

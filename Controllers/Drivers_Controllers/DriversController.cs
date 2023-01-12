@@ -92,7 +92,7 @@ namespace Yumm_Back_End.Controllers.Drivers_Controllers
 
                 var uploadedResponse = await mediaManager.SaveImage(driverDTO.Files,reference, entity, images);
 
-                if (!uploadedResponse.Success)
+                if (!uploadedResponse.isSucess)
                 {
                     ModelState.AddModelError("", $" " + uploadedResponse.imagePath);
                     return StatusCode(500, ModelState);
@@ -295,7 +295,7 @@ namespace Yumm_Back_End.Controllers.Drivers_Controllers
 
 
 
-                driverCurrentObj.ImageLink = (uploadedResponse.Success) ? uploadedResponse.imagePath:driverCurrentObj.ImageLink;
+                driverCurrentObj.ImageLink = (uploadedResponse.isSucess) ? uploadedResponse.imagePath:driverCurrentObj.ImageLink;
 
                 //if (!driverRepo.UpdateDriver(driverObj))
                 if (!driverRepo.Save())

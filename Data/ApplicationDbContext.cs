@@ -39,6 +39,8 @@ namespace Yumm_Back_End.Data
 
             builder.Entity<MenuGroupsProducts>().HasKey(x => new { x.MenuGroupId, x.ProductId });
 
+            builder.Entity<RestaurantUser>().HasKey(x => new { x.RestaurantId, x.UserId });
+
             ////Locations Builder
             //builder.Entity<Location>().Property(L => L.Lat).HasPrecision(8,6);
             //builder.Entity<Location>().Property(L => L.Lng).HasPrecision(9,6);
@@ -81,6 +83,8 @@ namespace Yumm_Back_End.Data
         public DbSet<SupportTeam> SupportTeams { get; set; }
         
         public DbSet<ProductSize> ProductSizes { get; set; }
+
+        public DbSet<RestaurantUser> RestaurantUsers { get; set; }
 
 
         #endregion

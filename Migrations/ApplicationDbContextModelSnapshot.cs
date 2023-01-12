@@ -517,11 +517,20 @@ namespace Yumm_Back_End.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Logo")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Reference")
@@ -533,16 +542,9 @@ namespace Yumm_Back_End.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RestaurantTypeId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Restaurants");
                 });
@@ -567,6 +569,33 @@ namespace Yumm_Back_End.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("RestaurantTypes");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.RestaurantUser", b =>
+                {
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("RestaurantId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RestaurantUsers");
                 });
 
             modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.Working_Hours", b =>
@@ -847,13 +876,24 @@ namespace Yumm_Back_End.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", "User")
-                        .WithOne("Restaurant")
-                        .HasForeignKey("Yumm_Back_End.Models.Restaurants.Restaurant", "UserId")
+                    b.Navigation("RestaurantType");
+                });
+
+            modelBuilder.Entity("Yumm_Back_End.Models.Restaurants.RestaurantUser", b =>
+                {
+                    b.HasOne("Yumm_Back_End.Models.Restaurants.Restaurant", "Restaurant")
+                        .WithMany()
+                        .HasForeignKey("RestaurantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("RestaurantType");
+                    b.HasOne("Yumm_Back_End.Models.User.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
 
                     b.Navigation("User");
                 });
@@ -906,8 +946,6 @@ namespace Yumm_Back_End.Migrations
                     b.Navigation("Client");
 
                     b.Navigation("Driver");
-
-                    b.Navigation("Restaurant");
                 });
 #pragma warning restore 612, 618
         }

@@ -20,9 +20,7 @@ namespace Yumm_Back_End.Models.Restaurants
 
         public string Description { get; set; }
 
-        [Required]
-        public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
+       
 
         public int RestaurantTypeId { get; set; }
         public RestaurantType RestaurantType { get; set; }
@@ -32,6 +30,15 @@ namespace Yumm_Back_End.Models.Restaurants
         public string Reference { get; set; }
 
         public int LocationId { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public string Email { get; set; }
+
+
+        public string Logo { get; set; }
+
+
         //public Location Location { get; set; }
 
         //   public ICollection<Product> Products { get; set; }

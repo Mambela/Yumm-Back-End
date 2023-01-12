@@ -62,7 +62,7 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
 
                 uploadResponse = await _productRepo.SaveProductImage(productDto,productDto.RestaurantId,_entity);
 
-                if (!uploadResponse.Success)
+                if (!uploadResponse.isSucess)
                 {
                     ModelState.AddModelError("", $" " + uploadResponse.imagePath);
                     return StatusCode(500, ModelState);
@@ -308,7 +308,7 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
             string entity = "\\" + "restaurant" + "\\";
             uploadResponse = await _productRepo.SaveProductImage(objForImage,productDto.RestaurantId,entity);
 
-            if (!uploadResponse.Success)
+            if (!uploadResponse.isSucess)
             {
                 ModelState.AddModelError("", $" " + uploadResponse.imagePath);
                 return StatusCode(500, ModelState);

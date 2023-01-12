@@ -56,7 +56,8 @@ namespace Yumm_Back_End.Mapper
                 
                 CreateMap<RestaurantType, RestaurantTypeDTO>().ReverseMap();
                 CreateMap<Restaurant, _RestaurantDTO>().ReverseMap();
-                CreateMap<Category, CategoryDTO>().ReverseMap();
+                CreateMap<Restaurant, ViewRestauratDTO>().ReverseMap();
+                 CreateMap<Category, CategoryDTO>().ReverseMap();
                 CreateMap<Menu, CreateMenuDTO>().ReverseMap();
                 CreateMap<MenuGroup, CreateMenuGroupDTO>().ReverseMap();
                 CreateMap<MenuGroup, MenuGroupDTO>().ReverseMap();
