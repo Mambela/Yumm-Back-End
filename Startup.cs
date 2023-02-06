@@ -46,6 +46,8 @@ using Microsoft.AspNetCore.Http;
 using Yumm_Back_End.Repository._MediaRepository;
 using Yumm_Back_End.Services.MediaService;
 using Yumm_Back_End.Repository._DriverRepository;
+using Yumm_Back_End.Repository._OrderRepository;
+using Yumm_Back_End.Repository._AddressRepository._ClientAdressRepository;
 
 namespace Yumm_Back_End
 {
@@ -57,6 +59,7 @@ namespace Yumm_Back_End
         }
 
         public IConfiguration Configuration { get; }
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -91,6 +94,8 @@ namespace Yumm_Back_End
             services.AddScoped<IProductExtrasRepository, ProductExtrasRepository>();
             services.AddScoped<ILoggerService, LoggerService>();
             services.AddScoped<ISupportTeamRepository, SupportTeamRepository>();
+            services.AddScoped<IOrderRepository,OrderRepository> ();
+            services.AddScoped<IClientAddressRepository,ClientAddressRepository> ();
             services.AddScoped<IMediaManager, MediaManager>();
             services.AddSingleton<IUriService>(o => 
             {

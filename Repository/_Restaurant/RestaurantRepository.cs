@@ -38,7 +38,9 @@ namespace Yumm_Back_End.Repository
 
         public Restaurant GetRestaurant(int restaurantId)
         {
-            return _dbContext.Restaurants.FirstOrDefault(r => r.Id == restaurantId);
+            return _dbContext.Restaurants
+                .Include(r => r.RestaurantType)
+                .FirstOrDefault(r => r.Id == restaurantId);
         }
 
         public ICollection<Restaurant> GetRestaurants()

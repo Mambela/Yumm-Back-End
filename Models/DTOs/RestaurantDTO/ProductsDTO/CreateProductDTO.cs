@@ -14,7 +14,7 @@ namespace Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO
         public string Name { get; set; }
  
 
-        public  IList<ProductSizesDTO> Sizes { get; set; }
+        public List<ProductSizesDTO> Sizes { get; set; }
         public string Description { get; set; }
 
         public int CategoryId { get; set; }

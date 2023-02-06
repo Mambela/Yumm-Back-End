@@ -52,11 +52,11 @@ namespace Yumm_Back_End.Services.MediaService
 
                 return _mediaResponse;
             }
-
+             
 
             //Maximum size allowed is 2.6 Mb
 
-            if (fileSize / 1048 > ImageMaxSize)
+            if (fileSize / 4192 > ImageMaxSize)
             {
                 _mediaResponse.isSucess = false;
                 _mediaResponse.imagePath = "Error!  The file size is too large";

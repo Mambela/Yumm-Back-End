@@ -65,9 +65,9 @@ namespace Yumm_Back_End.Repository._MenuRepository._MenuGroupRepository
 
         }
 
-        public ICollection<Restaurant> GetRestaurantMenuGroups(int restaurantId)
+        public ICollection<MenuGroup> GetRestaurantMenuGroups(int restaurantId)
         {
-            return _dbContext.Restaurants.Include(m => m.Menu).Include(mg => mg.Menu.MenuGroups).Where(r => r.Id == restaurantId).ToList();
+            return _dbContext.MenuGroups.Include(m => m.Menu).Include(mg => mg.Menu.MenuGroups).Where(r => r.Menu.RestaurantId == restaurantId).ToList();
         }
 
         public bool Save()

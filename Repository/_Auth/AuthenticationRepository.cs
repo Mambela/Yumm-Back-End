@@ -128,7 +128,6 @@ namespace Yumm_Back_End.Repository._Auth
                 };
 
 
-                Console.WriteLine(userRoles);
 
                 return authUser;
             }

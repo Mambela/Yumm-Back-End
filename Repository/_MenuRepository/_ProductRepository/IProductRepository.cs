@@ -24,6 +24,12 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
         ICollection<Product> GetProductsInMenuGroup(int menuGroupId);
         ICollection<Product> GetProductsInMenuGroup(PaginationFilter pagination,int menuGroupId);
 
+        int CountProductsInMenuGroup(int menuGroupId);
+
+        int CountProductsInRestaurant(int restaurantId);
+
+        int CountProdcutsInCategory(int categoryId);
+
         Product GetProduct(int productId);
 
         bool ProductExists(int productId);
@@ -32,6 +38,10 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
 
         Task<bool> CreateProduct(Product product);
         Task<bool> CreateProductSize(List<ProductSize> productSizes);
+
+        List<ProductSize> GetAllProductSizes(int productId);
+
+        bool RemoveProductSize(List<ProductSize> productSizes);
 
         bool UpdateProduct(Product product);
 

@@ -46,10 +46,9 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
 
             try
             {
-
                 if (productDto == null)
                 {
-                    return BadRequest(ModelState);
+                    return BadRequest(productDto);
                 }
 
                 if (productDto.Files == null)
@@ -64,7 +63,7 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
 
                 if (!uploadResponse.isSucess)
                 {
-                    ModelState.AddModelError("", $" " + uploadResponse.imagePath);
+                    ModelState.AddModelError("", $"failed to upload product Image.");
                     return StatusCode(500, ModelState);
                 }
 
@@ -183,11 +182,11 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
         }
 
         [HttpGet("ProductsInCategory/{categoryId:int}")]
-        public IActionResult ProductsInCategory(int categoryId, PaginationFilter pagination)
+        public IActionResult ProductsInCategory(int categoryId, [FromQuery] PaginationFilter pagination)
         {
             try
             {
-
+                
 
                 var productList = _productRepo.GetProductsInCategory(categoryId);
                 var route = Request.Path.Value;
@@ -198,9 +197,11 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                     productDto.Add(_mapper.Map<ProductDTO>(product));
                 }
 
+                int totalRecords = _productRepo.CountProdcutsInCategory(categoryId);
+
                 var validFilter = new PaginationFilter(pagination.PageNumber, pagination.PageSize);
 
-                var pageResponse = PaginationHelper.CreatePageResponse<ProductDTO>(productDto, validFilter, productDto.Count, _uriService, route);
+                var pageResponse = PaginationHelper.CreatePageResponse<ProductDTO>(productDto, validFilter, totalRecords, _uriService, route);
 
                 return Ok(pageResponse);
             }
@@ -219,6 +220,9 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
         {
             try
             {
+
+             
+
                 var productList = _productRepo.GetProductsInRestaurant(pagination, restauarantId);
                 var route = Request.Path.Value;
                 var productDto = new List<ViewProductDTO>();
@@ -241,9 +245,11 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                     productDto.Add(productItem);
                 }
 
+                int totalRecords = _productRepo.CountProductsInRestaurant(restauarantId);
+
                 var validFilter = new PaginationFilter(pagination.PageNumber, pagination.PageSize);
 
-                var pageResponse = PaginationHelper.CreatePageResponse<ViewProductDTO>(productDto, validFilter, productDto.Count, _uriService, route);
+                var pageResponse = PaginationHelper.CreatePageResponse<ViewProductDTO>(productDto, validFilter, totalRecords, _uriService, route);
 
                 return Ok(pageResponse);
             }
@@ -275,7 +281,9 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                 }
                 var validFilter = new PaginationFilter(pagination.PageNumber, pagination.PageSize);
 
-                var pageResponse = PaginationHelper.CreatePageResponse<ProductDTO>(productDto, validFilter, productDto.Count, _uriService, route);
+                int totalRecords = _productRepo.CountProductsInMenuGroup(menuGroupId);
+
+                var pageResponse = PaginationHelper.CreatePageResponse<ProductDTO>(productDto, validFilter, totalRecords, _uriService, route);
 
                 return Ok(pageResponse);
             }
@@ -297,35 +305,64 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                 return BadRequest(ModelState);
             }
 
-            if (productDto.Files == null)
+            var productObj = _productRepo.GetProduct(productId);
+
+            if (productDto.Files != null)
             {
-                return BadRequest(ModelState);
+                var objForImage = _mapper.Map<CreateProductDTO>(productDto);
+                 
+                string entity = "\\" + "restaurant" + "\\";
+                uploadResponse = await _productRepo.SaveProductImage(objForImage,productDto.RestaurantId,entity);
+                productObj.ImagePath = uploadResponse.imagePath;    
             }
 
+            productObj.Duration = productDto.Duration;
+            productObj.MenuGroupId = productDto.MenuGroupId;
+            productObj.categoryId = productDto.CategoryId;
+            productObj.Description = productDto.Description;
 
-            var objForImage = _mapper.Map<CreateProductDTO>(productDto);
-
-            string entity = "\\" + "restaurant" + "\\";
-            uploadResponse = await _productRepo.SaveProductImage(objForImage,productDto.RestaurantId,entity);
-
-            if (!uploadResponse.isSucess)
-            {
-                ModelState.AddModelError("", $" " + uploadResponse.imagePath);
-                return StatusCode(500, ModelState);
-            }
-
-
-            productDto.ImagePath = uploadResponse.imagePath;
-
-
-
-            var productObj = _mapper.Map<Product>(productDto);
 
             if (!_productRepo.UpdateProduct(productObj))
             {
                 ModelState.AddModelError("", $"Something went wrong when updating the record {productObj.Name}");
                 return StatusCode(500, ModelState);
             }
+
+
+            //Delete current product. 
+            var currentProductSize = _productRepo.GetAllProductSizes(productObj.Id);
+
+            if (_productRepo.RemoveProductSize(currentProductSize))
+            {
+                var productSizeList = new List<ProductSize>();
+
+                //Associate product size to the  Product
+                foreach (var productProperty in productDto.Sizes)
+                {
+                    productSizeList.Add(new ProductSize
+                    {
+                        ProductId = productObj.Id,
+                        Size = productProperty.Size,
+                        Price = productProperty.Price,
+
+                    });
+                }
+
+
+                if (! await _productRepo.CreateProductSize(productSizeList))
+                {
+                    return Ok(
+                        new 
+                            {
+                             isSuccess = false,
+                             message= "Failed to update product size. Please try again."
+                            });
+
+                }
+            }
+
+
+
 
             return NoContent();
 

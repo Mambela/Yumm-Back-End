@@ -79,20 +79,6 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
 
         }
 
-        //[HttpGet]
-        //public IActionResult GetRestaurants()
-        //{
-        //    var restaurantList = _restaurantRepo.GetRestaurants();
-
-        //    var restaurantDTO = new List<_RestaurantDTO>();
-
-        //    foreach (var restaurant in restaurantList)
-        //    {
-        //        restaurantDTO.Add(_mapper.Map<_RestaurantDTO>(restaurant));
-        //    }
-
-        //    return Ok(restaurantDTO);
-        //}
 
 
         [HttpGet]
@@ -206,6 +192,8 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
             }
 
             var restaurantDTO = _mapper.Map<ViewRestauratDTO>(restaurantObj);
+
+            restaurantDTO.RestaurantType = restaurantObj.RestaurantType.Name;
 
             return Ok(restaurantDTO);
 

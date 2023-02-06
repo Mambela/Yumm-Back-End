@@ -243,7 +243,12 @@ namespace Yumm_Back_End.Controllers.Authentication
 
                 var register = await _authRepo.RegisterClientAsync(model);
 
-                return Ok(model);
+                return StatusCode(StatusCodes.Status201Created,
+                            new
+                            {
+                                Message = "Client created successfully. Email Verification not sent. Please request a new email verification. ",
+                                isSuccess = true
+                            });
 
             }
             catch (Exception ex)

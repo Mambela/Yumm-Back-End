@@ -112,12 +112,16 @@ namespace Yumm_Back_End.Data
         #region Orders
 
         public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderDetails> OrderDetails { get; set; }
         #endregion
 
 
         #region Client Entities
 
         public DbSet<Client> Clients { get; set; }
+
+        public DbSet<ClientAddress> ClientAddresses { get; set; }
         #endregion
 
 

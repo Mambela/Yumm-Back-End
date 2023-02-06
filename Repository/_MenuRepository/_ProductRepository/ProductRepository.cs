@@ -32,6 +32,22 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
             _mediaManager = mediaManager;   
         }
 
+        public int CountProdcutsInCategory(int categoryId)
+        {
+            return _dbContext.Products.Where(r => r.categoryId == categoryId).Count();
+        }
+
+        public int CountProductsInMenuGroup(int menuGroupId)
+        {
+            return _dbContext.Products.Where(r => r.MenuGroupId == menuGroupId).Count();
+
+        }
+
+        public int CountProductsInRestaurant(int restaurantId)
+        {
+            return _dbContext.Products.Where(r => r.MenuGroup.Menu.RestaurantId == restaurantId).Count();
+
+        }
 
         public async Task<bool> CreateProduct(Product item)
         {
@@ -58,6 +74,11 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
         public Task<MediaResponse> DeleteProductImage(UpdateProductDTO objectfile, string previousimage)
         {
             throw new NotImplementedException();
+        }
+
+        public List<ProductSize> GetAllProductSizes(int productId)
+        {
+            return _dbContext.ProductSizes.Where(p => p.ProductId == productId).ToList();
         }
 
         public Product GetProduct(int ProductId)
@@ -127,9 +148,10 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
                .Include(s => s.ProductSizes)
                .Include(c => c.category)
                .Include(m => m.MenuGroup)
-               .Skip((pagination.PageNumber-1)* pagination.PageSize)
+               .Where(p => p.MenuGroup.Menu.RestaurantId == restaurantId)
+               .Skip((pagination.PageNumber - 1) * pagination.PageSize)
                .Take(pagination.PageSize)
-               .Where(p => p.MenuGroup.Menu.RestaurantId == restaurantId).ToList();
+                .ToList();
         }
 
         public bool ProductExists(int itemId)
@@ -140,6 +162,12 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
         public bool ProductExists(string name, int restaurantId, int categoryId)
         {
             return _dbContext.Products.Any(i => i.Name == name && i.categoryId == categoryId);
+        }
+
+        public bool RemoveProductSize(List<ProductSize> productSizes)
+        {
+            _dbContext.ProductSizes.RemoveRange(productSizes);
+            return Save();
         }
 
         public bool Save()

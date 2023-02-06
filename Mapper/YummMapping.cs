@@ -80,6 +80,7 @@ namespace Yumm_Back_End.Mapper
 
             #region Client Mapping
             CreateMap<Client, ClientDTO>().ReverseMap();
+            CreateMap<ClientAddress, ClientAddressDTO>().ReverseMap();
 
 
             #endregion
