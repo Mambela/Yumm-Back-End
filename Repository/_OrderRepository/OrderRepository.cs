@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -17,6 +18,21 @@ namespace Yumm_Back_End.Repository._OrderRepository
         {
             dbContext = _dbContext;
         }
+
+        public int CountClientOrders(string clientId)
+        {
+            return dbContext.Orders
+               .Include(o => o.OrderedByUser)
+               .Where(c => c.OrderedByUserId == clientId)
+               .Count();
+        }
+
+        public int CountRestaurantOrders(int restaurantId, string status)
+        {
+            return dbContext.Orders
+               .Where(o => o.OrderDetails.Select(o => o.Product.MenuGroup.Menu.RestaurantId).Contains(restaurantId)).Count();
+        }
+
         public async Task<bool> CreateOrder(Order order)
         {
             await dbContext.Orders.AddAsync(order);
@@ -38,11 +54,13 @@ namespace Yumm_Back_End.Repository._OrderRepository
             return Save();
         }
 
-        public IList<Order> GetClientOrders(string clientId)
+        public IList<Order> GetClientOrders(string clientId, PaginationFilter filter)
         {
             return dbContext.Orders
                 .Include(o => o.OrderedByUser)
                 .Where(c => c.OrderedByUserId == clientId)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
                 .ToList();
         }
 
@@ -75,11 +93,14 @@ namespace Yumm_Back_End.Repository._OrderRepository
                 .ToList();
         }
 
-        public IList<Order> GetRestaurantOrders(int restaurantId)
+        public IList<Order> GetRestaurantOrders(int restaurantId, string status)
         {
-            throw new System.NotImplementedException();
-
-            
+            return dbContext.Orders
+                .Include(o => o.OrderDetails)
+                .Include(o => o.OrderDetails).ThenInclude(p =>p.Product)
+                .Where(o => o.OrderDetails.Select(o => o.Product.MenuGroup.Menu.RestaurantId).Contains(restaurantId) && o.OrderStatus.ToLower().Trim() == status.ToLower().Trim())
+                .ToList();
+                  
         }
 
         public bool Save()

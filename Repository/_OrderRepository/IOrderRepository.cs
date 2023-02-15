@@ -13,12 +13,16 @@ namespace Yumm_Back_End.Repository._OrderRepository
 
         Order GetOrder(int id);
 
-        IList<Order> GetRestaurantOrders(int restaurantId);
+        IList<Order> GetRestaurantOrders(int restaurantId,string status);
+
+        int CountRestaurantOrders(int restaurantId, string status);
 
         IList<OrderDetails> GetOrdersInRestaurant(int restaurantId, PaginationFilter filter);
 
-        IList<Order> GetClientOrders(string clientId);
+        IList<Order> GetClientOrders(string clientId,PaginationFilter pagination);
 
+
+        int CountClientOrders(string clientId); 
 
         IList<OrderDetails> GetOrderDetails(int orderId);
         

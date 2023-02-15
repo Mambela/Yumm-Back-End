@@ -98,6 +98,11 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
 
             var categoryDTO = new List<CategoryDTO>();
 
+            categoryDTO.Add( new CategoryDTO{
+               Id = 0,
+               Name = "All"               
+            });
+
             foreach (var category in categoryList)
             {
                 categoryDTO.Add(_mapper.Map<CategoryDTO>(category));

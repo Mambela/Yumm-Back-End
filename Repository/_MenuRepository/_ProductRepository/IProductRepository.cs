@@ -12,21 +12,26 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
 {
     public interface IProductRepository
     {
-        ICollection<Product> GetProducts();
+        ICollection<Product> GetProducts(PaginationFilter pagination);
 
         ICollection<Product> GetProductsInCategory(int catgoryId);
         ICollection<Product> GetProductsInCategory(PaginationFilter pagination,int catgoryId);
 
         ICollection<Product> GetProductsInRestaurant (int restaurantId);
         ICollection<Product> GetProductsInRestaurant (PaginationFilter pagination,int restaurantId);
+        ICollection<Product> GetProductsInaRestaurantbyCategory (PaginationFilter pagination,int restaurantId, int categoryId);
 
 
         ICollection<Product> GetProductsInMenuGroup(int menuGroupId);
         ICollection<Product> GetProductsInMenuGroup(PaginationFilter pagination,int menuGroupId);
 
+
+        int CountProductsInaRestaurantbyCategory(int restaurantId, int categoryId);
         int CountProductsInMenuGroup(int menuGroupId);
 
         int CountProductsInRestaurant(int restaurantId);
+
+        int CountAllProducts();
 
         int CountProdcutsInCategory(int categoryId);
 

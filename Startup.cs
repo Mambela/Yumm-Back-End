@@ -67,7 +67,14 @@ namespace Yumm_Back_End
             services.AddCors();
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("SIT_ENV"));
+                options.UseSqlServer(Configuration.GetConnectionString("SIT_ENV"),sqlServerOptionsAction: sqlOptions => {
+                      sqlOptions.EnableRetryOnFailure(
+                      maxRetryCount: 3,
+                      maxRetryDelay: TimeSpan.FromSeconds(30),
+                      errorNumbersToAdd: null
+                      );
+
+                });
             });
 
 

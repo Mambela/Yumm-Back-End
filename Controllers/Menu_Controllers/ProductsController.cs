@@ -167,18 +167,50 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
         }
 
         [HttpGet]
-        public IActionResult GetProducts()
+        public IActionResult GetProducts([FromQuery] PaginationFilter pagination)
         {
-            var productList = _productRepo.GetProducts();
-
-            var productDto = new List<ProductDTO>();
-
-            foreach (var product in productList)
+            try
             {
-                productDto.Add(_mapper.Map<ProductDTO>(product));
-            }
 
-            return Ok(productDto);
+                var productList = _productRepo.GetProducts(pagination);
+                var route = Request.Path.Value;
+                var productDto = new List<ViewProductDTO>();
+
+                foreach (var product in productList)
+                {
+
+                    var productItem = new ViewProductDTO
+                    {
+                        Id = product.Id,
+                        Category = product.category.Name,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Duration = product.Duration,
+                        ImagePath = product.ImagePath,
+                        CategoryId = product.categoryId,
+                        MenuGroup = product.MenuGroup.Name,
+                        ProductSizes = _mapper.Map<IList<ProductSizesDTO>>(product.ProductSizes),
+                    };
+                    productDto.Add(productItem);
+                }
+
+                int totalRecords = _productRepo.CountAllProducts();
+
+                var validFilter = new PaginationFilter(pagination.PageNumber, pagination.PageSize);
+
+                var pageResponse = PaginationHelper.CreatePageResponse<ViewProductDTO>(productDto, validFilter, totalRecords, _uriService, route);
+
+                return Ok(pageResponse);
+            }
+            catch (Exception ex)
+            {
+
+                _loggerService.LogError("Error " + ex.Message);
+                ModelState.AddModelError("error", "Failed to complete product retrieval process. Try again.");
+
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpGet("ProductsInCategory/{categoryId:int}")]
@@ -215,13 +247,58 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
         }
 
 
+        [HttpGet("RestaurantsProductsInCategory")]
+        public IActionResult GetRestaurantsProductsInCategory(int categoryId, int restaurantId,[FromQuery] PaginationFilter pagination)
+        {
+            try {
+
+                var productList = _productRepo.GetProductsInaRestaurantbyCategory(pagination, restaurantId,categoryId);
+                var route = Request.Path.Value;
+                var productDto = new List<ViewProductDTO>();
+
+                foreach (var product in productList)
+                {
+
+                    var productItem = new ViewProductDTO
+                    {
+                        Id = product.Id,
+                        Category = product.category.Name,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Duration = product.Duration,
+                        ImagePath = product.ImagePath,
+                        CategoryId = product.categoryId,
+                        MenuGroup = product.MenuGroup.Name,
+                        ProductSizes = _mapper.Map<IList<ProductSizesDTO>>(product.ProductSizes),
+                    };
+                    productDto.Add(productItem);
+                }
+
+                int totalRecords = _productRepo.CountProductsInaRestaurantbyCategory(restaurantId,categoryId);
+
+                var validFilter = new PaginationFilter(pagination.PageNumber, pagination.PageSize);
+
+                var pageResponse = PaginationHelper.CreatePageResponse<ViewProductDTO>(productDto, validFilter, totalRecords, _uriService, route);
+
+                return Ok(pageResponse);
+            }
+            catch (Exception ex)
+            {
+
+                _loggerService.LogError("Error " + ex.Message);
+                ModelState.AddModelError("error", "Failed to complete product retrieval process. Try again.");
+
+                return BadRequest(ModelState);
+            }
+        }
+        
+
+
         [HttpGet("ProductsInRestauarant/restauarantId:int")]
         public IActionResult ProductsInRestauarant(int restauarantId, [FromQuery] PaginationFilter pagination)
         {
             try
             {
-
-             
 
                 var productList = _productRepo.GetProductsInRestaurant(pagination, restauarantId);
                 var route = Request.Path.Value;

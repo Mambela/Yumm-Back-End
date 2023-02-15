@@ -32,9 +32,24 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
             _mediaManager = mediaManager;   
         }
 
+        public int CountAllProducts()
+        {
+            return _dbContext.Products.Count();
+        }
+
         public int CountProdcutsInCategory(int categoryId)
         {
             return _dbContext.Products.Where(r => r.categoryId == categoryId).Count();
+        }
+
+        public int CountProductsInaRestaurantbyCategory(int restaurantId, int categoryId)
+        {
+            return _dbContext.Products
+                  .Where(p => p.categoryId == categoryId)
+                .Include(s => s.ProductSizes)
+                .Include(c => c.category)
+                .Include(m => m.MenuGroup)
+                .Where(p => p.MenuGroup.Menu.RestaurantId == restaurantId).Count();
         }
 
         public int CountProductsInMenuGroup(int menuGroupId)
@@ -88,11 +103,29 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
                 .FirstOrDefault(i => i.Id == ProductId);
         }
 
-        public ICollection<Product> GetProducts()
+        public ICollection<Product> GetProducts(PaginationFilter pagination)
         {
             return _dbContext.Products
                 .Include(s => s.ProductSizes)
-                .ToList();
+                 .Include(r => r.category)
+                  .Include(m => m.MenuGroup)
+                  .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+                  .Take(pagination.PageSize)
+                  .ToList();
+                
+        }
+
+        public ICollection<Product> GetProductsInaRestaurantbyCategory(PaginationFilter pagination, int restaurantId, int categoryId)
+        {
+            return _dbContext.Products
+                .Where(p =>p.categoryId == categoryId)
+              .Include(s => s.ProductSizes)
+              .Include(c => c.category)
+              .Include(m => m.MenuGroup)
+              .Where(p => p.MenuGroup.Menu.RestaurantId == restaurantId)
+              .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+              .Take(pagination.PageSize)
+               .ToList();
         }
 
         public ICollection<Product> GetProductsInCategory(int categoryId)
@@ -105,6 +138,7 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
         {
             return _dbContext.Products.Include(s => s.ProductSizes)
                   .Include(r => r.category)
+                  .Include(m => m.MenuGroup)
                   .Skip((pagination.PageNumber-1)* pagination.PageSize)
                   .Take(pagination.PageSize)
                   .Where(c => c.categoryId == categoryId).ToList();

@@ -7,6 +7,7 @@ using Yumm_Back_End.Models.Shared;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yumm_Back_End.Models.User;
 using Yumm_Back_End.Models.Address;
+using Yumm_Back_End.Models.Restaurants;
 
 namespace Yumm_Back_End.Models.Orders
 {
@@ -41,6 +42,11 @@ namespace Yumm_Back_End.Models.Orders
         public string? CollectedByUserId { get; set; }
 
         public ApplicationUser? CollectedByUser { get; set; }
+
+
+        //public int RestaurantId { get; set; }
+
+        //public Restaurant Restaurant { get; set; }
 
     }
 }
