@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Yumm_Back_End.Data;
+using Yumm_Back_End.Models;
 using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.Orders;
+using Yumm_Back_End.Models.Restaurants;
 
 namespace Yumm_Back_End.Repository._OrderRepository
 {
@@ -25,6 +27,14 @@ namespace Yumm_Back_End.Repository._OrderRepository
                .Include(o => o.OrderedByUser)
                .Where(c => c.OrderedByUserId == clientId)
                .Count();
+        }
+
+        public int CountRestaurantDeliveryOrders(int restarauntId)
+        {
+            return dbContext.Orders
+                 .Where(
+                    o => o.OrderDetails.Select(o => o.Product.MenuGroup.Menu.RestaurantId).Contains(restarauntId) &&  
+                    (o.OrderStatus.ToUpper().Trim() != Status.NEW && o.OrderStatus != Status.AWAITINGPAYMENT && o.OrderStatus != Status.PAID)).Count();
         }
 
         public int CountRestaurantOrders(int restaurantId, string status)
@@ -98,9 +108,24 @@ namespace Yumm_Back_End.Repository._OrderRepository
             return dbContext.Orders
                 .Include(o => o.OrderDetails)
                 .Include(o => o.OrderDetails).ThenInclude(p =>p.Product)
+                .Include(o => o.OrderedByUser).ThenInclude(c =>c.Client)
                 .Where(o => o.OrderDetails.Select(o => o.Product.MenuGroup.Menu.RestaurantId).Contains(restaurantId) && o.OrderStatus.ToLower().Trim() == status.ToLower().Trim())
                 .ToList();
                   
+        }
+
+        public IList<Order> GetRestaurantOrdersByStatus(int restaurantId, PaginationFilter filter)
+        {
+           return dbContext.Orders
+                .Include(o => o.OrderDetails)
+                .Include(o => o.OrderDetails).ThenInclude(p => p.Product)
+                .Include(o => o.OrderedByUser).ThenInclude(c => c.Client)
+                .Where(o => o.OrderDetails.Select(o => o.Product.MenuGroup.Menu.RestaurantId).Contains(restaurantId)
+                
+                && o.OrderStatus.ToUpper().Trim() != Status.NEW && o.OrderStatus!=Status.AWAITINGPAYMENT && o.OrderStatus !=Status.PAID)
+                .Take(filter.PageSize)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .ToList();
         }
 
         public bool Save()
@@ -114,5 +139,6 @@ namespace Yumm_Back_End.Repository._OrderRepository
 
             return Save();
         }
+ 
     }
 }

@@ -14,6 +14,7 @@ namespace Yumm_Back_End.Repository._OrderRepository
         Order GetOrder(int id);
 
         IList<Order> GetRestaurantOrders(int restaurantId,string status);
+        IList<Order> GetRestaurantOrdersByStatus(int restaurantId,PaginationFilter filter);
 
         int CountRestaurantOrders(int restaurantId, string status);
 
@@ -22,7 +23,9 @@ namespace Yumm_Back_End.Repository._OrderRepository
         IList<Order> GetClientOrders(string clientId,PaginationFilter pagination);
 
 
-        int CountClientOrders(string clientId); 
+        int CountClientOrders(string clientId);
+
+        int CountRestaurantDeliveryOrders(int restarauntId);
 
         IList<OrderDetails> GetOrderDetails(int orderId);
         
@@ -34,6 +37,8 @@ namespace Yumm_Back_End.Repository._OrderRepository
         Task<bool> CreateOrderDetails(List<OrderDetails> orderDetails);
 
         bool UpdateOrder(Order order);
+
+        
 
         bool Save();
     }

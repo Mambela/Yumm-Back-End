@@ -17,6 +17,12 @@ namespace Yumm_Back_End.Models.Orders
 
         public int NumberOfProducts { get; set; }
 
+        public string ClientName { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public DateTime DueTime { get; set; }
+
         public IList<ViewOrderDetails> OrderDetails { get; set; }
     }
 }

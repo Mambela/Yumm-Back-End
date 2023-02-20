@@ -5,7 +5,10 @@
         New,
         Accepted,
         Rejected,
+        Ready,
         Collected,
         Delivered,
+        AwaitingPayment,
+        Paid
     }
 }

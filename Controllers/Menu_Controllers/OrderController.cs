@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Yumm_Back_End.Helper;
+using Yumm_Back_End.Models;
 using Yumm_Back_End.Models.DTOs.OrderDTO;
 using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
@@ -59,6 +61,7 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                     Note =newOrderDTO.Note,
                     ClientAddressId = newOrderDTO.LocationId,
                     OrderStatus =StatusEnum.New.ToString(),
+
                     OrderedByUserId = newOrderDTO.OrderedByUserId,
                 };
 
@@ -117,6 +120,8 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
         {
             try
             {
+
+                TimeEstimator estmator = new TimeEstimator();
                 var restaurantOrdersListObj = orderRepository.GetRestaurantOrders(restaurantId,status);
                 var route = Request.Path.Value;
                 var orderList = new List<ViewOrderDTO>();
@@ -131,7 +136,10 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                         Note = order.Note,
                         OrderedDate = order.TakenOderDate,
                         Status = order.OrderStatus,
+                        ClientName = order.OrderedByUser.Client.FirstName +" "+ order.OrderedByUser.Client.LastName,
+                        PhoneNumber = order.OrderedByUser.PhoneNumber,
                         TotalAmount = order.TotalAmount,
+                        DueTime = estmator.DueAt(order),
                         NumberOfProducts = order.OrderDetails.Count
                     };
 
@@ -146,8 +154,12 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                                 Amount = orderItem.Amount,
                                 Id = orderItem.Id,
                                 Note = orderItem.Note,
+                                PrepTime = orderItem.Product.Duration,
+                                Quantity = orderItem.NoOfServing,
                                 ProductName = orderItem.Product.Name,
-                                Size = orderItem.Size
+                                Size = orderItem.Size,
+                                ImageLink = orderItem.Product.ImagePath,
+                                
                             }
 
                             );
@@ -176,6 +188,75 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
             }
         }
 
+        [HttpGet("RestaurantOrdersDelivery")]
+        public IActionResult GetRestaurantOrdersForDelivery(int restaurantId, [FromQuery] PaginationFilter filters) {
+
+            try
+            {
+
+                TimeEstimator estmator = new TimeEstimator();
+                var restaurantOrdersListObj = orderRepository.GetRestaurantOrdersByStatus(restaurantId,filters);
+                var route = Request.Path.Value;
+                var orderList = new List<ViewOrderDTO>();
+
+                foreach (var order in restaurantOrdersListObj)
+                {
+                    var orderDetails = new List<ViewOrderDetails>();
+
+                    var newOrder = new ViewOrderDTO
+                    {
+                        Id = order.Id,
+                        Note = order.Note,
+                        OrderedDate = order.TakenOderDate,
+                        Status = order.OrderStatus,
+                        ClientName = order.OrderedByUser.Client.FirstName + " " + order.OrderedByUser.Client.LastName,
+                        PhoneNumber = order.OrderedByUser.PhoneNumber,
+                        TotalAmount = order.TotalAmount,
+                        NumberOfProducts = order.OrderDetails.Count,
+                        DueTime = estmator.DueAt(order)
+                    };
+
+
+
+
+                    foreach (var orderItem in order.OrderDetails)
+                    {
+
+                        orderDetails.Add(
+                            new ViewOrderDetails
+                            {
+                                Amount = orderItem.Amount,
+                                Id = orderItem.Id,
+                                Note = orderItem.Note,
+                                PrepTime = orderItem.Product.Duration,
+                                Quantity = orderItem.NoOfServing,
+                                ProductName = orderItem.Product.Name,
+                                Size = orderItem.Size,
+                                ImageLink = orderItem.Product.ImagePath,
+                            }
+
+                            );
+                        newOrder.OrderDetails = orderDetails;
+                    }
+                    orderList.Add(newOrder);
+                }
+
+
+                int totalRecords = orderRepository.CountRestaurantDeliveryOrders(restaurantId);
+
+                var validFilter = new PaginationFilter(filters.PageNumber, filters.PageSize);
+
+                var pageResponse = PaginationHelper.CreatePageResponse<ViewOrderDTO>(orderList, validFilter, totalRecords, uriService, route);
+
+                return Ok(pageResponse);
+
+            }
+            catch (Exception ex)
+            {
+                loggerService.LogError(""+ex.Message);
+                return BadRequest();
+            }
+        }
 
         [HttpGet("ClientOrders")]
         public IActionResult ClientOrders(string clientId, string status, [FromQuery] PaginationFilter pagination)
@@ -185,19 +266,45 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
                 var clientOrderObjList = orderRepository.GetClientOrders(clientId,pagination);
                 var clientOrdersList = new List<ViewOrderDTO>();
                 var route = Request.Path.Value;
-
+                var orderList = new List<ViewOrderDTO>();
 
                 foreach (var order in clientOrderObjList)
                 {
                     var orderDetails = new List<ViewOrderDetails>();
-                    clientOrdersList.Add(new ViewOrderDTO
+
+                    var newOrder = new ViewOrderDTO
                     {
                         Id = order.Id,
                         Note = order.Note,
                         OrderedDate = order.TakenOderDate,
                         Status = order.OrderStatus,
                         TotalAmount = order.TotalAmount,
-                    });
+                        NumberOfProducts = order.OrderDetails.Count
+                    };
+
+
+
+
+                    foreach (var orderItem in order.OrderDetails)
+                    {
+
+                        orderDetails.Add(
+                            new ViewOrderDetails
+                            {
+                                Amount = orderItem.Amount,
+                                Id = orderItem.Id,
+                                Note = orderItem.Note,
+                                PrepTime = orderItem.Product.Duration,
+                                Quantity = orderItem.NoOfServing,
+                                ProductName = orderItem.Product.Name,
+                                Size = orderItem.Size
+                            }
+
+                            );
+                        newOrder.OrderDetails = orderDetails;
+                    }
+
+                    orderList.Add(newOrder);
                 }
 
 
@@ -231,6 +338,35 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
             {
 
                 throw;
+            }
+        }
+
+
+        [HttpPatch]
+        public IActionResult ChangeOrderStatus(string status, int orderId)
+        {
+            try
+            {
+                var orderObj = orderRepository.GetOrder(orderId);
+
+                if (orderObj == null)
+                {
+                    return BadRequest("Order not found.");
+                }
+
+                orderObj.OrderStatus = Status.GetStatus(status);
+
+                if (orderObj.OrderStatus == null)
+                    throw new Exception("incorrect status provided");
+
+                orderRepository.UpdateOrder(orderObj);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                loggerService.LogError("Error updating order status " + ex.Message);
+                return BadRequest("Failed to change order status");
             }
         }
     }
