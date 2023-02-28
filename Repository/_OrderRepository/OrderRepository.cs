@@ -1,5 +1,7 @@
 ﻿using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -35,6 +37,26 @@ namespace Yumm_Back_End.Repository._OrderRepository
                  .Where(
                     o => o.OrderDetails.Select(o => o.Product.MenuGroup.Menu.RestaurantId).Contains(restarauntId) &&  
                     (o.OrderStatus.ToUpper().Trim() != Status.NEW && o.OrderStatus != Status.AWAITINGPAYMENT && o.OrderStatus != Status.PAID)).Count();
+        }
+
+        public int CountRestaurantDeliveryProcessedOrders(int restarauntId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CountRestaurantOrderHistoryByDateRange(int restaurantId, PaginationFilter filter, DateTime startDate, DateTime endDate)
+        {
+            return dbContext.Orders
+                 .Include(o => o.OrderDetails)
+                 .Include(o => o.OrderDetails).ThenInclude(p => p.Product)
+                 .Include(o => o.OrderedByUser).ThenInclude(c => c.Client)
+                .Where(o => o.OrderDetails.Select(o => o.Product.MenuGroup.Menu.RestaurantId).Contains(restaurantId)
+                 && o.CreateDate.Date >= startDate.Date.Date && o.CreateDate.Date <= endDate.Date
+                 && o.OrderStatus.ToUpper().Trim() != Status.NEW && o.OrderStatus != Status.AWAITINGPAYMENT && o.OrderStatus != Status.PAID
+                 )
+                 .Take(filter.PageSize)
+                 .Skip((filter.PageNumber - 1) * filter.PageSize)
+                 .Count();
         }
 
         public int CountRestaurantOrders(int restaurantId, string status)
@@ -109,23 +131,39 @@ namespace Yumm_Back_End.Repository._OrderRepository
                 .Include(o => o.OrderDetails)
                 .Include(o => o.OrderDetails).ThenInclude(p =>p.Product)
                 .Include(o => o.OrderedByUser).ThenInclude(c =>c.Client)
-                .Where(o => o.OrderDetails.Select(o => o.Product.MenuGroup.Menu.RestaurantId).Contains(restaurantId) && o.OrderStatus.ToLower().Trim() == status.ToLower().Trim())
+                .Where(o => o.OrderDetails.Select(o => o.Product.MenuGroup.Menu.RestaurantId).Contains(restaurantId) 
+                    && o.OrderStatus.ToLower().Trim() == status.ToLower().Trim() && o.CreateDate.Date == DateTime.UtcNow.Date)
                 .ToList();
                   
         }
 
-        public IList<Order> GetRestaurantOrdersByStatus(int restaurantId, PaginationFilter filter)
+        public IList<Order> GetRestaurantProcessedOrders(int restaurantId, PaginationFilter filter)
         {
            return dbContext.Orders
                 .Include(o => o.OrderDetails)
                 .Include(o => o.OrderDetails).ThenInclude(p => p.Product)
                 .Include(o => o.OrderedByUser).ThenInclude(c => c.Client)
                 .Where(o => o.OrderDetails.Select(o => o.Product.MenuGroup.Menu.RestaurantId).Contains(restaurantId)
-                
-                && o.OrderStatus.ToUpper().Trim() != Status.NEW && o.OrderStatus!=Status.AWAITINGPAYMENT && o.OrderStatus !=Status.PAID)
+                && o.CreateDate == DateTime.UtcNow
+                && o.OrderStatus.ToUpper().Trim() != Status.NEW && o.OrderStatus!=Status.AWAITINGPAYMENT && o.OrderStatus !=Status.PAID
+                && o.CreateDate.Date == DateTime.UtcNow.Date)
                 .Take(filter.PageSize)
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
                 .ToList();
+        }
+
+        public IList<Order> GetRestaurantProcessedOrdersHistoryByDateRange(int restaurantId, PaginationFilter filter, DateTime startDate, DateTime endDate)
+        {
+            return dbContext.Orders
+                 .Include(o => o.OrderDetails)
+                 .Include(o => o.OrderDetails).ThenInclude(p => p.Product)
+                 .Include(o => o.OrderedByUser).ThenInclude(c => c.Client)
+                 .Where(o => o.OrderDetails.Select(o => o.Product.MenuGroup.Menu.RestaurantId).Contains(restaurantId)
+                 && o.CreateDate.Date >= startDate.Date.Date && o.CreateDate.Date <=endDate.Date
+                 && o.OrderStatus.ToUpper().Trim() != Status.NEW && o.OrderStatus != Status.AWAITINGPAYMENT && o.OrderStatus != Status.PAID)
+                 .Take(filter.PageSize)
+                 .Skip((filter.PageNumber - 1) * filter.PageSize)
+                 .ToList();
         }
 
         public bool Save()

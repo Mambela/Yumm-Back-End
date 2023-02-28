@@ -195,7 +195,7 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
             {
 
                 TimeEstimator estmator = new TimeEstimator();
-                var restaurantOrdersListObj = orderRepository.GetRestaurantOrdersByStatus(restaurantId,filters);
+                var restaurantOrdersListObj = orderRepository.GetRestaurantProcessedOrders(restaurantId,filters);
                 var route = Request.Path.Value;
                 var orderList = new List<ViewOrderDTO>();
 
@@ -338,6 +338,78 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
             {
 
                 throw;
+            }
+        }
+
+        [HttpGet("OrderHistory")]
+        public IActionResult GetRestaurantHistory(int restaurantId, DateTime startDate, DateTime endDate, [FromQuery] PaginationFilter pagination)
+        {
+            try
+            {
+                var ordersByHistory = orderRepository.GetRestaurantProcessedOrdersHistoryByDateRange(restaurantId, pagination, startDate, endDate);
+                TimeEstimator estmator = new TimeEstimator();
+                var route = Request.Path.Value;
+                var orderList = new List<ViewOrderDTO>();
+
+                foreach (var order in ordersByHistory)
+                {
+                    var orderDetails = new List<ViewOrderDetails>();
+
+                    var newOrder = new ViewOrderDTO
+                    {
+                        Id = order.Id,
+                        Note = order.Note,
+                        OrderedDate = order.TakenOderDate,
+                        Status = order.OrderStatus,
+                        ClientName = order.OrderedByUser.Client.FirstName + " " + order.OrderedByUser.Client.LastName,
+                        PhoneNumber = order.OrderedByUser.PhoneNumber,
+                        TotalAmount = order.TotalAmount,
+                        DueTime = estmator.DueAt(order),
+                        NumberOfProducts = order.OrderDetails.Count
+                    };
+
+
+
+
+                    foreach (var orderItem in order.OrderDetails)
+                    {
+
+                        orderDetails.Add(
+                            new ViewOrderDetails
+                            {
+                                Amount = orderItem.Amount,
+                                Id = orderItem.Id,
+                                Note = orderItem.Note,
+                                PrepTime = orderItem.Product.Duration,
+                                Quantity = orderItem.NoOfServing,
+                                ProductName = orderItem.Product.Name,
+                                Size = orderItem.Size,
+                                ImageLink = orderItem.Product.ImagePath,
+
+                            }
+
+                            );
+                        newOrder.OrderDetails = orderDetails;
+                    }
+                    orderList.Add(newOrder);
+                }
+
+
+
+
+
+                int totalRecords = orderRepository.CountRestaurantOrderHistoryByDateRange(restaurantId,pagination,startDate,endDate);
+
+                var validFilter = new PaginationFilter(pagination.PageNumber, pagination.PageSize);
+
+                var pageResponse = PaginationHelper.CreatePageResponse<ViewOrderDTO>(orderList, validFilter, totalRecords, uriService, route);
+
+                return Ok(pageResponse);
+            }
+            catch (Exception ex)
+            {
+                loggerService.LogError("Error fetching " + ex.Message);
+                return BadRequest("Falied to retrieve Restaraunt History");
             }
         }
 
