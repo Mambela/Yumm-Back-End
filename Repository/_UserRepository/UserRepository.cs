@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Yumm_Back_End.Data;
 using Yumm_Back_End.Models.User;
@@ -25,6 +26,11 @@ namespace Yumm_Back_End.Repository._UserRepository
         public ApplicationUser GetUserPhoneNumber(string phoneNumber)
         {
             return _dbContext.Users.FirstOrDefault(p => p.PhoneNumber == phoneNumber);
+        }
+
+        public ApplicationUser GetUserPhoneNumber(int OTP, string phoneNumber)
+        {
+            return _dbContext.Users.FirstOrDefault(u => u.OTP == OTP && u.PhoneNumber == phoneNumber);
         }
 
         public ApplicationUser GetUserToVerifyOTP(int OTP)

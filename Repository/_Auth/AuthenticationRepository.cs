@@ -309,6 +309,11 @@ namespace Yumm_Back_End.Repository._Auth
             return _dbContext.Users.FirstOrDefault(u => u.UserName == username);
         }
 
+        public RestaurantUser getUser(string userId)
+        {
+            return _dbContext.RestaurantUsers.FirstOrDefault(c => c.UserId.Equals(userId.ToLower()));
+        }
+
 
         #endregion
 

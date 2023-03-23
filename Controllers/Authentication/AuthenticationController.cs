@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using Yumm_Back_End.Helper;
 using Yumm_Back_End.Models;
 using Yumm_Back_End.Models.Authentication;
+using Yumm_Back_End.Models.DTOs.AuthenticationDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.DTOs.SupportTeamDTO;
 using Yumm_Back_End.Models.Restaurants;
@@ -25,6 +26,7 @@ using Yumm_Back_End.Repository._SupportTeamRepository;
 using Yumm_Back_End.Repository._UserRepository;
 using Yumm_Back_End.Services;
 using Yumm_Back_End.Services.Logger;
+using static System.Net.WebRequestMethods;
 
 namespace Yumm_Back_End.Controllers.Authentication
 {
@@ -124,11 +126,8 @@ namespace Yumm_Back_End.Controllers.Authentication
                         errorList.Add(error.Description);
                     }
 
-
                     return BadRequest(errorList);
-
                 }
-                           
 
 
                 //Create the Specific Role and or associate a role to a user 
@@ -153,7 +152,7 @@ namespace Yumm_Back_End.Controllers.Authentication
                     PhoneNumber = model.RestaurantPhoneNumber,
                     Email = model.RestaurantEmail,
                     Reference = gen.GenereateRestaurantReference(model.Name)
-            };
+                };
 
 
                 if (!await _restaurantRepo.CreateRestaurant(restaurant))
@@ -168,13 +167,13 @@ namespace Yumm_Back_End.Controllers.Authentication
                 RestaurantUser restaurantUser = new RestaurantUser {
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    RestaurantId= restaurant.Id,
+                    RestaurantId = restaurant.Id,
                     UserId = user.Id,
                 };
 
 
                 //Associate a user to restaurant
-                if(! await _restaurantRepo.AssociateUserToRestaurant(restaurantUser))
+                if (!await _restaurantRepo.AssociateUserToRestaurant(restaurantUser))
                 {
 
                     ModelState.AddModelError("error", "error while trying to associate user to restaurant.");
@@ -261,13 +260,12 @@ namespace Yumm_Back_End.Controllers.Authentication
 
 
 
-       
+
         #endregion
 
         #region Verification EndPoints
         [HttpPost]
-        [Route("Verify")]
-
+        [Route("VerifyByToken")]
         public async Task<IActionResult> VerifyRestaurantEmail(string token)
         {
             try
@@ -340,6 +338,80 @@ namespace Yumm_Back_End.Controllers.Authentication
             }
         }
 
+        [HttpPost]
+        [Route("VerifyUserOTP")]
+        public IActionResult VerifyUserOTP([FromBody] VerifyUserOTPDTO verifyUserOtp)
+        {
+            try
+            {
+
+                var user = _userRepository.GetUserPhoneNumber(verifyUserOtp.OTP, verifyUserOtp.phoneNumber);
+                //TODO:  Need to Add Expiration Date To OTP and update the OTP to 
+
+                if (user != null)
+                {
+                    return BadRequest(new { message = "failed to verify this user!" });
+                }
+
+
+
+                return Ok(
+                    new {
+                        isSuccess = true,
+                        message ="User verified successfully!"
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                _loggerService.LogError("Error occurred while attempting to verify restaurant email " + ex.Message);
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        [Route("RequestPasswordChangeByOTP")]
+        public IActionResult RequestPasswordChange([FromBody] VerifyUserOTPDTO verifyUserOTPDTO)
+        {
+            try
+            {
+                TokenManager tokenManager = new TokenManager();
+
+                var user = _userRepository.GetUserPhoneNumber(verifyUserOTPDTO.phoneNumber);
+                if (user == null)
+                {
+                    ModelState.AddModelError("error", "User could not be verified.");
+
+                    return BadRequest();
+                }
+
+                var generateOTP = tokenManager.GenerateOTP();
+
+                user.OTP = generateOTP.OTP;
+
+                if (!_userRepository.UpdateUser(user))
+                {
+
+                    ModelState.AddModelError("error", "User could not be verified.");
+                    return BadRequest();
+
+                }
+
+                return Ok(new
+                {
+                    isSuccess = true,
+                    message = "OTP sent successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                _loggerService.LogError("Error occurred while attempting to verify restaurant email " + ex.Message);
+
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpPost]
         [Route("RequestPhoneNumberVerification")]
@@ -364,20 +436,28 @@ namespace Yumm_Back_End.Controllers.Authentication
 
                 user.OTP = generateOTP.OTP;
 
-                _userRepository.UpdateUser(user);
+                if (!_userRepository.UpdateUser(user)) {
+
+                    ModelState.AddModelError("error", "User could not be verified.");
+                    return BadRequest();
+
+                }
 
 
                 return Ok(
                     new
                     {
                         isSuccess = true,
-                        message = "Restaurant email verified successfully."
+                        message = "User verified successfully."
                     });
             }
             catch (Exception ex)
             {
+                _loggerService.LogError("Error occurred while attempting to verify user" + ex.Message);
 
-                throw;
+                ModelState.AddModelError("error", "User could not be verified.");
+
+                return BadRequest(ModelState);
             }
         }
 
@@ -387,9 +467,10 @@ namespace Yumm_Back_End.Controllers.Authentication
 
         #region Authentication EndPoint
         [HttpPost]
-        [Route("Login")]
+        [Route("MerchantLogin")]
         public async Task<IActionResult> LoginClient([FromBody] AuthModel authModel)
         {
+            var unauthorizedResponse = new { error = "Username or password is incorrect." };
 
             if (authModel == null)
             {
@@ -402,31 +483,20 @@ namespace Yumm_Back_End.Controllers.Authentication
             }
 
 
-            var user = await _userManager.FindByEmailAsync(authModel.PhoneNumber);
+            var user = await _userManager.FindByEmailAsync(authModel.UserName);
 
             if (user == null)
             {
-                var unauthorizedResponse = new { error = "Username or password is incorrect." };
+               
 
-                user = _authRepo.GetUserByUserName(authModel.PhoneNumber);
+                user = _authRepo.GetUserByPhone(authModel.UserName);
 
                 if (user == null)
                 {
-                    //
-                    if (authModel.PhoneNumber == null)
-                    {
+            
                         //ModelState.AddModelError("error", "Failed to authencticate this user");    
                         return Unauthorized(unauthorizedResponse);
-                    }
-
-                    var userByPhone = _authRepo.GetUserByPhone(authModel.PhoneNumber);
-
-                    if (userByPhone == null)
-                    {
-                        return Unauthorized(unauthorizedResponse);
-                    }
-
-                    user = userByPhone;
+        
                 }
 
             }
@@ -463,10 +533,16 @@ namespace Yumm_Back_End.Controllers.Authentication
 
                 string fullName = "";
 
+                var _currentUser = _authRepo.getUser(user.Id);
 
-                if (user.Client != null)
+
+                if (_currentUser != null)
                 {
-                    fullName = user.Client.FirstName + " " + user.Client.LastName;
+                    fullName = _currentUser.FirstName + " " + _currentUser.LastName;
+
+                }
+                else {
+                    return BadRequest();
                 }
                 //else if (user.Restaurant != null)
                 //{
@@ -480,6 +556,7 @@ namespace Yumm_Back_End.Controllers.Authentication
                     id = user.Id,
                     email = user.Email,
                     username = user.UserName,
+                    restaurantId = _currentUser.RestaurantId,
                     fullName = fullName,
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     roles = userRoles,
@@ -489,7 +566,7 @@ namespace Yumm_Back_End.Controllers.Authentication
 
             var authResult = await _authRepo.AuthenticatedClient(authModel.Password, authModel.UserName);
 
-            return Ok(authResult);
+            return Unauthorized(unauthorizedResponse);
         }
 
         #endregion
