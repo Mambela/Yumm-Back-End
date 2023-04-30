@@ -27,16 +27,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Logs\" />
-    <Folder Include="Models\DTOs\AuthenticationDTO\" />
-    <Folder Include="wwwroot\" />
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-    </None>
+    <Folder Include="Models\Drivers\" />
+    <Folder Include="Models\Support Team\" />
+    <Folder Include="Userimage\" />
+    <Folder Include="wwwroot\resources\" />
+    <Folder Include="Repository\_AddressRepository\LocationRepository\DriverLocationRepository\" />
+    <Folder Include="Repository\_AddressRepository\LocationRepository\RestaurantLocationRepository\" />
+    <Folder Include="wwwroot\" />
+
   </ItemGroup>
 
 </Project>

@@ -130,7 +130,6 @@ namespace Yumm_Back_End.Data
         //  public DbSet<Ticket_Type> Ticket_Types { get; set; }
         #endregion
 
-
         #region Drivers 
 
 
