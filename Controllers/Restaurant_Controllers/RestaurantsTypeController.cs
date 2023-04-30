@@ -5,9 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Repository._Restaurant;
+using Yumm_Back_End.Services.PaginationService;
 
 namespace Yumm_Back_End.Controllers.Restaurant_Controllers
 {
@@ -17,11 +19,13 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
     {
         public readonly IRestaurantTypeRepository _restTypeRepo;
         public readonly IMapper _mapper;
+        private readonly IUriService _uriService;
 
-        public RestaurantsTypeController(IRestaurantTypeRepository restTypeRepo, IMapper mapper)
+        public RestaurantsTypeController(IRestaurantTypeRepository restTypeRepo, IMapper mapper, IUriService uriService)
         {
             _restTypeRepo = restTypeRepo;
             _mapper = mapper;
+            _uriService = uriService;
         }
 
         [HttpPost]
@@ -36,7 +40,7 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
             if (_restTypeRepo.TypeExists(restaurantType.Name))
             {
 
-                ModelState.AddModelError("", "Type already Exists!");
+                ModelState.AddModelError("error", "Type already Exists!");
                 return StatusCode(404, ModelState);
             }
 
@@ -48,7 +52,7 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
             var typeObj = _mapper.Map<RestaurantType>(restaurantType);
             if (!await _restTypeRepo.CreateType(typeObj))
             {
-                ModelState.AddModelError("", $"An error occurred while creating the type {restaurantType.Name}");
+                ModelState.AddModelError("error", $"An error occurred while creating the type {restaurantType.Name}");
 
                 return StatusCode(500, ModelState);
             }
@@ -89,19 +93,28 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTypes()
+        public IActionResult GetTypes([FromQuery] PaginationFilter pagination)
         {
-            var typeList = _restTypeRepo.GetRestaurantTypes();
+
+            var route = Request.Path.Value;
+            var typeList = _restTypeRepo.GetRestaurantTypes(pagination);
+
+            int totalRecords = _restTypeRepo.Count();
 
 
-            var typeDTO = new List<RestaurantTypeDTO>();
+            var typeDTO = _mapper.Map<List<RestaurantTypeDTO>>(typeList);
 
-            foreach (var restType in typeList)
-            {
-                typeDTO.Add(_mapper.Map<RestaurantTypeDTO>(restType));
-            }
+            //foreach (var restType in typeList)
+            //{
+            //    typeDTO.Add(_mapper.Map<RestaurantTypeDTO>(restType));
 
-            return Ok(typeDTO);
+
+            var validFilter = new PaginationFilter(pagination.PageNumber, pagination.PageSize);
+
+            var pagedResponse = PaginationHelper.CreatePageResponse<RestaurantTypeDTO>(typeDTO, validFilter, totalRecords, _uriService, route);
+            //}
+
+            return Ok(pagedResponse);
 
         }
 

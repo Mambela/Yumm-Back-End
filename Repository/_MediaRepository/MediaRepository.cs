@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
+using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
 using Yumm_Back_End.Services;
+using Yumm_Back_End.Services.MediaService;
 using Yumm_Back_End.Services.Response;
 
 namespace Yumm_Back_End.Repository._MediaRepository
@@ -14,27 +17,20 @@ namespace Yumm_Back_End.Repository._MediaRepository
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly MediaResponse _mediaResponse;
-        private readonly MediaValidator _mediaValidator;
-        public MediaRepository(IWebHostEnvironment webHostenvironment,MediaResponse mediaResponse, MediaValidator mediaValidator)
+        private readonly MediaManager _mediaValidator;
+        public MediaRepository(IWebHostEnvironment webHostenvironment,MediaResponse mediaResponse, MediaManager mediaValidator)
         {
             _webHostEnvironment = webHostenvironment;
             _mediaResponse = mediaResponse;
             _mediaValidator = mediaValidator;
         }
-        public async Task<bool> SaveFoodImage(ItemDTORegister objectFile, string entity)
+        public async Task<bool> SaveFoodImage(CreateProductDTO objectFile, string entity)
         {
 
             Console.WriteLine(objectFile.Files.Length);
             Console.WriteLine(objectFile.Files.GetType());
 
             return false;
-
-
-            //if (_mediaValidator.ValidateImageExtension(objectFile.GetType.ToString()).Errors)
-            //{ 
-
-            //}
-
 
 
             string reference = objectFile.RestaurantId.ToString();
@@ -84,9 +80,11 @@ namespace Yumm_Back_End.Repository._MediaRepository
             }
         }
 
-        public Task<bool> SaveFoodImage(ItemDTORegister objectFile)
+        public Task<bool> SaveFoodImage(CreateProductDTO objectFile)
         {
             throw new NotImplementedException();
         }
+         
+        
     }
 }

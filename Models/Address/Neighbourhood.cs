@@ -7,7 +7,7 @@ using Yumm_Back_End.Models.Shared;
 
 namespace Yumm_Back_End.Models.Address
 {
-    public class Neighbourhood :BaseEntity
+    public class Neighbourhood : BaseEntity
     {
         [Key]
         public int Id { get; set; }
@@ -17,7 +17,7 @@ namespace Yumm_Back_End.Models.Address
         public int CommuneId { get; set; }
         public Commune Commune { get; set; }
 
-        public ICollection<Street> Streets{ get; set; }
+        public ICollection<Street> Streets { get; set; }
 
     }
 }

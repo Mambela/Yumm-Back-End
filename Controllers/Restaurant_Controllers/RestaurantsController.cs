@@ -5,9 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Yumm_Back_End.Helper;
+using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Repository._Restaurant;
+using Yumm_Back_End.Services;
+using Yumm_Back_End.Services.MediaService;
+using Yumm_Back_End.Services.PaginationService;
+using Yumm_Back_End.Services.Response;
 
 namespace Yumm_Back_End.Controllers.Restaurant_Controllers
 {
@@ -17,60 +23,163 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
     {
         private readonly IRestaurantRepository _restaurantRepo;
         private readonly IMapper _mapper;
-
-        public RestaurantsController(IRestaurantRepository restRepo, IMapper mapper)
+        private readonly IUriService _uriService;
+        private readonly IMediaManager mediaManager;
+        public RestaurantsController(IRestaurantRepository restRepo, IMapper mapper, IUriService uriService, IMediaManager _mediaManager)
         {
             _restaurantRepo = restRepo;
             _mapper = mapper;
+            _uriService = uriService;
+            this.mediaManager = _mediaManager;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateRestaurant([FromBody] _RestaurantDTO restaurantDTO)
         {
-            if (restaurantDTO == null)
+            Generators gen = new Generators();
+
+            try
             {
-                return BadRequest(ModelState);
-            }
 
-            if (_restaurantRepo.RestaurantExist(restaurantDTO.Name))
-            {
-                ModelState.AddModelError("", $"The restaurant already exists!");
-                return StatusCode(404, ModelState);
-            }
+                if (restaurantDTO == null)
+                {
+                    return BadRequest(ModelState);
+                }
+                                 
+           
+                if (_restaurantRepo.RestaurantExist(restaurantDTO.Name))
+                {
+                    ModelState.AddModelError("", $"The restaurant already exists!");
+                    return StatusCode(404, ModelState);
+                }
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var restaurantObj = _mapper.Map<Restaurant>(restaurantDTO);
+                var restaurantObj = _mapper.Map<Restaurant>(restaurantDTO);
+                    restaurantObj.Reference = gen.GenereateRestaurantReference(restaurantDTO.Name);
 
-            if (!await _restaurantRepo.CreateRestaurant(restaurantObj))
-            {
-                ModelState.AddModelError("", $"An error occurred while creating the restaurant {restaurantDTO.Name}");
+                if (!await _restaurantRepo.CreateRestaurant(restaurantObj))
+                {
+                    ModelState.AddModelError("", $"An error occurred while creating the restaurant {restaurantDTO.Name}");
 
-                return StatusCode(500, ModelState);
-            }
+                    return StatusCode(500, ModelState);
+                }
 
             return Ok(restaurantObj);
 
-        }
-
-        [HttpGet]
-        public IActionResult GetRestaurants()
-        {
-            var restaurantList = _restaurantRepo.GetRestaurants();
-
-            var restaurantDTO = new List<_RestaurantDTO>();
-
-            foreach (var restaurant in restaurantList)
+            }
+            catch (Exception)
             {
-                restaurantDTO.Add(_mapper.Map<_RestaurantDTO>(restaurant));
+
+                throw;
             }
 
-            return Ok(restaurantDTO);
         }
 
+
+
+        [HttpGet]
+
+        public IActionResult GetPagedRestaurant([FromQuery] PaginationFilter filters)
+        {
+            try
+            {
+                TokenManager token = new TokenManager();
+                var route = Request.Path.Value;
+
+                var validFilter = new PaginationFilter(filters.PageNumber,filters.PageSize);
+
+                var pagedDataObj = _restaurantRepo.GetRestaurantsPaged(validFilter);
+
+                var pageDataDTO = new List<FullRestaurantDTO>();
+
+                foreach (var item in pagedDataObj)
+                {
+
+                    pageDataDTO.Add(
+                        new FullRestaurantDTO 
+                        {
+                            Id = item.Id,
+                            Description = item.Description,
+                            Email = item.Email,
+                            Name = item.Name,
+                            NoOfOrders = token.GenerateOrders(),
+                            Phone = item.PhoneNumber,
+                            RestaurantType = item.RestaurantType.Name,
+                               Reference = item.Reference,
+                               Logo = item.Logo,
+                            CreateDate = item.CreateDate,
+                            UpdatedDate = item.UpdatedDate
+                        }
+                        );
+
+                }
+
+                var totalRecords = pagedDataObj.Count();
+
+                var pagedResponse = PaginationHelper.CreatePageResponse<FullRestaurantDTO>(pageDataDTO, validFilter, totalRecords, _uriService, route);
+
+                return Ok(pagedResponse);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+
+        [HttpGet("PagedRestaurant/reference:string")]
+        public IActionResult GetPagedRestaurantByRef([FromQuery] PaginationFilter filters, string reference)
+        {
+            try
+            {
+                TokenManager token = new TokenManager();
+                var route = Request.Path.Value;
+
+                var validFilter = new PaginationFilter(filters.PageNumber, filters.PageSize);
+
+                var pagedDataObj = _restaurantRepo.GetRestaurantsByReference(validFilter,reference);
+
+                var pageDataDTO = new List<FullRestaurantDTO>();
+
+                foreach (var item in pagedDataObj)
+                {
+
+                    pageDataDTO.Add(
+                        new FullRestaurantDTO
+                        {
+                            Id = item.Id,
+                            Description = item.Description,
+                            Email = item.Email,
+                            Name = item.Name,
+                            NoOfOrders = token.GenerateOrders(),
+                            Phone = item.PhoneNumber,
+                            RestaurantType = item.RestaurantType.Name,
+                            Reference = item.Reference,
+                            Logo = item.Logo,
+                            CreateDate = item.CreateDate,
+                            UpdatedDate = item.UpdatedDate
+                        }
+                        );
+
+                }
+
+                var totalRecords = pagedDataObj.Count();
+
+                var pagedResponse = PaginationHelper.CreatePageResponse<FullRestaurantDTO>(pageDataDTO, validFilter, totalRecords, _uriService, route);
+
+                return Ok(pagedResponse);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
 
         [HttpGet("{restaurantId:int}", Name ="GetRestaurant")]
         public IActionResult GetRestaurant(int restaurantId)
@@ -82,7 +191,9 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
                 return NotFound();
             }
 
-            var restaurantDTO = _mapper.Map<_RestaurantDTO>(restaurantObj);
+            var restaurantDTO = _mapper.Map<ViewRestauratDTO>(restaurantObj);
+
+            restaurantDTO.RestaurantType = restaurantObj.RestaurantType.Name;
 
             return Ok(restaurantDTO);
 
@@ -125,23 +236,71 @@ namespace Yumm_Back_End.Controllers.Restaurant_Controllers
 
         [HttpPatch]
 
-        public IActionResult UpdateRestaurant([FromBody] _RestaurantDTO restaurantDTO, int restaurantId)
+        public async Task<IActionResult> UpdateRestaurantAsync([FromForm] _RestaurantDTO restaurantDTO, int restaurantId)
         {
-            if (restaurantDTO == null || restaurantDTO.Id == restaurantId)
+            try
             {
-                return BadRequest(ModelState);
+
+                    if (restaurantDTO == null || restaurantDTO.Id != restaurantId)
+                    {
+                                return BadRequest(ModelState);
+                    }
+
+                    MediaResponse uploadedResponse = new MediaResponse();
+
+                    if (restaurantDTO.Files != null)
+                    {
+                        string images = "\\images\\";
+                        string entity = "\\" + "restaurant" + "\\";
+                        string reference = "\\" + restaurantId.ToString() + "\\";
+                        uploadedResponse = await mediaManager.SaveImage(restaurantDTO.Files, reference, entity, images);
+                    }
+
+
+                    var restaurantObj = _restaurantRepo.GetRestaurant(restaurantId);
+
+                    if (restaurantObj == null)
+                    {
+                        ModelState.AddModelError("error", "Request restaurant not found.");
+
+                        return NotFound(ModelState);
+                    }
+
+
+                    restaurantObj.PhoneNumber = restaurantDTO.PhoneNumber;
+                    restaurantObj.Email = restaurantDTO.Email;
+                    restaurantObj.Name = restaurantDTO.Name;
+                    restaurantObj.Description = restaurantDTO.Description;
+                    restaurantObj.RestaurantTypeId = restaurantDTO.RestaurantTypeId;
+                
+                    restaurantObj.LocationId = restaurantDTO.LocationId;
+
+
+                    if (uploadedResponse.isSucess)
+                    {
+                            restaurantObj.Logo = uploadedResponse.imagePath;
+                    }
+
+
+
+                    if (!_restaurantRepo.Save())
+                    {
+                        ModelState.AddModelError("", $"Something went wrong while updating the restaurant {restaurantObj.Name}");
+
+                        return StatusCode(500, ModelState);
+                     }
+
+
+
+                    return NoContent();
+
             }
-
-            var restaurantObj = _mapper.Map<Restaurant>(restaurantDTO);
-
-            if(!_restaurantRepo.UpdateResturant(restaurantObj))
+            catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Something went wrong while updating the restaurant {restaurantObj.Name}");
 
-                return StatusCode(500, ModelState);
-             }
 
-            return NoContent();
+                throw;
+            }
         }
 
     }

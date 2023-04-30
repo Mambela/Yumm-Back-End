@@ -1,13 +1,18 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
+using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
+using Yumm_Back_End.Services.Response;
 
 namespace Yumm_Back_End.Repository._MediaRepository
 {
     public interface IMediaRepository
     {
-         Task<bool> SaveFoodImage(ItemDTORegister objectFile);
+         Task<bool> SaveFoodImage(CreateProductDTO objectFile);
+
+        
     }
 }

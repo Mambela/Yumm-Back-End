@@ -8,9 +8,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models;
 using Yumm_Back_End.Models.Address;
+using Yumm_Back_End.Models.Authentication;
 using Yumm_Back_End.Models.Clients;
+using Yumm_Back_End.Models.Drivers;
+using Yumm_Back_End.Models.Orders;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Models.Shared;
+using Yumm_Back_End.Models.Tickets;
+using Yumm_Back_End.Models.User;
 
 namespace Yumm_Back_End.Data
 {
@@ -24,141 +29,118 @@ namespace Yumm_Back_End.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
-            builder.Entity<Item>()
-                .Property(I => I.Price)
-                .HasPrecision(18, 2);
+            builder.Entity<ProductExtras>()
+                   .Property(I => I.Price)
+                   .HasPrecision(18, 2);
 
-            builder.Entity<Location>().Property(L => L.Lat).HasPrecision(8,6);
-            builder.Entity<Location>().Property(L => L.Lng).HasPrecision(9,6);
+            builder.Entity<ProductSize>()
+               .Property(i => i.Price).HasPrecision(18, 2);
+
+
+            builder.Entity<MenuGroupsProducts>().HasKey(x => new { x.MenuGroupId, x.ProductId });
+
+            builder.Entity<RestaurantUser>().HasKey(x => new { x.RestaurantId, x.UserId });
+
+            ////Locations Builder
+            //builder.Entity<Location>().Property(L => L.Lat).HasPrecision(8,6);
+            //builder.Entity<Location>().Property(L => L.Lng).HasPrecision(9,6);
+
+            //builder.Entity<UsersLocations>().Property(L => L.Lat).HasPrecision(8, 6);
+            //builder.Entity<UsersLocations>().Property(L => L.Lng).HasPrecision(9, 6);
+
+
+            ////Associating Locations To user
+            //  builder.Entity<UsersLocations>().HasKey(x => new {x.UserId,x.LocationId});
+
 
 
             // SeedUser(builder);
 
             base.OnModelCreating(builder);
         }
+       
         #region Restaurant Entities
 
         public DbSet<Restaurant> Restaurants { get; set; }
 
         public DbSet<Category> Categories { get; set; }
 
-        public DbSet<Item> Items { get; set; }
+        public DbSet<Product> Products { get; set; }
+
+
+        public DbSet<ProductExtras> ProductsExtras { get; set; }
 
         public DbSet<Working_Hours> Working_Hours { get; set; }
 
         public DbSet<RestaurantType> RestaurantTypes { get; set; }
 
+       public DbSet<Menu> Menus { get; set; }
+
+        public DbSet<MenuGroup> MenuGroups { get; set; }
+
+        public DbSet<MenuGroupsProducts> MenuGroupsProducts { get; set; }
+
+        public DbSet<SupportTeam> SupportTeams { get; set; }
+        
+        public DbSet<ProductSize> ProductSizes { get; set; }
+
+        public DbSet<RestaurantUser> RestaurantUsers { get; set; }
+
+
         #endregion
 
 
         #region Address Entities
 
-        public DbSet<Province> Provinces { get; set; }
-        public DbSet<City> Cities { get; set; }
+        //public DbSet<Province> Provinces { get; set; }
+        //public DbSet<City> Cities { get; set; }
 
-        public DbSet<Commune> Communes { get; set; }
+        //public DbSet<Commune> Communes { get; set; }
 
-        public DbSet<Neighbourhood> Neighbourhoods { get; set; }
+        //public DbSet<Neighbourhood> Neighbourhoods { get; set; }
 
-        public DbSet<Street> Streets { get; set; }
+        //public DbSet<Street> Streets { get; set; }
 
-        public DbSet<Location> Locations { get; set; }
+        //public DbSet<Location> Locations { get; set; }
+
+        //public DbSet<UsersLocations> UsersLocations { get; set; }
         #endregion
 
 
         //Seed SUPER ADMIN
 
-        private void SeedUser(ModelBuilder builder)
-        { 
+        #region Orders
 
-            string SUPER_ADMIN_ID =  "02174cf0–9412–4cfe - afbf - 59f706d72cf6";
+        public DbSet<Order> Orders { get; set; }
 
-            string ROLE_ID = "341743f0-asd2–42de-afbf-59kkidelejk72cf6";
-
-            builder.Entity<IdentityRole>().HasData(new IdentityRole { 
-                Name = "SuperAdmin",
-                NormalizedName = "SuperAdmin",
-                Id = ROLE_ID,
-                ConcurrencyStamp = ROLE_ID
-            });
-
-            //Add user 
-            var superUser = new ApplicationUser
-            {
-                Id = SUPER_ADMIN_ID,
-                Email = "kevinDeveloper@yumm.com",
-                EmailConfirmed = true,
-                UserName = "kevinDeveloper@yumm.com"
-
-            };
-
-            PasswordHasher<ApplicationUser> appUser = new PasswordHasher<ApplicationUser>();
-
-            superUser.PasswordHash = appUser.HashPassword(superUser, "4kingmambela?");
-
-            //seed user
-
-            builder.Entity<ApplicationUser>().HasData(superUser);
-
-        #region Address Entities
-
-        public DbSet<Province> Provinces { get; set; }
-        public DbSet<City> Cities { get; set; }
-
-        public DbSet<Commune> Communes { get; set; }
-
-        public DbSet<Neighbourhood> Neighbourhoods { get; set; }
-
-        public DbSet<Street> Streets { get; set; }
-
-        public DbSet<Location> Locations { get; set; }
-
-        public DbSet<UsersLocations> UsersLocations { get; set; }
+        public DbSet<OrderDetails> OrderDetails { get; set; }
         #endregion
-
-
-        //Seed SUPER ADMIN
-
-        private void SeedUser(ModelBuilder builder)
-        { 
-
-            string SUPER_ADMIN_ID =  "02174cf0–9412–4cfe - afbf - 59f706d72cf6";
-
-            string ROLE_ID = "341743f0-asd2–42de-afbf-59kkidelejk72cf6";
-
-            builder.Entity<IdentityRole>().HasData(new IdentityRole { 
-                Name = "SuperAdmin",
-                NormalizedName = "SuperAdmin",
-                Id = ROLE_ID,
-                ConcurrencyStamp = ROLE_ID
-            });
-
-            //Add user 
-            var superUser = new ApplicationUser
-            {
-                Id = SUPER_ADMIN_ID,
-                Email = "kevinDeveloper@yumm.com",
-                EmailConfirmed = true,
-                UserName = "kevinDeveloper@yumm.com"
-
-            };
-
-            builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
-            {
-                RoleId = ROLE_ID,
-                UserId = SUPER_ADMIN_ID
-            });
-        }
-
 
 
         #region Client Entities
 
-        //public DbSet<Client> Clients { get; set; }
+        public DbSet<Client> Clients { get; set; }
+
+        public DbSet<ClientAddress> ClientAddresses { get; set; }
         #endregion
 
 
-        #region Additional Database Modification
+
+        #region Tickets 
+        //  public DbSet<Ticket_Type> Ticket_Types { get; set; }
+        #endregion
+
+        #region Drivers 
+
+
+        public DbSet<Driver> Drivers { get; set; }
+
+        #endregion
+
+
+        #region Additional Database Configuration
+
+        // Entities added for created date and Update date. 
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {

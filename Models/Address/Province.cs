@@ -7,7 +7,7 @@ using Yumm_Back_End.Models.Shared;
 
 namespace Yumm_Back_End.Models.Address
 {
-    public class Province :BaseEntity
+    public class Province : BaseEntity
     {
         [Key]
         public int Id { get; set; }

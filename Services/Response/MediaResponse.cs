@@ -8,7 +8,7 @@ namespace Yumm_Back_End.Services.Response
     public class MediaResponse
     {
 
-        public string Message { get; set; }
-        public bool Success { get; set; }
+        public string imagePath { get; set; }
+        public bool isSucess { get; set; }
     }
 }
