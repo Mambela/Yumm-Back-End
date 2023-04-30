@@ -10,6 +10,16 @@ namespace Yumm_Back_End.Repository._UserRepository
     {
 
         ApplicationUser GetUser(string userId);
-        
+
+        public ApplicationUser GetVerifyUser(string Token);
+
+        ApplicationUser GetUserToVerifyOTP(int OTP);
+
+        public bool UpdateUser(ApplicationUser user);
+
+        public ApplicationUser GetUserPhoneNumber(string phoneNumber);
+        public ApplicationUser GetUserPhoneNumber(int OTP,string phoneNumber);
+
+        public bool Save();
     }
 }

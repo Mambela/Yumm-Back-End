@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Repository._MediaRepository;
+using Yumm_Back_End.Services.Logger;
 
 namespace Yumm_Back_End.Controllers.Media_Controllers
 {
@@ -14,9 +15,11 @@ namespace Yumm_Back_End.Controllers.Media_Controllers
     public class MediasController : ControllerBase
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public MediasController(IWebHostEnvironment webHostenvironment) 
+        private readonly ILoggerService loggerSerive;
+        public MediasController(IWebHostEnvironment webHostenvironment,ILoggerService _loggerService) 
         {
             _webHostEnvironment = webHostenvironment;
+            loggerSerive = _loggerService;
         }
         
 
@@ -31,6 +34,32 @@ namespace Yumm_Back_End.Controllers.Media_Controllers
 
             return File(b, "image/jpeg");
 
+        }
+
+        [HttpGet("DriverImage")]
+
+        public IActionResult DriverImage(string name)
+        {
+            try
+            {
+
+                string resourceRoot = "\\resources\\", _entity = "\\" + "driver" + "\\",reference="\\profilepicture\\" ,images = "\\images\\";
+                string _root = _webHostEnvironment.WebRootPath + resourceRoot + _entity + reference + images;
+                var path = _root + name;
+
+                Byte[] b = System.IO.File.ReadAllBytes(path);
+
+                return File(b, "image/jpeg");
+
+               
+            }
+            catch (Exception ex)
+            {
+                loggerSerive.LogError("error" + ex.Message);
+
+                ModelState.AddModelError("Error", "Failed to retrieve driver Image");
+                return BadRequest(ModelState);
+            }
         }
 
     }

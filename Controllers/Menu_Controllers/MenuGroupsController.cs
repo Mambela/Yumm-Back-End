@@ -67,12 +67,17 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
         [HttpGet("{menuGroupId:int}",Name = "GetMenuGroup")]
         public IActionResult GetMenuGroup(int menuGroupId)
         {
-            if(!_menuGroupRepo.CheckMenuGroupExist(menuGroupId))
-              {
-                return NotFound();
-                }
+            //if(!_menuGroupRepo.CheckMenuGroupExist(menuGroupId))
+            //  {
+            //    return NotFound();
+            //    }
 
             var menuGroupObj = _menuGroupRepo.GetRestaurantMenuGroup(menuGroupId);
+
+            if (menuGroupObj == null)
+            {
+                return NotFound();
+            }
 
             var menuGroupDTO = _mapper.Map<MenuGroupDTO>(menuGroupObj);
 
@@ -87,36 +92,23 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
         {
             var menuGroupList = _menuGroupRepo.GetRestaurantMenuGroups(restaurantId);
 
-            //if (menuGroupList == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //var menuGroupInRestaurantList= new List<MenuGroupDTO>();
-
-            //foreach (var menuGroupRestaurant in menuGroupList)
-            //{
-
-            //    var menuGroupInRestaurant = new List<MenuGroup>();
-
-            //    foreach (var menuGroup in menuGroupRestaurant.Menu.MenuGroups)
-            //    {
-
-            //        menuGroupInRestaurant.Add(menuGroup);
-
-            //    }
+          
+            var menuGroupInRestaurantList = new List<MenuGroupDTO>();
 
 
-            //    MenuGroupsInRestaurantDTO mengrObj = new MenuGroupsInRestaurantDTO
-            //    {
-            //        Id = menuGroupRestaurant.Id,
-            //        Name  = menuGroupRestaurant.Name,
-            //        MenuId = menuGroupRestaurant.Menu.Id,
-            //        MenuGroup = menuGroupInRestaurant
-            //    };
-            //}
+            foreach (var item in menuGroupList)
+            {
+                var menugroupItem = new MenuGroupDTO
+                {
+                    Id = item.Id,
+                    Name = item.Name,
 
-            return NotFound();
+                };
+
+                menuGroupInRestaurantList.Add(menugroupItem);
+            }
+
+            return Ok(menuGroupInRestaurantList);
         }
 
         [HttpDelete]

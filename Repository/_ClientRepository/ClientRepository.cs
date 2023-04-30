@@ -18,39 +18,37 @@ namespace Yumm_Back_End.Repository._ClientRepository
         {
             _dbcontext = dbcontex;
         }
- 
- 
 
         public bool ClientExists(int id)
         {
-            return _dbcontext.Clients.Any(c => c.Id == id);
+                return _dbcontext.Clients.Any(c => c.Id == id);
         }
 
         public bool ClientExists(string Phone)
         {
             return _dbcontext.Users.Any(u => u.PhoneNumber == Phone);
         }
- 
+
         public async Task<bool> CreateClient(Client client)
         {
             await _dbcontext.Clients.AddAsync(client);
             return Save();
         }
 
-       
+
         public bool DeleteClient(Client client)
         {
             _dbcontext.Clients.Remove(client);
 
             return Save();
         }
- 
+
 
         public Client GetClient(int Id)
         {
             return _dbcontext.Clients.Include(u => u.User).FirstOrDefault(c => c.Id == Id);
         }
- 
+
         public Client GetClientByNumber(string phone)
         {
             var user = _dbcontext.Users.FirstOrDefault(u => u.PhoneNumber == phone);
@@ -59,16 +57,16 @@ namespace Yumm_Back_End.Repository._ClientRepository
 
             return client;
         }
- 
+
 
         public ICollection<Client> GetClients()
         {
             var clientlist = _dbcontext.Clients.Include(u => u.User).ToList();
- 
+
 
             return clientlist;
         }
- 
+
         public ICollection<ApplicationUser> GetUsers()
         {
             var userlist = _dbcontext.Users.ToList();
@@ -79,7 +77,7 @@ namespace Yumm_Back_End.Repository._ClientRepository
         {
             return _dbcontext.SaveChanges() >= 0;
         }
- 
+
 
         public bool UpdateClient(Client client)
         {

@@ -25,7 +25,7 @@ namespace Yumm_Back_End.Models.Restaurants
 
         [Required]
         public Restaurant Restaurant { get; set; }
+        public int RestaurantId { get; set; }
 
- 
     }
 }

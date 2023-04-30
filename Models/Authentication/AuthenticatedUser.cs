@@ -18,6 +18,10 @@ namespace Yumm_Back_End.Models.Authentication
 
         public string role { get; set; }
 
+        public bool EmailVerified  { get; set; }
+
+        public bool PhoneVerified { get; set; }
+
 
     }
 }

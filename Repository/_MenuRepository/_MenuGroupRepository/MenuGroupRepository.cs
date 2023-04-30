@@ -16,6 +16,14 @@ namespace Yumm_Back_End.Repository._MenuRepository._MenuGroupRepository
             _dbContext = dbContext;
         }
 
+        public async Task<bool> AttachProductToMenugroup(MenuGroupsProducts menugroupProducts)
+        {
+
+             await _dbContext.MenuGroupsProducts.AddAsync(menugroupProducts);
+
+            return Save();
+        }
+
         public bool CheckMenuGroupExist(int menuGroupId)
         {
             return _dbContext.MenuGroups.Any(mg => mg.Id == menuGroupId);
@@ -23,7 +31,7 @@ namespace Yumm_Back_End.Repository._MenuRepository._MenuGroupRepository
 
         public async Task<bool> CreateRestaurantMenuGroup(MenuGroup menuGroup)
         {
-            await  _dbContext.MenuGroups.AddAsync(menuGroup);
+            await _dbContext.MenuGroups.AddAsync(menuGroup);
 
 
             return Save();
@@ -32,6 +40,14 @@ namespace Yumm_Back_End.Repository._MenuRepository._MenuGroupRepository
         public bool DeleteMenu(MenuGroup menuGroup)
         {
             _dbContext.Remove(menuGroup);
+
+            return Save();
+        }
+
+        public bool DeleteProductToMenugroup(MenuGroupsProducts menuGroupsProducts)
+        {
+
+            _dbContext.MenuGroupsProducts.Remove(menuGroupsProducts);
 
             return Save();
         }
@@ -46,12 +62,12 @@ namespace Yumm_Back_End.Repository._MenuRepository._MenuGroupRepository
         {
 
             return _dbContext.MenuGroups.First(m => m.Id == menuGroupId);
-            
+
         }
 
-        public ICollection<Restaurant> GetRestaurantMenuGroups(int restaurantId)
+        public ICollection<MenuGroup> GetRestaurantMenuGroups(int restaurantId)
         {
-            return _dbContext.Restaurants.Include(m => m.Menu).Include(mg => mg.Menu.MenuGroups).Where(r => r.Id == restaurantId).ToList();
+            return _dbContext.MenuGroups.Include(m => m.Menu).Include(mg => mg.Menu.MenuGroups).Where(r => r.Menu.RestaurantId == restaurantId).ToList();
         }
 
         public bool Save()

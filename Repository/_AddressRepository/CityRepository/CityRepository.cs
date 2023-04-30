@@ -19,60 +19,105 @@ namespace Yumm_Back_End.Repository._AddressRepository.CityRepository
 
         public bool CityExists(string name)
         {
-            bool value = _dbContext.Cities.Any(c => c.Name.Trim().ToLower() == name.ToLower().Trim());
-
-            return value;
+            throw new NotImplementedException();
         }
 
         public bool CityExists(int cityId)
         {
-            bool value = _dbContext.Cities.Any(c => c.Id == cityId);
-
-            return value;
+            throw new NotImplementedException();
         }
 
-        public async Task<bool> CreateCity(City city)
+        public Task<bool> CreateCity(City city)
         {
-            await _dbContext.AddAsync(city);
-
-            return Save();
+            throw new NotImplementedException();
         }
 
         public bool DeleteCity(City city)
         {
-            _dbContext.Cities.Remove(city);
-
-            return Save();
+            throw new NotImplementedException();
         }
 
         public ICollection<City> GetCities()
         {
-            return _dbContext.Cities.OrderBy(a => a.Name).ToList();
+            throw new NotImplementedException();
         }
 
         public ICollection<City> GetCitiesInProvices(int provinceId)
         {
-
-            return _dbContext.Cities.Include(c => c.Province).Where(c => c.ProviceId == provinceId).ToList();
-            
+            throw new NotImplementedException();
         }
 
         public City GetCity(int cityId)
         {
-            return _dbContext.Cities.FirstOrDefault(c => c.Id == cityId);
-            
+            throw new NotImplementedException();
         }
 
         public bool Save()
         {
-            return _dbContext.SaveChanges() >= 0;
+            throw new NotImplementedException();
         }
 
         public bool UpdateCity(City city)
         {
-            _dbContext.Cities.Update(city);
-
-            return Save();
+            throw new NotImplementedException();
         }
+
+        //public bool CityExists(string name)
+        //{
+        //    bool value = _dbContext.Cities.Any(c => c.Name.Trim().ToLower() == name.ToLower().Trim());
+
+        //    return value;
+        //}
+
+        //public bool CityExists(int cityId)
+        //{
+        //    bool value = _dbContext.Cities.Any(c => c.Id == cityId);
+
+        //    return value;
+        //}
+
+        //public async Task<bool> CreateCity(City city)
+        //{
+        //    await _dbContext.AddAsync(city);
+
+        //    return Save();
+        //}
+
+        //public bool DeleteCity(City city)
+        //{
+        //    _dbContext.Cities.Remove(city);
+
+        //    return Save();
+        //}
+
+        //public ICollection<City> GetCities()
+        //{
+        //    return _dbContext.Cities.OrderBy(a => a.Name).ToList();
+        //}
+
+        //public ICollection<City> GetCitiesInProvices(int provinceId)
+        //{
+
+        //    return _dbContext.Cities.Include(c => c.Province).Where(c => c.ProviceId == provinceId).ToList();
+
+        //}
+
+        //public City GetCity(int cityId)
+        //{
+        //    return _dbContext.Cities.FirstOrDefault(c => c.Id == cityId);
+
+        //}
+
+        //public bool Save()
+        //{
+        //    return _dbContext.SaveChanges() >= 0;
+        //}
+
+        //public bool UpdateCity(City city)
+        //{
+        //    _dbContext.Cities.Update(city);
+
+        //    return Save();
+        //}
     }
 }

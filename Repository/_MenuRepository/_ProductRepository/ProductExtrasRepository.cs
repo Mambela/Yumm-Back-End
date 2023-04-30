@@ -10,7 +10,7 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
     public class ProductExtrasRepository : IProductExtrasRepository
     {
         private readonly ApplicationDbContext _dbContext;
-        
+
 
         public ProductExtrasRepository(ApplicationDbContext dbContext)
         {
@@ -20,7 +20,7 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
         public async Task<bool> CreateProductExtras(ProductExtras productExtras)
         {
 
-           await _dbContext.ProductsExtras.AddAsync(productExtras);
+            await _dbContext.ProductsExtras.AddAsync(productExtras);
 
             return Save();
         }
@@ -68,7 +68,7 @@ namespace Yumm_Back_End.Repository._MenuRepository._ProductRepository
 
         public bool ProductExtrasExist(string productExtra)
         {
-           return _dbContext.ProductsExtras.Any(p => p.Name.Trim().ToLower() == productExtra.Trim().ToLower());
+            return _dbContext.ProductsExtras.Any(p => p.Name.Trim().ToLower() == productExtra.Trim().ToLower());
         }
     }
 }

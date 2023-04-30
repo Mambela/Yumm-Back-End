@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Data;
+using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.Restaurants;
 
 namespace Yumm_Back_End.Repository._Restaurant
@@ -15,9 +16,15 @@ namespace Yumm_Back_End.Repository._Restaurant
         public RestaurantTypeRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
+
         }
 
-        public async  Task<bool> CreateType(RestaurantType type)
+        public int Count()
+        {
+            return _dbContext.RestaurantTypes.Count();
+        }
+
+        public async Task<bool> CreateType(RestaurantType type)
         {
 
             await _dbContext.RestaurantTypes.AddAsync(type);
@@ -29,7 +36,7 @@ namespace Yumm_Back_End.Repository._Restaurant
         {
             var type = GetRestaurantType(restaurantId);
 
-              _dbContext.RestaurantTypes.Remove(type);
+            _dbContext.RestaurantTypes.Remove(type);
 
             return Save();
         }
@@ -38,7 +45,7 @@ namespace Yumm_Back_End.Repository._Restaurant
         {
 
             return _dbContext.RestaurantTypes.Include(rt => rt.Restaurant).Where(r => r.Id == id).ToList();
-            
+
         }
 
         public RestaurantType GetRestaurantType(int typeId)
@@ -46,10 +53,14 @@ namespace Yumm_Back_End.Repository._Restaurant
             return _dbContext.RestaurantTypes.FirstOrDefault(t => t.Id == typeId);
         }
 
-        public ICollection<RestaurantType> GetRestaurantTypes()
+        public ICollection<RestaurantType> GetRestaurantTypes(PaginationFilter validFilter)
         {
 
-            return _dbContext.RestaurantTypes.ToList();
+            return _dbContext.RestaurantTypes
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .OrderBy(c =>c.Name)
+                .ToList();
         }
 
         public bool Save()

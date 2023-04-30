@@ -18,75 +18,130 @@ namespace Yumm_Back_End.Repository._AddressRepository.LocationRepository
             _dbContext = dbContext;
             _mapper = mapper;
         }
-        public async Task<bool> CreateLocation(Location location)
+
+        public Task<bool> CreateLocation(Location location)
         {
-
-            await _dbContext.Locations.AddAsync(location);
-
-            return Save();
-
+            throw new NotImplementedException();
         }
 
         public bool DeleteLocation(int locationId)
         {
-            var location = GetLocation(locationId);
-
-            _dbContext.Locations.Remove(location);
-
-            return Save();
+            throw new NotImplementedException();
         }
 
         public Location GetLocation(int locationId)
         {
-            return _dbContext.Locations.Include(s => s.Street)
-                   .FirstOrDefault(l => l.Id == locationId);
+            throw new NotImplementedException();
         }
 
         public ICollection<Location> GetLocations()
         {
-            return _dbContext.Locations.Include(s => s.Street)
-                .ToList();
+            throw new NotImplementedException();
         }
 
         public ICollection<Location> GetLocationsInNeighbourhood(int hoodId)
         {
-
-            return _dbContext.Locations.Include(n => n.Street.Neighbourhoods).Where(n => n.Street.NeighbourhoodId == hoodId)
-                .Include(s => s.Street)
-                .ToList();
+            throw new NotImplementedException();
         }
 
         public bool LocationExists(Location location)
         {
-            return _dbContext.Locations.Any(l => l.Lat == location.Lat && l.Lng == location.Lng && l.StreetId == location.StreetId);
-        }
-
-        public Location UserCheckLocationExist(Location location)
-        {
-            return _dbContext.Locations.FirstOrDefault(l => l.Lat == location.Lat && l.Lng == l.Lng);
+            throw new NotImplementedException();
         }
 
         public bool LocationExists(int locationId)
         {
-            return _dbContext.Locations.Any(l => l.Id == locationId);
+            throw new NotImplementedException();
         }
-
 
         public bool Save()
         {
-            return _dbContext.SaveChanges() >= 0;
+            throw new NotImplementedException();
         }
 
         public bool UpdateLocation(Location location)
         {
-            _dbContext.Locations.Update(location);
+            throw new NotImplementedException();
+        }
 
-            return Save();
+        public Location UserCheckLocationExist(Location location)
+        {
+            throw new NotImplementedException();
         }
 
         public bool UserCheckLocationExist(int locationId)
         {
-            return _dbContext.Locations.Any(l => l.Id == locationId);
+            throw new NotImplementedException();
         }
+        //public async Task<bool> CreateLocation(Location location)
+        //{
+
+        //    await _dbContext.Locations.AddAsync(location);
+
+        //    return Save();
+
+        //}
+
+        //public bool DeleteLocation(int locationId)
+        //{
+        //    var location = GetLocation(locationId);
+
+        //    _dbContext.Locations.Remove(location);
+
+        //    return Save();
+        //}
+
+        //public Location GetLocation(int locationId)
+        //{
+        //    return _dbContext.Locations.Include(s => s.Street)
+        //           .FirstOrDefault(l => l.Id == locationId);
+        //}
+
+        //public ICollection<Location> GetLocations()
+        //{
+        //    return _dbContext.Locations.Include(s => s.Street)
+        //        .ToList();
+        //}
+
+        //public ICollection<Location> GetLocationsInNeighbourhood(int hoodId)
+        //{
+
+        //    return _dbContext.Locations.Include(n => n.Street.Neighbourhoods).Where(n => n.Street.NeighbourhoodId == hoodId)
+        //        .Include(s => s.Street)
+        //        .ToList();
+        //}
+
+        //public bool LocationExists(Location location)
+        //{
+        //    return _dbContext.Locations.Any(l => l.Lat == location.Lat && l.Lng == location.Lng && l.StreetId == location.StreetId);
+        //}
+
+        //public Location UserCheckLocationExist(Location location)
+        //{
+        //    return _dbContext.Locations.FirstOrDefault(l => l.Lat == location.Lat && l.Lng == l.Lng);
+        //}
+
+        //public bool LocationExists(int locationId)
+        //{
+        //    return _dbContext.Locations.Any(l => l.Id == locationId);
+        //}
+
+
+        //public bool Save()
+        //{
+        //    return _dbContext.SaveChanges() >= 0;
+        //}
+
+        //public bool UpdateLocation(Location location)
+        //{
+        //    _dbContext.Locations.Update(location);
+
+        //    return Save();
+        //}
+
+        //public bool UserCheckLocationExist(int locationId)
+        //{
+        //    return _dbContext.Locations.Any(l => l.Id == locationId);
+        //}
     }
 }

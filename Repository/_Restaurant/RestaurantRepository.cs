@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yumm_Back_End.Data;
+using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Repository._Restaurant;
 
@@ -16,7 +17,6 @@ namespace Yumm_Back_End.Repository
         public RestaurantRepository(ApplicationDbContext context)
         {
             _dbContext = context;
-                
         }
 
 
@@ -38,7 +38,9 @@ namespace Yumm_Back_End.Repository
 
         public Restaurant GetRestaurant(int restaurantId)
         {
-            return _dbContext.Restaurants.FirstOrDefault(r => r.Id == restaurantId);
+            return _dbContext.Restaurants
+                .Include(r => r.RestaurantType)
+                .FirstOrDefault(r => r.Id == restaurantId);
         }
 
         public ICollection<Restaurant> GetRestaurants()
@@ -73,6 +75,46 @@ namespace Yumm_Back_End.Repository
         public ICollection<Restaurant> GetRestaurantsInType(int typeId)
         {
             return _dbContext.Restaurants.Include(rt => rt.RestaurantType).Where(rt => rt.RestaurantTypeId == typeId).ToList();
+        }
+
+        public List<Restaurant> GetRestaurantsPaged(PaginationFilter validFilter)
+        {
+           return _dbContext.Restaurants
+                .Include(rt =>rt.RestaurantType)
+             //   .Include(u =>u.User)
+                .Skip((validFilter.PageNumber -1)* validFilter.PageSize)
+                .Take(validFilter.PageSize).ToList(); 
+        }
+
+        public List<Restaurant> GetRestaurantsPagedByType(PaginationFilter validFilter , int typeId)
+        {
+            return _dbContext.Restaurants.Include(rt => rt.RestaurantType)
+              //  .Include(u => u.User)
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .Where(rt => rt.RestaurantTypeId == typeId).ToList();
+        }
+
+        public List<Restaurant> GetRestaurantsByReference(PaginationFilter validFilter,string reference)
+        {
+            return _dbContext.Restaurants
+                .Include(rt => rt.RestaurantType)
+                //.Include(u => u.User)
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                 .Where(r => r.Reference.ToLower().Contains(reference.ToLower())).ToList();
+        }
+
+        public int Count()
+        {
+            return _dbContext.Restaurants.Count();
+        }
+
+        public async Task<bool> AssociateUserToRestaurant(RestaurantUser restaurantUser)
+        {
+            await _dbContext.RestaurantUsers.AddAsync(restaurantUser);
+
+            return Save();
         }
     }
 }

@@ -15,10 +15,6 @@ namespace Yumm_Back_End.Models.Restaurants
         [StringLength(255)]
         public string Name { get; set; }
 
-       
-        public decimal Price { get; set; }
-
-        public string Size { get; set; }
 
         [StringLength(500)]
         public string Description { get; set; }
@@ -37,6 +33,8 @@ namespace Yumm_Back_End.Models.Restaurants
 
         public ICollection<ProductExtras> ProductsExtras { get; set; }
 
+
+        public ICollection<ProductSize> ProductSizes { get; set; }
 
     }
 }

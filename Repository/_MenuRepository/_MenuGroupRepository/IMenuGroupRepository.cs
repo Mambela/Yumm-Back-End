@@ -12,9 +12,13 @@ namespace Yumm_Back_End.Repository._MenuRepository._MenuGroupRepository
 
         ICollection<MenuGroup> GetMenuGroups();
 
-        ICollection<Restaurant> GetRestaurantMenuGroups(int restaurantId);
+        ICollection<MenuGroup> GetRestaurantMenuGroups(int restaurantId);
 
         MenuGroup GetRestaurantMenuGroup(int menuGroupId);
+        
+        Task<bool> AttachProductToMenugroup(MenuGroupsProducts menugroupProducts);
+
+        bool DeleteProductToMenugroup(MenuGroupsProducts menuGroupsProducts);
 
         bool CheckMenuGroupExist(int menuGroupId);
 

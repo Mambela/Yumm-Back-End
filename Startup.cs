@@ -39,6 +39,15 @@ using Yumm_Back_End.Repository._AddressRepository.UserLocationRepository;
 using Yumm_Back_End.Repository._UserRepository;
 using Yumm_Back_End.Repository._MenuRepository._ProductRepository;
 using Yumm_Back_End.Repository._MenuRepository._MenuGroupRepository;
+using Yumm_Back_End.Services.Logger;
+using Yumm_Back_End.Repository._SupportTeamRepository;
+using Yumm_Back_End.Services.PaginationService;
+using Microsoft.AspNetCore.Http;
+using Yumm_Back_End.Repository._MediaRepository;
+using Yumm_Back_End.Services.MediaService;
+using Yumm_Back_End.Repository._DriverRepository;
+using Yumm_Back_End.Repository._OrderRepository;
+using Yumm_Back_End.Repository._AddressRepository._ClientAdressRepository;
 
 namespace Yumm_Back_End
 {
@@ -51,18 +60,26 @@ namespace Yumm_Back_End
 
         public IConfiguration Configuration { get; }
 
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(Configuration.GetConnectionString("SIT_ENV"),sqlServerOptionsAction: sqlOptions => {
+                      sqlOptions.EnableRetryOnFailure(
+                      maxRetryCount: 3,
+                      maxRetryDelay: TimeSpan.FromSeconds(30),
+                      errorNumbersToAdd: null
+                      );
+
+                });
             });
 
 
             //
-            
+            #region Service Injection
             services.AddScoped<IAuthRepository, AuthenticationRepository>();
             services.AddScoped<IRestaurantRepository, RestaurantRepository>();
             services.AddScoped<IProvinceRepository, ProvinceRepository>();
@@ -79,8 +96,25 @@ namespace Yumm_Back_End
             services.AddScoped<IUserRepository,UserRepository>();
             services.AddScoped<IMenuRepository, MenuRepository>();
             services.AddScoped<IMenuGroupRepository, MenuGroupRepository>();
+            // services.AddScoped<IMediaRepository, MediaRepository>();
+            services.AddScoped<IDriverRepository,DriverRepository>();
             services.AddScoped<IProductExtrasRepository, ProductExtrasRepository>();
-           
+            services.AddScoped<ILoggerService, LoggerService>();
+            services.AddScoped<ISupportTeamRepository, SupportTeamRepository>();
+            services.AddScoped<IOrderRepository,OrderRepository> ();
+            services.AddScoped<IClientAddressRepository,ClientAddressRepository> ();
+            services.AddScoped<IMediaManager, MediaManager>();
+            services.AddSingleton<IUriService>(o => 
+            {
+                var accessor = o.GetRequiredService<IHttpContextAccessor>();
+                var request = accessor.HttpContext.Request;
+                var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+                return new UriService(uri);
+            });
+
+
+            services.AddScoped<IDriverRepository, DriverRepository>();
+            #endregion
 
             services.AddAutoMapper(typeof(YummMapping));
 

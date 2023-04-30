@@ -11,10 +11,9 @@ namespace Yumm_Back_End.Repository._MenuRepository
     public class MenuRepository : IMenuRepository
     {
         private readonly ApplicationDbContext _dbContext;
-
         public MenuRepository(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;
+            _dbContext = dbContext; 
         }
 
         public async Task<bool> CreateRestaurantMenu(Menu Menu)
@@ -23,7 +22,7 @@ namespace Yumm_Back_End.Repository._MenuRepository
             await _dbContext.Menus.AddAsync(Menu);
 
             return Save();
-            
+
         }
 
         public bool DeleteMenu(Menu menu)
@@ -35,17 +34,17 @@ namespace Yumm_Back_End.Repository._MenuRepository
 
         public ICollection<Menu> GetMenus()
         {
-            return _dbContext.Menus.Include(m =>m.Restaurant).ToList();
+            return _dbContext.Menus.Include(m => m.Restaurant).ToList();
         }
 
         public Menu GetMenu(int MenuId)
         {
-            return _dbContext.Menus.Include(m=>m.Restaurant).First(m => m.Id == MenuId);
+            return _dbContext.Menus.Include(m => m.Restaurant).First(m => m.Id == MenuId);
         }
 
         public ICollection<Menu> GetRestaurantMenus(int restaurantId)
         {
-            return _dbContext.Menus.Include(r =>r.Restaurant).Where(r => r.RestaurantId == restaurantId).ToList();
+            return _dbContext.Menus.Include(r => r.Restaurant).Where(r => r.RestaurantId == restaurantId).ToList();
         }
 
         public bool Save()
@@ -57,7 +56,7 @@ namespace Yumm_Back_End.Repository._MenuRepository
         {
 
             _dbContext.Menus.Update(menu);
-            
+
             return Save();
         }
 

@@ -5,9 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Yumm_Back_End.Models.DTOs.PaginationDTO;
 using Yumm_Back_End.Models.DTOs.RestaurantDTO;
+using Yumm_Back_End.Models.DTOs.RestaurantDTO.ProductsDTO;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Repository._ProductCategory;
+using Yumm_Back_End.Services.Logger;
+using Yumm_Back_End.Services.PaginationService;
 
 namespace Yumm_Back_End.Controllers.Menu_Controllers
 {
@@ -17,10 +21,14 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
     {
         private readonly ICategoryRepository _categoRepo;
         private readonly IMapper _mapper;
+        private readonly ILoggerService loggerService;
+        private readonly IUriService _uriService;
 
-        public FoodCategoriesController(ICategoryRepository categoRepo, IMapper mapper)
+        public FoodCategoriesController(ICategoryRepository categoRepo, IMapper mapper, ILoggerService _loggerService, IUriService uriService)
         {
+            loggerService = _loggerService;
             _categoRepo = categoRepo;
+            _uriService = uriService;
             _mapper = mapper;
         }
 
@@ -55,6 +63,32 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
 
             return Ok(categoryObj);
         }
+        [HttpGet("GetPagedCategories")]
+        public IActionResult GetPagedCategories([FromQuery] PaginationFilter pagination)
+        {
+            try
+            {
+                var categoryListObj = _categoRepo.GetPagedCategories(pagination);
+                var route = Request.Path.Value;
+
+                int totalRecords = _categoRepo.Count();
+
+
+                var validFilter = new PaginationFilter(pagination.PageNumber, pagination.PageSize);
+
+                var pagedCategories = _mapper.Map<List<CategoryDTO>>(categoryListObj);
+                
+                var pageResponse = PaginationHelper.CreatePageResponse<CategoryDTO>(pagedCategories, validFilter, totalRecords, _uriService, route);
+                return Ok(pageResponse);
+
+            }
+            catch (Exception ex)
+            {
+                loggerService.LogError("Error" + ex.Message);
+                ModelState.AddModelError("Error", "Error failed to retrieve food categories");
+                return BadRequest(ModelState);
+            }
+        }
 
         [HttpGet]
         public IActionResult GetCategories()
@@ -63,6 +97,11 @@ namespace Yumm_Back_End.Controllers.Menu_Controllers
             var categoryList = _categoRepo.GetCategories();
 
             var categoryDTO = new List<CategoryDTO>();
+
+            categoryDTO.Add( new CategoryDTO{
+               Id = 0,
+               Name = "All"               
+            });
 
             foreach (var category in categoryList)
             {

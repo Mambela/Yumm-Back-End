@@ -8,7 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Yumm_Back_End.Models;
 using Yumm_Back_End.Models.Address;
+using Yumm_Back_End.Models.Authentication;
 using Yumm_Back_End.Models.Clients;
+using Yumm_Back_End.Models.Drivers;
 using Yumm_Back_End.Models.Orders;
 using Yumm_Back_End.Models.Restaurants;
 using Yumm_Back_End.Models.Shared;
@@ -27,25 +29,28 @@ namespace Yumm_Back_End.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
-            builder.Entity<Product>()
-                .Property(I => I.Price)
-                .HasPrecision(18, 2);
-
             builder.Entity<ProductExtras>()
                    .Property(I => I.Price)
                    .HasPrecision(18, 2);
 
-
-            //Locations Builder
-            builder.Entity<Location>().Property(L => L.Lat).HasPrecision(8,6);
-            builder.Entity<Location>().Property(L => L.Lng).HasPrecision(9,6);
-
-            builder.Entity<UsersLocations>().Property(L => L.Lat).HasPrecision(8, 6);
-            builder.Entity<UsersLocations>().Property(L => L.Lng).HasPrecision(9, 6);
+            builder.Entity<ProductSize>()
+               .Property(i => i.Price).HasPrecision(18, 2);
 
 
-            //Associating Locations To user
-            builder.Entity<UsersLocations>().HasKey(x => new {x.UserId,x.LocationId});
+            builder.Entity<MenuGroupsProducts>().HasKey(x => new { x.MenuGroupId, x.ProductId });
+
+            builder.Entity<RestaurantUser>().HasKey(x => new { x.RestaurantId, x.UserId });
+
+            ////Locations Builder
+            //builder.Entity<Location>().Property(L => L.Lat).HasPrecision(8,6);
+            //builder.Entity<Location>().Property(L => L.Lng).HasPrecision(9,6);
+
+            //builder.Entity<UsersLocations>().Property(L => L.Lat).HasPrecision(8, 6);
+            //builder.Entity<UsersLocations>().Property(L => L.Lng).HasPrecision(9, 6);
+
+
+            ////Associating Locations To user
+            //  builder.Entity<UsersLocations>().HasKey(x => new {x.UserId,x.LocationId});
 
 
 
@@ -69,9 +74,17 @@ namespace Yumm_Back_End.Data
 
         public DbSet<RestaurantType> RestaurantTypes { get; set; }
 
-        public DbSet<Menu> Menus { get; set; }
+       public DbSet<Menu> Menus { get; set; }
 
         public DbSet<MenuGroup> MenuGroups { get; set; }
+
+        public DbSet<MenuGroupsProducts> MenuGroupsProducts { get; set; }
+
+        public DbSet<SupportTeam> SupportTeams { get; set; }
+        
+        public DbSet<ProductSize> ProductSizes { get; set; }
+
+        public DbSet<RestaurantUser> RestaurantUsers { get; set; }
 
 
         #endregion
@@ -79,18 +92,18 @@ namespace Yumm_Back_End.Data
 
         #region Address Entities
 
-        public DbSet<Province> Provinces { get; set; }
-        public DbSet<City> Cities { get; set; }
+        //public DbSet<Province> Provinces { get; set; }
+        //public DbSet<City> Cities { get; set; }
 
-        public DbSet<Commune> Communes { get; set; }
+        //public DbSet<Commune> Communes { get; set; }
 
-        public DbSet<Neighbourhood> Neighbourhoods { get; set; }
+        //public DbSet<Neighbourhood> Neighbourhoods { get; set; }
 
-        public DbSet<Street> Streets { get; set; }
+        //public DbSet<Street> Streets { get; set; }
 
-        public DbSet<Location> Locations { get; set; }
+        //public DbSet<Location> Locations { get; set; }
 
-        public DbSet<UsersLocations> UsersLocations { get; set; }
+        //public DbSet<UsersLocations> UsersLocations { get; set; }
         #endregion
 
 
@@ -99,18 +112,36 @@ namespace Yumm_Back_End.Data
         #region Orders
 
         public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderDetails> OrderDetails { get; set; }
         #endregion
 
 
         #region Client Entities
 
         public DbSet<Client> Clients { get; set; }
+
+        public DbSet<ClientAddress> ClientAddresses { get; set; }
         #endregion
 
 
-        #region Additional Database Mods
 
-           // Entities added for created date and Update date. 
+        #region Tickets 
+        //  public DbSet<Ticket_Type> Ticket_Types { get; set; }
+        #endregion
+
+
+        #region Drivers 
+
+
+        public DbSet<Driver> Drivers { get; set; }
+
+        #endregion
+
+
+        #region Additional Database Configuration
+
+        // Entities added for created date and Update date. 
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
@@ -165,10 +196,6 @@ namespace Yumm_Back_End.Data
                  cancellationToken));
         }
 
-        #endregion
-
-        #region Tickets 
-      //  public DbSet<Ticket_Type> Ticket_Types { get; set; }
         #endregion
     }
 }

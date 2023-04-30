@@ -33,11 +33,11 @@ namespace Yumm_Back_End.Repository._Auth
         public IConfiguration _configuration;
         public IRestaurantRepository _restaurantRepo;
         public IClientRepository _clientRepo;
- 
 
-       
-        public AuthenticationRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, 
-            IConfiguration configuration, IRestaurantRepository restaurantRepo, ApplicationDbContext dbContext, IOptions<AppSettings> appSettings,IClientRepository clientRepository)
+
+
+        public AuthenticationRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
+            IConfiguration configuration, IRestaurantRepository restaurantRepo, ApplicationDbContext dbContext, IOptions<AppSettings> appSettings, IClientRepository clientRepository)
         {
 
             _userManager = userManager;
@@ -47,27 +47,42 @@ namespace Yumm_Back_End.Repository._Auth
             _restaurantRepo = restaurantRepo;
             _clientRepo = clientRepository;
             _appSettings = appSettings.Value;
-            
+
 
         }
 
+        public bool RegisterDriver()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RegisterClient()
+        {
+            throw new NotImplementedException();
+        }
+
+
+
         #region Authentication 
         #region Restaurant
-        public async Task<AuthenticatedUser> AuthenticateRestaurant(string password,string email = null, string phoneNumber = null)
+        public async Task<AuthenticatedUser> AuthenticateRestaurant(string password, string email = null, string phoneNumber = null)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            string currentRole="";
+            string currentRole = "";
 
-            if (user != null && await _userManager.CheckPasswordAsync(user,password))
+
+
+            if (user != null && await _userManager.CheckPasswordAsync(user, password))
             {
                 //Inside here it means that the user has been found!!!!
 
 
                 //fetch the Data of the Restaurant
-                Restaurant restaurant = _dbContext.Restaurants.Single(r => r.UserId ==user.Id);
+                Restaurant restaurant = _dbContext
+                    .Restaurants.Single();
 
-                Console.WriteLine("\n\n Restaurant Name "+restaurant.Name);
-                
+                Console.WriteLine("\n\n Restaurant Name " + restaurant.Name);
+
                 // fetch all the roles associate to this user
                 var userRoles = await _userManager.GetRolesAsync(user);
 
@@ -82,7 +97,7 @@ namespace Yumm_Back_End.Repository._Auth
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
                     currentRole = userRole;
-                    
+
                 }
 
 
@@ -101,16 +116,18 @@ namespace Yumm_Back_End.Repository._Auth
 
 
                 //return the Restaurant data to the user
-                AuthenticatedUser authUser = new AuthenticatedUser {
+                AuthenticatedUser authUser = new AuthenticatedUser
+                {
                     Id = restaurant.Id,
                     Name = restaurant.Name,
                     Token = tokenHandler.WriteToken(token),
-                    role = currentRole
+                    role = currentRole,
+                    EmailVerified = user.EmailConfirmed,
+                    PhoneVerified = user.PhoneNumberConfirmed
 
                 };
 
 
-                Console.WriteLine(userRoles);
 
                 return authUser;
             }
@@ -118,9 +135,9 @@ namespace Yumm_Back_End.Repository._Auth
 
             return null;
 
-            
+
         }
-        #endregion
+        //#endregion
 
         #region Client
         public async Task<AuthenticatedUser> AuthenticatedClient(string password, string email)
@@ -191,19 +208,11 @@ namespace Yumm_Back_End.Repository._Auth
         #endregion
 
         #region Registration 
-        public bool RegisterClient()
-        {
-            throw new NotImplementedException();
-        }
 
-        public bool RegisterDriver()
-        {
-            throw new NotImplementedException();
-        }
 
-        
 
-        public async Task<bool> RegisterRestaurantAsync(string Email, string password, string phoneNumber, string name, string Description, int RestaurantId)
+
+        public async Task<bool> RegisterRestaurantAsync(string Email, string password, string phoneNumber, string name, string Description, int RestaurantId,string token)
         {
 
             ApplicationUser user = new ApplicationUser
@@ -211,7 +220,8 @@ namespace Yumm_Back_End.Repository._Auth
                 Email = Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = Email,
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                Token = token
 
             };
 
@@ -220,24 +230,21 @@ namespace Yumm_Back_End.Repository._Auth
             if (!result.Succeeded)
                 return false;
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.ADMIN))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.ADMIN));
+            if (!await _roleManager.RoleExistsAsync(UserRoles.RESTAURANT))
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.RESTAURANT));
 
-            if (await _roleManager.RoleExistsAsync(UserRoles.ADMIN))
+            if (await _roleManager.RoleExistsAsync(UserRoles.RESTAURANT))
             {
-                await _userManager.AddToRoleAsync(user, UserRoles.ADMIN);
+                await _userManager.AddToRoleAsync(user, UserRoles.RESTAURANT);
             }
 
-            Restaurant restaurant = new Restaurant 
+            Restaurant restaurant = new Restaurant
             {
                 Name = name,
                 Description = Description,
-                UserId = user.Id,
+               // UserId = user.Id,
                 RestaurantTypeId = RestaurantId
             };
-
-
-            Console.WriteLine("Last inserted user" + user.Id);
 
             return await _restaurantRepo.CreateRestaurant(restaurant);
 
@@ -250,43 +257,66 @@ namespace Yumm_Back_End.Repository._Auth
 
         public async Task<bool> RegisterClientAsync(RegisterClientModel model)
         {
-            ApplicationUser user = new ApplicationUser
+            try
             {
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Email,
-                PhoneNumber = model.PhoneNumber
-            };
 
-            var clientResult = await _userManager.CreateAsync(user, model.Password);
+                ApplicationUser user = new ApplicationUser
+                {
+                    Email = model.Email,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    UserName = model.Email,
+                    PhoneNumber = model.PhoneNumber
+                };
 
-            if (!clientResult.Succeeded)
-                return false;
+                var clientResult = await _userManager.CreateAsync(user, model.Password);
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.CLIENT))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.CLIENT));
+                if (!clientResult.Succeeded)
+                    return false;
 
-            if (await _roleManager.RoleExistsAsync(UserRoles.CLIENT))
-            {
-                await _userManager.AddToRoleAsync(user, UserRoles.CLIENT);
+                if (!await _roleManager.RoleExistsAsync(UserRoles.CLIENT))
+                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.CLIENT));
+
+                if (await _roleManager.RoleExistsAsync(UserRoles.CLIENT))
+                {
+                    await _userManager.AddToRoleAsync(user, UserRoles.CLIENT);
+                }
+
+                Client client = new Client
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Gender = model.Gender,
+                    UserId = user.Id
+                };
+
+                return await _clientRepo.CreateClient(client);
+
             }
-
-            Client client = new Client
+            catch (Exception ex)
             {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Gender = model.Gender,
-                UserId = user.Id
-            };
 
-            return await _clientRepo.CreateClient(client);
-
-           
+                throw;
+            }
         }
 
-       
+        public ApplicationUser GetUserByPhone(string phoneNumber)
+        {
+            return  _dbContext.Users.FirstOrDefault(u => u.PhoneNumber == phoneNumber);
+        }
+
+        public ApplicationUser GetUserByUserName(string username)
+        {
+            return _dbContext.Users.FirstOrDefault(u => u.UserName == username);
+        }
+
+        public RestaurantUser getUser(string userId)
+        {
+            return _dbContext.RestaurantUsers.FirstOrDefault(c => c.UserId.Equals(userId.ToLower()));
+        }
+
+
         #endregion
 
-
+        #endregion
     }
 }
